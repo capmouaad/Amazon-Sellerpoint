@@ -3,9 +3,13 @@ import SvgIcon from '../components/Helpers/SvgIcon'
 import { connect } from 'react-redux';
 
 class HeaderUser extends Component {
-
+    myProfile = () => {
+        window.location.href = window.location.origin + "/User/Myprofile"
+    }
+    changePassword = () => {
+        window.location.href = window.location.origin + "/User/ChangePassword"
+    }
     render() {
-
         const { isMenuOpened } = this.props
         return (
             <div
@@ -24,10 +28,10 @@ class HeaderUser extends Component {
                     <div className="header__dropdown">
                         <div className="header__dropdown-menu">
                             <li>
-                                <a href="">My Profile</a>
+                                <a onClick={this.myProfile}>My Profile</a>
                             </li>
                             <li>
-                                <a href="">Change Password</a>
+                                <a onClick={this.changePassword}>Change Password</a>
                             </li>
                             <li>
                                 <a onClick={this.props.logOutUser}>Log out</a>
