@@ -10,8 +10,7 @@ class HeaderUser extends Component {
         return (
             <div
                 className={"header__user" + (isMenuOpened ? " is-active" : "")}
-                onClick={this.props.toggleUsermenu}
-            >
+                onClick={this.props.toggleUsermenu}>
                 <div className="header__user-avatar">
                     {this.props.userInfo && <img src={this.props.userInfo.ProfilePhoto} alt="Profile Image" />}
                 </div>
