@@ -1,26 +1,33 @@
 import * as types from '../store/ActionTypes';
 
 export const initialState = {
-  authToken: null
+    authToken: null,
+    userInfo: null
 }
 
 const login = (state = initialState, action) => {
-  switch (action.type) {
+    switch (action.type) {
 
-    case types.LOG_IN:
-      return {
-        ...state,
-        authToken: action.payload,
-      }
+        case types.LOG_OUT:
+            return {
+                initialState
+            }
 
-    case types.LOG_OUT:
-      return {
-        initialState
-      }
+        case types.LOG_IN:
+            return {
+                ...state,
+                userInfo: action.payload,
+            }
 
-    default:
-      return state;
-  }
+        case types.SET_AUTHTOKEN:
+            return {
+                ...state,
+                authToken: action.payload,
+            }
+
+        default:
+            return state;
+    }
 }
 
 export default login;
