@@ -4,7 +4,7 @@ React.js app bootstrapped with [Create React App](https://github.com/facebookinc
 React, Redux, React-router 4, React-loadable is used
 
 ### Demo link
-http://sallerpoint.surge.sh
+http://localhost:3000/SellerPoint/
 
 ## Table of Contents
 - [How to start](#hot-to-start)
