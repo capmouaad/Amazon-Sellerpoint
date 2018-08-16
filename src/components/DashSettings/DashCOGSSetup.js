@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import matchSorter from 'match-sorter'
-import api, { BACKEND_URL } from '../../services/Api';
+import api, { BACKEND_URL}from '../../services/Api';
 // Import React Table
 import ReactTable from "react-table";
+import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
 import Dropzone from 'react-dropzone'
@@ -12,7 +12,8 @@ export default class DashCOGSSetup extends Component {
     lstEditedCOGS = [];
     state = {
         data: [],
-        open: false
+        open: false,
+        filename: ''
     };
 
     constructor() {
@@ -36,8 +37,8 @@ export default class DashCOGSSetup extends Component {
     onDrop(files) {
         if (files.length > 0) {
             var data = new FormData();
-            data.append("file", files[0]);
-
+            data.append("file", files[0]);            
+            this.setState({ filename: files[0].name });
             api
                 .post(`UploadCogsData`, data)
                 .then((res) => {
@@ -111,7 +112,7 @@ export default class DashCOGSSetup extends Component {
 
 
     renderAvgHistoricalPrice(cellInfo) {
-        if (cellInfo.original.AvgHistoricalPrice == 0) {
+        if (cellInfo.original.AvgHistoricalPrice === 0) {
             return ('N/A');
         } else {
             return (['$', cellInfo.original.AvgHistoricalPrice.toFixed(2)]);
@@ -139,9 +140,8 @@ export default class DashCOGSSetup extends Component {
     }
 
     render() {
-        const { data, open } = this.state;
-        console.log(open);
-        return (
+        const { data, open, filename } = this.state;
+               return (
             <React.Fragment>
                 <div className="dash-container">
                     <div className="container container--full">
@@ -169,6 +169,7 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Satus",
                                                 id: "Status",
+                                                maxWidth: 80,
                                                 accessor: d => d.Status,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Status"] }),
@@ -177,6 +178,7 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Seller SKU",
                                                 id: "SellerSKU",
+                                                maxWidth: 150,
                                                 accessor: d => d.SellerSKU,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
@@ -185,14 +187,17 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Listing Name",
                                                 id: "Name",
+                                                maxWidth: 500,
                                                 accessor: d => d.Name,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true
+                                                filterAll: true,
+                                                style: { 'white-space': 'unset' }
                                             },
                                             {
                                                 Header: "MarketPlace Name",
                                                 id: "MarketplaceName",
+                                                maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
@@ -201,6 +206,7 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Brand",
                                                 id: "Brand",
+                                                maxWidth: 130,
                                                 accessor: d => d.Brand,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Brand"] }),
@@ -209,6 +215,7 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Avg. Hist. Price",
                                                 id: "AvgHistoricalPrice",
+                                                maxWidth: 120,
                                                 accessor: d => ["$", () => { return d.AvgHistoricalPrice.toFixed(2) }],
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
@@ -218,6 +225,7 @@ export default class DashCOGSSetup extends Component {
                                             {
                                                 Header: "Landed Cost",
                                                 id: "LandedCost",
+                                                maxWidth: 120,
                                                 accessor: "LandedCost",
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
@@ -281,12 +289,10 @@ export default class DashCOGSSetup extends Component {
                                     </div>
                                     <div class="upload-btn mt-20">
                                         <button type="button" class="btn btn-primary btn-rounded" id="btnUpload">Upload CSV template</button>
-                                        <span id="filename"></span>
-
+                                        <span id="filename">{filename}</span>
                                         <section>
                                             <div className="dropzone">
-                                                <Dropzone onDrop={this.onDrop.bind(this)} accept=".xlsx">
-                                                    <p>Try dropping some files here, or click to select files to upload.</p>
+                                                <Dropzone onDrop={this.onDrop.bind(this)} accept=".xlsx">                                                   
                                                 </Dropzone>
                                             </div>
 

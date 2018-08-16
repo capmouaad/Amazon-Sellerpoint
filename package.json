@@ -3,7 +3,7 @@
   "homepage": "http://qa.kinimetrix.com:8082/SellerPoint",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "dependencies": { 
     "aos": "^2.3.3",
     "autoprefixer": "7.1.6",
     "axios": "^0.18.0",
