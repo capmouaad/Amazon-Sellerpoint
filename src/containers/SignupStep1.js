@@ -9,7 +9,7 @@ import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
-
+import { tAndC, privacyPolicy} from '../components/Footer';
 // Formsy.addValidationRule('isValidPassword', (values, value) => {
 //   // const min_length = value ? value.length >= 8 : false
 //   // const contains_upcase = /[A-Z]/.test(value)
@@ -334,7 +334,7 @@ class SignupStep1 extends Component {
               <span className="ui-input-validation">Please enter captcha</span>
             }
             <div className="signup__rules">
-            By signing up, you are agreeing to KiniMetrix’s <br/><a href="http://qa.kinimetrix.com:8082/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a> and <a href="http://qa.kinimetrix.com:8082/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                        By signing up, you are agreeing to KiniMetrix’s <br /><a onClick={tAndC} rel="noopener noreferrer">Terms of Use</a> and <a onClick={privacyPolicy} rel="noopener noreferrer">Privacy Policy</a>.
             </div>
             <div className="signup__form-cta">
               <button type="submit" className="btn btn-signup btn--block">Sign Up</button>
