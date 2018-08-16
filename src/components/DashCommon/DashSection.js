@@ -16,6 +16,13 @@ export default class DashSection extends Component {
         // this.requestQlikData()
     }
 
+    onResetQlik = async () => {
+        if (window.GlobalQdtComponents) {
+            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            qApp.clearAll()
+        }
+    }
+
     toggleTab = () => {
         this.setState({
             isTabOpened: !this.state.isTabOpened
@@ -24,7 +31,7 @@ export default class DashSection extends Component {
 
     render() {
 
-        const { name, qdt, toolTipSimple, toolTipTabbed, toolTipHeader, toolTipContent, toolTipTabs, toolTipTabContents } = this.props;
+        const { name, qdt, toolTipSimple, toolTipTabbed, toolTipHeader, toolTipContent, toolTipTabs, toolTipTabContents, clearFilters } = this.props;
         const { isTabOpened } = this.state
 
         return (
@@ -37,6 +44,12 @@ export default class DashSection extends Component {
                     {toolTipSimple && <TooltipSimple toolTipheader={toolTipHeader} toolTipContent={toolTipContent} />}
                     {toolTipTabbed && <ToolTipTabbed toolTipheader={toolTipHeader} toolTipTabs={toolTipTabs} toolTipTabContents={toolTipTabContents} />}
                 </div>
+                {
+                    clearFilters && 
+                    <div className='wrapper-btn-clear'>
+                        <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
+                    </div>
+                }
                 <div className="dash-section__chart">
                     {qdt &&
                         <QdtComponent
