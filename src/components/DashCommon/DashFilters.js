@@ -3,16 +3,24 @@ import QdtComponent from '../Qlik/QdtComponent';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 //import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-daterangepicker/daterangepicker.css';
+import { resetQlik } from '../../actions/qlik'
 
 import moment from 'moment';
 
 export default class DashFilters extends Component {
     handleEvent(event, picker) {
-        if (event.type == 'apply') { 
+        if (event.type === 'apply') { 
             debugger;
         let a = window.qlik.currApp();
         a.field('Date').selectMatch('>=' + picker.startDate._i + '<=' + picker.endDate._i, true);
     }
+    }
+
+    onResetQlik = async () => {
+        if (window.GlobalQdtComponents) {
+            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            qApp.clearAll()
+        }
     }
     
     render() {
@@ -73,11 +81,16 @@ export default class DashFilters extends Component {
                 }
             }
         ]
-
+        
         return (
             <div className="dash-filters">
                 <div className="container container--full">
-                    <div className="dash-filters__title">FILTERS</div>
+                    <div style={{display: 'flex', justifyContent:'space-between'}}>
+                        <div className="dash-filters__title">FILTERS</div>
+                        <button className='btn-clear-filter' onClick={this.onResetQlik}>
+                            clear filters
+                        </button>
+                    </div>
                     <div className="dash-filters__wrapper">
                         {filters.map((filter, i) => {
                             return (
@@ -90,18 +103,17 @@ export default class DashFilters extends Component {
                         })}
                         <div>
                             <DateRangePicker onEvent={this.handleEvent} startDate="8/1/2018" endDate="8/18/2018" ranges={ranges} containerClass="react-bootstrap-daterangepicker-container"> 
-                            <div className="input-group">
-                                <input type="text" className="form-control" value="" />
-                                <span className="input-group-btn">
-                                    <button className="default date-range-toggle">
-                                        <i className="fa fa-calendar" />
-                                    </button>
-                                </span>
-                            </div>
-                        </DateRangePicker>
+                                <div className="input-group">
+                                    <input type="text" className="form-control" value="" />
+                                    <span className="input-group-btn">
+                                        <button className="default date-range-toggle">
+                                            <i className="fa fa-calendar" />
+                                        </button>
+                                    </span>
+                                </div>
+                            </DateRangePicker>
+                        </div>
                     </div>
-                    </div>
-                   
                 </div>
             </div>
         )

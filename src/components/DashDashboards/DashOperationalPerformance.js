@@ -25,6 +25,7 @@ export default class DashOperationalPerformance extends Component {
                             }}
                         />
                         <DashSection
+                            clearFilters
                             name="SKU Level Aggregated View"
                             qdt={{
                                 type: 'QdtViz',

@@ -65,6 +65,7 @@ export default class DashBusinessResults extends Component {
                             />
                         </div>
                         <DashSection
+                            clearFilters
                             name="SKU Level Aggregated View"
                             qdt={{
                                 type: 'QdtViz',

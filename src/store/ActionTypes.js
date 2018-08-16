@@ -9,7 +9,6 @@ export const SET_SIGNUP_ID = 'SET_SIGNUP_ID';
 export const SET_SIGNUP_FIELDS = 'SET_SIGNUP_FIELDS';
 
 export const LOG_IN = 'LOG_IN';
-export const SET_AUTHTOKEN = 'SET_AUTHTOKEN';
 export const LOG_OUT = 'LOG_OUT';
 
 export const SET_LWA_AUTH = 'SET_LWA_AUTH';

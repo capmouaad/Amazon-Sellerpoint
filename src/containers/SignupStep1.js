@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { withRouter } from 'react-router-dom'
 
 import { setSignupStep, setSignupEmail, setSignupId, setSignupFields } from '../actions/signup';
 import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
-import { tAndC, privacyPolicy} from '../components/Footer';
+
 // Formsy.addValidationRule('isValidPassword', (values, value) => {
 //   // const min_length = value ? value.length >= 8 : false
 //   // const contains_upcase = /[A-Z]/.test(value)
@@ -118,7 +119,7 @@ class SignupStep1 extends Component {
 
   nextStep = () => {
     const { first_name, last_name, company_name, email, phone, password, captcha } = this.state;
-
+    const { history } = this.props
     const leadObj = {
       email: email,
       password: password,
@@ -139,6 +140,7 @@ class SignupStep1 extends Component {
       .then((res) => {
         console.log('backend responce to Get CheckEmail', res)
         if ( res.data.IsDuplicateUser ){
+          history.push(`/login`)
           this.formRef.current.updateInputsWithError({
             email: res.data.ErrorMessage
           });
@@ -334,7 +336,7 @@ class SignupStep1 extends Component {
               <span className="ui-input-validation">Please enter captcha</span>
             }
             <div className="signup__rules">
-                        By signing up, you are agreeing to KiniMetrix’s <br /><a onClick={tAndC} rel="noopener noreferrer">Terms of Use</a> and <a onClick={privacyPolicy} rel="noopener noreferrer">Privacy Policy</a>.
+            By signing up, you are agreeing to KiniMetrix’s <br/><a href="http://qa.kinimetrix.com:8082/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a> and <a href="http://qa.kinimetrix.com:8082/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
             </div>
             <div className="signup__form-cta">
               <button type="submit" className="btn btn-signup btn--block">Sign Up</button>
@@ -359,4 +361,4 @@ const mapDispatchToProps = (dispatch) => ({
   setSignupId: (data) => dispatch(setSignupId(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignupStep1);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SignupStep1));

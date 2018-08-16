@@ -5,10 +5,6 @@ import PropTypes from 'prop-types';
 
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import DashboardNavTabs from '../components/DashCommon/DashboardNavTabs';
-import DashFinancialPerformance from '../components/DashDashboards/DashFinancialPerformance'
-import DashBusinessResults from '../components/DashDashboards/DashBusinessResults'
-import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
-import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
 
 import { setHeaderClass } from '../actions/header';
 
@@ -22,32 +18,7 @@ class DashboardDashboards extends Component {
   }
 
   render(){
-
-    const { match } = this.props // from the router
-
-    const routes = [
-      {
-        isExact: true,
-        path: match.url,
-        name: 'Financial Performace',
-        component: DashFinancialPerformance
-      },
-      {
-        path: `${match.url}/businessResults`,
-        name: 'Business Results',
-        component: DashBusinessResults
-      },
-      {
-        path: `${match.url}/operationalPerformance`,
-        name: 'Operational Performance',
-        component: DashOperationalPerformance
-      },
-      {
-        path: `${match.url}/advertisingPerformance`,
-        name: 'Advertising Performance',
-        component: DashAdvertisingPerformance
-      }
-    ];
+    const { listNav } = this.props // from the router
 
     if ( !this.props.authToken ){
       return (
@@ -57,10 +28,10 @@ class DashboardDashboards extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
-        <DashboardNavTabs routes={routes} />
+        <DashboardNavTabs routes={listNav} />
 
         <div className="dash">
-          {routes.map(route => (
+          {listNav.map(route => (
             <Route
               key={route.path}
               exact={route.isExact}
