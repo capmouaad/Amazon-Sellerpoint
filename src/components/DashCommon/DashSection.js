@@ -23,14 +23,14 @@ export default class DashSection extends Component {
         }
     }
 
-    onHideChildSellerSku = async() => {
+    onHideChildSellerSku = async () => {
         const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-        qApp.variable.setContent('vShowChildSellerSKU', 'Hide')
+        qApp.variable.setStringValue('vShowChildSellerSKU', 'Hide')
     }
 
-    onShowChildSellerSku = async() => {
+    onShowChildSellerSku = async () => {
         const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-        qApp.variable.setContent('vShowChildSellerSKU', 'Show')
+        qApp.variable.setStringValue('vShowChildSellerSKU', 'Show')
     }
 
     toggleTab = () => {
@@ -55,15 +55,15 @@ export default class DashSection extends Component {
                     {toolTipTabbed && <ToolTipTabbed toolTipheader={toolTipHeader} toolTipTabs={toolTipTabs} toolTipTabContents={toolTipTabContents} />}
                 </div>
                 {
-                    clearFilters && 
+                    clearFilters &&
                     <div>
                         <div className='wrapper-btn-clear'>
                             <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
                         </div>
                         <div className='wrapper-radio-sku'>
                             <h5>Show child SKU</h5>
-                            <input type="radio" name="radio_sku_child" value="1" className='style-radio-sku' onClick={this.onHideChildSellerSku}/><span>Hide</span>
-                            <input type="radio" name="radio_sku_child" value="0" className='style-radio-sku' onClick={this.onShowChildSellerSku}/><span>Show</span>
+                            <input type="radio" name="radio_sku_child" value="1" className='style-radio-sku' onClick={this.onHideChildSellerSku} /><span>Hide</span>
+                            <input type="radio" name="radio_sku_child" value="0" className='style-radio-sku' onClick={this.onShowChildSellerSku} /><span>Show</span>
                         </div>
                     </div>
                 }
