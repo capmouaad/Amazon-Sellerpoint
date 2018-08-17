@@ -8,3 +8,8 @@ export const logIn = (data) => ({
 export const logOut = (data) => ({
   type: types.LOG_OUT
 })
+
+export const setAuthToken = (data) => ({
+    type: types.SET_AUTHTOKEN,
+    payload: data
+})
