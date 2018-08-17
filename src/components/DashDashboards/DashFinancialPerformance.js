@@ -55,6 +55,7 @@ export default class DashFinancialPerformance extends Component {
                         />
                         <DashSection
                             name="Profitability Waterfall: Detail View"
+                            clearFilters
                             toolTipSimple="true"
                             toolTipHeader="Profitability Waterfall: Detail View"
                             toolTipContent="This view provides the SKU-level detail around the profitability components that you can most easily impact."

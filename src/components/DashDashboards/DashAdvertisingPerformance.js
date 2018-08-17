@@ -57,6 +57,7 @@ export default class DashAdvertisingPerformance extends Component {
 
                         <DashSection
                             name="Advertising Performance Detail View"
+                            clearFilters
                             toolTipSimple="true"
                             toolTipHeader="Advertising Performance: Detail View"
                             toolTipContent={"Note: Attribution is based on a 7 day attribution model.<br/><br/>This table provides a SKU-level view of many of the key metrics provided in the advertising performance charts."}
