@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import api from '../services/Api';
 
 import DashboardWelcome from '../containers/DashboardWelcome';
@@ -154,6 +154,11 @@ class Dashboard extends Component {
           path={match.url}
           component={DashboardWelcome}
         />
+        <Route render={({ history: { location: { pathname, search, hash } } }) => (
+          pathname.slice(-1) === '/' ?
+            <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
+            null
+        )} />
       </React.Fragment>
     )
   }

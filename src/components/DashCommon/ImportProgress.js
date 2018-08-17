@@ -37,8 +37,7 @@ class ImportProgress extends Component {
 
   getImportStatus = () => {
 
-    // const { signupId } = this.props; // prodcution
-    const signupId = 3212; // testing
+    const { signupId } = this.props; // prodcution
 
     api
       .get(`GetDataImportStatus?clientid=${signupId}`)

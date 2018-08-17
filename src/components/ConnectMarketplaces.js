@@ -150,7 +150,8 @@ class ConnectMarketplaces extends Component{
 
 
 const mapStateToProps = (state) => ({
-  signupId: state.signup.signupId
+  signupId: state.signup.signupId,
+  LWA: state.lwa
 });
 
 const mapDispatchToProps = (dispatch) => ({

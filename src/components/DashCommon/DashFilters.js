@@ -8,11 +8,22 @@ import { resetQlik } from '../../actions/qlik'
 import moment from 'moment';
 
 export default class DashFilters extends Component {
-    handleEvent(event, picker) {
+    constructor(props) {
+        super(props)
+        this.state = {
+            pickerStartDate: '',
+            pickerEndDate: ''
+        }
+    }
+    handleEvent = (event, picker) => {
         if (event.type === 'apply') { 
-            debugger;
-        let a = window.qlik.currApp();
-        a.field('Date').selectMatch('>=' + picker.startDate._i + '<=' + picker.endDate._i, true);
+            const startDate = moment(picker.startDate).format('MM/DD/YYYY')
+            const endDate = moment(picker.endDate).format('MM/DD/YYYY')
+
+            this.setState({
+                pickerStartDate: startDate,
+                pickerEndDate: endDate
+            })
     }
     }
 
@@ -81,7 +92,7 @@ export default class DashFilters extends Component {
                 }
             }
         ]
-        
+        const { pickerStartDate, pickerEndDate } = this.state
         return (
             <div className="dash-filters">
                 <div className="container container--full">
@@ -102,9 +113,13 @@ export default class DashFilters extends Component {
                             )
                         })}
                         <div>
-                            <DateRangePicker onEvent={this.handleEvent} startDate="8/1/2018" endDate="8/18/2018" ranges={ranges} containerClass="react-bootstrap-daterangepicker-container"> 
+                            <DateRangePicker onEvent={this.handleEvent} ranges={ranges} containerClass="react-bootstrap-daterangepicker-container"> 
                                 <div className="input-group">
-                                    <input type="text" className="form-control" value="" />
+                                    <input
+                                        type="text"
+                                        className="form-control date-picker"
+                                        value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
+                                    />
                                     <span className="input-group-btn">
                                         <button className="default date-range-toggle">
                                             <i className="fa fa-calendar" />

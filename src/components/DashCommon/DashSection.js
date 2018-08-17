@@ -23,6 +23,16 @@ export default class DashSection extends Component {
         }
     }
 
+    onHideChildSellerSku = async() => {
+        const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+        qApp.variable.setContent('vShowChildSellerSKU', 'Hide')
+    }
+
+    onShowChildSellerSku = async() => {
+        const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+        qApp.variable.setContent('vShowChildSellerSKU', 'Show')
+    }
+
     toggleTab = () => {
         this.setState({
             isTabOpened: !this.state.isTabOpened
@@ -46,8 +56,15 @@ export default class DashSection extends Component {
                 </div>
                 {
                     clearFilters && 
-                    <div className='wrapper-btn-clear'>
-                        <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
+                    <div>
+                        <div className='wrapper-btn-clear'>
+                            <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
+                        </div>
+                        <div className='wrapper-radio-sku'>
+                            <h5>Show child SKU</h5>
+                            <input type="radio" name="radio_sku_child" value="1" className='style-radio-sku' onClick={this.onHideChildSellerSku}/><span>Hide</span>
+                            <input type="radio" name="radio_sku_child" value="0" className='style-radio-sku' onClick={this.onShowChildSellerSku}/><span>Show</span>
+                        </div>
                     </div>
                 }
                 <div className="dash-section__chart">
