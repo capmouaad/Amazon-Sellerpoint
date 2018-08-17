@@ -37,7 +37,7 @@ export default class DashFinancialPerformance extends Component {
                             qdt={{
                                 type: 'QdtViz',
                                 props: {
-                                    id: 'QrVLDbS', height: '156px'
+                                    id: 'QrVLDbS', height: '450px'
                                 },
                             }}
                         />
