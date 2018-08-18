@@ -10,6 +10,11 @@ export const logOut = (data) => ({
 })
 
 export const setAuthToken = (data) => ({
-    type: types.SET_AUTHTOKEN,
-    payload: data
+  type: types.SET_AUTHTOKEN,
+  payload: data
+})
+
+export const setDataImportComplete = (data) => ({
+  type: types.SET_DATA_IMPORT_COMPLETE,
+  payload: data
 })

@@ -2,7 +2,8 @@ import * as types from '../store/ActionTypes';
 
 export const initialState = {
     authToken: null,
-    userInfo: null
+    userInfo: null,
+    DataImportComplete: false
 }
 
 const login = (state = initialState, action) => {
@@ -23,6 +24,12 @@ const login = (state = initialState, action) => {
         case types.LOG_OUT:
             return {
                 initialState
+            }
+        
+        case types.SET_DATA_IMPORT_COMPLETE:
+            return {
+                ...state,
+                DataImportComplete: action.payload
             }
 
         default:

@@ -10,7 +10,7 @@ import FormLoader from '../components/Forms/FormLoader';
 import { setSignupStep } from '../actions/signup';
 
 import { setHeaderClass } from '../actions/header';
-import { logIn, setAuthToken } from '../actions/login';
+import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
 import { APP_CONFIG } from '../constants'
 
@@ -65,62 +65,67 @@ class Login extends Component {
         // prevalidations if any ?
     }
 
-    loginUser = () => {
-        const { email, password, rememberMe } = this.state;
-        const { history, setSignupStep } = this.props
+    loginUser = async () => {
+        try {
+            const { email, password, rememberMe } = this.state;
+            const { history, setSignupStep, setDataImportComplete } = this.props
 
-        this.setState({
-            isFormSubmited: true // reset submit status
-        })
+            this.setState({
+                isFormSubmited: true // reset submit status
+            })
 
-        const loginData = {
-            userEmail: email,
-            password: password,
-            rememberMe: rememberMe
-        }
+            const loginData = {
+                userEmail: email,
+                password: password,
+                rememberMe: rememberMe
+            }
 
-        api
-            .post(`Login`, loginData)
-            .then((res) => {
-                console.log('backend responce to POST LOGIN', res)
+            const loginRes = await api.post(`Login`, loginData)
+            console.log('backend responce to POST LOGIN', loginRes)
 
-                const { IsSuccess, AuthToken, UserInfo } = res.data;
-                if (IsSuccess && AuthToken) {
-                    this.props.logIn(UserInfo);
-                    this.props.setAuthToken(AuthToken);
-                    this.props.setSignupId(UserInfo.ClientID)
-                    this.setState({
-                        authenticated: true
-                    })
-                    if (!UserInfo.KMASignUpCompleted) {
-                        switch (UserInfo.KMACurrentStep) {
-                            case APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.key:
-                                setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step)
-                                history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step}`)
-                                break
-                            case APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.key:
-                                setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step)
-                                history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step}`)
-                                break
-                            default:
-                                break
-                        }
-                        return
+            const { IsSuccess, AuthToken, UserInfo } = loginRes.data;
+            if (IsSuccess && AuthToken) {
+                this.props.logIn(UserInfo);
+                this.props.setAuthToken(AuthToken);
+                this.props.setSignupId(UserInfo.ClientID)
+
+                if (!UserInfo.KMASignUpCompleted) {
+                    switch (UserInfo.KMACurrentStep) {
+                        case APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.key:
+                            setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step)
+                            history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step}`)
+                            break
+                        case APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.key:
+                            setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step)
+                            history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step}`)
+                            break
+                        default:
+                            break
                     }
-                } else {
-                    this.setState({
-                        apiError: res.data.ErrorMessage
-                    })
+                    return
+                }
+
+                const importStatusRes = await api.get(`GetDataImportStatus?clientid=${UserInfo.ClientID}`)
+                const { DataImportComplete } = importStatusRes.data
+                if (DataImportComplete) {
+                   setDataImportComplete(true)
                 }
 
                 this.setState({
-                    isFormSubmited: false // reset submit status
+                    authenticated: true
                 })
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+            } else {
+                this.setState({
+                    apiError: loginRes.data.ErrorMessage
+                })
+            }
 
+            this.setState({
+                isFormSubmited: false // reset submit status
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
     componentDidMount() {
         this.props.setHeaderClass('header--logo-only');
@@ -197,18 +202,17 @@ class Login extends Component {
 }
 
 
-const mapStateToProps = (state) => (
-    {}
-);
+const mapStateToProps = (state) => ({
+    DataImportComplete: state.login.DataImportComplete
+});
 
-const mapDispatchToProps = (dispatch) => (
-    {
-        setHeaderClass: (data) => dispatch(setHeaderClass(data)),
-        logIn: (data) => dispatch(logIn(data)),
-        setAuthToken: (data) => dispatch(setAuthToken(data)),
-        setSignupId: (data) => dispatch(setSignupId(data)),
-        setSignupStep: (data) => dispatch(setSignupStep(data))
-    }
-);
+const mapDispatchToProps = (dispatch) => ({
+    setHeaderClass: (data) => dispatch(setHeaderClass(data)),
+    logIn: (data) => dispatch(logIn(data)),
+    setAuthToken: (data) => dispatch(setAuthToken(data)),
+    setSignupId: (data) => dispatch(setSignupId(data)),
+    setSignupStep: (data) => dispatch(setSignupStep(data)),
+    setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed))
+});
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

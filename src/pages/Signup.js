@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import api from '../services/Api';
 
 import { setHeaderClass } from '../actions/header';
 
@@ -17,12 +18,31 @@ class Signup extends Component {
   };
 
   componentDidMount(){
+    this.checkEmail()
     this.updateURL();
     this.props.setHeaderClass('header--logo-only');
   }
 
   componentDidUpdate(){
     this.updateURL();
+  }
+
+  checkEmail = async () => {
+    try {
+      const { history, location } = this.props
+
+      const params = new URLSearchParams(location.search)
+      const email = params.get('email')
+
+      if (email) {
+        const checkEmailRes = await api.get(`CheckEmail?Email=${email}`)
+        if ( checkEmailRes.data.IsDuplicateUser ){
+          history.push(`/login`)
+        }
+      }
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   updateURL = () => {
@@ -106,4 +126,4 @@ const mapDispatchToProps = (dispatch) => (
   }
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Signup));
