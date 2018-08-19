@@ -87,10 +87,11 @@ class SignupStep1 extends Component {
 
   // submit handler from the form
   handleSubmit = (e) => {
-    if ( this.state.formIsValid &&
-         this.state.captcha &&
-         ( this.state.password === this.state.password_confirmation )
-       ){
+    if (
+      this.state.formIsValid &&
+      this.state.captcha &&
+      ( this.state.password === this.state.password_confirmation )
+    ){
       this.nextStep();
     }
   }
@@ -168,6 +169,9 @@ class SignupStep1 extends Component {
           this.props.setSignupId(res.data.ClientId);
           this.updateSignup();
         } else {
+          if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
+            this.recaptchaRef.reset && this.recaptchaRef.reset()
+          }
           this.setState({
             apiError: res.data.ErrorMessage
           })
@@ -328,6 +332,7 @@ class SignupStep1 extends Component {
             }
             <div className="signup__captcha">
               <ReCAPTCHA
+                ref={(node) => { this.recaptchaRef = node }}
                 sitekey="6Ld-90UUAAAAAP1OQz2XtlLe_zd8AYmMCql1vJXE"
                 render="explicit"
                 onChange={this.recaptchaVerify}
