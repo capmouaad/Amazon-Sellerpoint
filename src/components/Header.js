@@ -4,7 +4,8 @@ import { Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
-import { OPEN_MENU, CLOSE_MENU } from '../store/ActionTypes';
+import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK } from '../store/ActionTypes';
+import { setQlikConnection, setQlikInstance } from '../actions/qlik'
 import { logOut } from '../actions/login';
 
 import SvgIcon from '../components/Helpers/SvgIcon'
@@ -49,29 +50,33 @@ class Header extends React.Component {
     component.preload();
   };
 
-  logOutUser = () => {
-    // destroy session
-    this.props.logOut()
+  logOutUser = async () => {
+    try {
+      // let the API know about it
 
-    // let the API know about it
+      // TODO
+      // For some reason IsSuccess is false
+      const logOffRes = await api.get(`LogOff`)
+      console.log('backend responce to GET LogOff', logOffRes)
 
-    // TODO
-    // For some reason IsSuccess is false
-    api
-      .get(`LogOff`)
-      .then((res) => {
-        console.log('backend responce to GET LogOff', res)
+      const { IsSuccess } = logOffRes.data;
 
-        const { IsSuccess } = res.data;
-
-        if ( IsSuccess ){
-          // do something ?
-
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      if ( IsSuccess ){
+        // reset qlik connection redux
+        this.props.setQlikConnection(false)
+        this.props.setQlikInstance(null)
+        // close qlik app
+        const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+        await qApp.close()
+        // clear qlik window object
+        window.GlobalQdtComponents = null
+        // destroy session
+        this.props.logOut()
+        window.location.reload()
+      }
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   toggleUsermenu = () => {
@@ -197,6 +202,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   openMenu: () => dispatch({ type: OPEN_MENU }),
   closeMenu: () => dispatch({ type: CLOSE_MENU }),
+  closeQlik: () => dispatch({ type: CLOSE_APP_QLIK }),
+  setQlikConnection: (data) => dispatch(setQlikConnection(data)),
+  setQlikInstance: (data) => dispatch(setQlikInstance(data)),
   logOut: () => dispatch(logOut())
 });
 

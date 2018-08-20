@@ -218,6 +218,23 @@ class SignupStep1 extends Component {
     return await res.data;
   }
 
+  getEmailUrl = () => {
+    const { location } = this.props
+
+    const params = new URLSearchParams(location.search)
+    const emailUrl = params.get('email')
+
+    if (emailUrl) {
+      this.setState({
+        email: emailUrl
+      })
+    }
+  }
+
+  componentDidMount () {
+    this.getEmailUrl()
+  }
+
 
   render(){
     const { first_name, last_name, company_name, email, phone, password, password_confirmation, apiError, isFormSubmited } = this.state;

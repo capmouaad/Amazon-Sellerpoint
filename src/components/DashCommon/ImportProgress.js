@@ -66,7 +66,7 @@ class ImportProgress extends Component {
 
     return(
       <div className="i-progress">
-        <div className="container">
+        <div className="container container--full">
           <div className="i-progress__wrapper">
             <div className="i-progress__title">DATA IMPORT STATUS</div>
             <div className="i-progress__bars">

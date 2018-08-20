@@ -11,8 +11,6 @@ import api from '../services/Api'
 
 class SignupStep3 extends Component {
 
-  isAdvertisingOptedOut = false;
-
   static propTypes = {
     setSignupStep: PropTypes.func,
     // setSignupFields: PropTypes.func
@@ -24,7 +22,9 @@ class SignupStep3 extends Component {
     this.state = {
       shouldRedirect: false,
       isFormSubmited: false,
-      apiError: null
+      apiError: null,
+      isAdvertisingOptedOut: false,
+      error: false
     }
   }
 
@@ -39,23 +39,29 @@ class SignupStep3 extends Component {
   }
 
   compleateSignup = async () => {
+    const { LWA } = this.props
     try {
-      await this.compleateSignupOnBackend()
-      this.setState({
-        shouldRedirect: true
-      })
-      this.props.setSignupStep(1);
+      if (!this.state.isAdvertisingOptedOut || (!LWA.resp.code && !LWA.resp.scope)) {
+        this.setState({
+          error: true
+        })
+      } else {
+        this.setState({
+          error: false
+        })
+        await this.compleateSignupOnBackend()
+        this.setState({
+          shouldRedirect: true
+        })
+        this.props.setSignupStep(1);
+      }
     } catch (e) {
       console.error(e)
     }
   }
 
-  advertisingOptedOutChange = (checked) => {   
-    this.isAdvertisingOptedOut = checked.target.checked;
-  }
-
   compleateSignupOnBackend = async () => {
-    if (this.isAdvertisingOptedOut){
+    if (this.state.isAdvertisingOptedOut){
       const resAd = await api.post('AdvertisingOptOut', {sellerId : this.props.sellerId});
       if (!resAd.data.IsSuccess) {
         throw new Error(resAd.data.ErrorMessage)
@@ -68,8 +74,14 @@ class SignupStep3 extends Component {
     }
   }
 
+  onCheckedInput = () => {
+    this.setState({
+      isAdvertisingOptedOut: !this.state.isAdvertisingOptedOut
+    })
+  }
+
   render () {
-    const { shouldRedirect, isFormSubmited, apiError } = this.state;
+    const { shouldRedirect, isFormSubmited, apiError, error, isAdvertisingOptedOut } = this.state;
     // const { signupFields } = this.props;
 
     if ( shouldRedirect ){
@@ -90,12 +102,17 @@ class SignupStep3 extends Component {
                 onFormSubmited={this.onFormSubmited}
               />
                <div className="signup__form-cta signup__form-cta--centered">
-               <input type="checkbox"onChange= {(e, checked) => this.advertisingOptedOutChange(e)}/> I don`t have advertising data to connect
+               <input type="checkbox"onChange={this.onCheckedInput}/> I don`t have advertising data to connect
               </div>
 
               <div className="signup__form-cta signup__form-cta--centered">
                 <span onClick={this.compleateSignup} className="btn btn-signup btn--block">Complete</span>
               </div>
+              {
+                error && !isAdvertisingOptedOut && <div style={{ display: 'block', textAlign: 'center', paddingTop: '10px'}}>
+                <span style={{ color: 'red', fontSize: 14 }}>{`Please click "Connect" to connect your advertising data or click the opt-out checkbox to continue`}</span>
+              </div>
+              }
             </div>
         </div>
       </div>
