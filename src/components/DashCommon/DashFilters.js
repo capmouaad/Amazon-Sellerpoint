@@ -68,18 +68,32 @@ export default class DashFilters extends Component {
             const startDate = moment(picker.startDate).format('MM/DD/YYYY')
             const endDate = moment(picker.endDate).format('MM/DD/YYYY')
 
-            this.setState({
-                pickerStartDate: startDate,
-                pickerEndDate: endDate
-            })
-
-            if (window.GlobalQdtComponents) {
-                const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-                qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(function () {
-                    qApp.field('Date').lock();
-                });
-            }
+            this.handleDateSelection(startDate, endDate);
         }
+    }
+
+    handleDateSelection = async (startDate, endDate) => {
+        this.setState({
+            pickerStartDate: startDate,
+            pickerEndDate: endDate
+        })
+
+        if (window.GlobalQdtComponents) {
+            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(function () {
+                qApp.field('Date').lock();
+            });
+        }
+    }
+
+    componentDidMount() {
+        this.initialSelection();
+    }
+
+    initialSelection = async () => {
+        const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
+        const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
+        this.handleDateSelection(startDate, endDate);
     }
 
     onResetQlik = async () => {
@@ -100,7 +114,7 @@ export default class DashFilters extends Component {
             'Last 90 days': [moment().subtract(89, 'days'), moment().subtract(1, 'days')],
             'Month to date': [moment().startOf('month'), moment().subtract(1, 'days')],
             'Year to date': [moment().startOf('year'), moment().subtract(1, 'days')],
-            'Rolling 12 months': [moment().subtract(11,'months'), moment().subtract(1, 'days')],
+            'Rolling 12 months': [moment().subtract(11, 'months'), moment().subtract(1, 'days')],
             'Last year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
         }
 
@@ -124,7 +138,7 @@ export default class DashFilters extends Component {
                             )
                         })}
                         <div>
-                            <DateRangePicker onEvent={this.handleEvent} ranges={ranges} containerClass="react-bootstrap-daterangepicker-container"> 
+                            <DateRangePicker onEvent={this.handleEvent} ranges={ranges} containerClass="react-bootstrap-daterangepicker-container">
                                 <div className="input-group">
                                     <span className="input-group-btn date-range-picker-calender-btn">
                                         <button className="default date-range-toggle">
