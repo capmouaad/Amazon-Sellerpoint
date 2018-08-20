@@ -10,6 +10,7 @@ import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
+import { tAndC, privacyPolicy } from '../components/Footer';
 
 // Formsy.addValidationRule('isValidPassword', (values, value) => {
 //   // const min_length = value ? value.length >= 8 : false
@@ -86,10 +87,11 @@ class SignupStep1 extends Component {
 
   // submit handler from the form
   handleSubmit = (e) => {
-    if ( this.state.formIsValid &&
-         this.state.captcha &&
-         ( this.state.password === this.state.password_confirmation )
-       ){
+    if (
+      this.state.formIsValid &&
+      this.state.captcha &&
+      ( this.state.password === this.state.password_confirmation )
+    ){
       this.nextStep();
     }
   }
@@ -167,6 +169,9 @@ class SignupStep1 extends Component {
           this.props.setSignupId(res.data.ClientId);
           this.updateSignup();
         } else {
+          if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
+            this.recaptchaRef.reset && this.recaptchaRef.reset()
+          }
           this.setState({
             apiError: res.data.ErrorMessage
           })
@@ -327,6 +332,7 @@ class SignupStep1 extends Component {
             }
             <div className="signup__captcha">
               <ReCAPTCHA
+                ref={(node) => { this.recaptchaRef = node }}
                 sitekey="6Ld-90UUAAAAAP1OQz2XtlLe_zd8AYmMCql1vJXE"
                 render="explicit"
                 onChange={this.recaptchaVerify}
@@ -336,7 +342,7 @@ class SignupStep1 extends Component {
               <span className="ui-input-validation">Please enter captcha</span>
             }
             <div className="signup__rules">
-            By signing up, you are agreeing to KiniMetrix’s <br/><a href="http://qa.kinimetrix.com:8082/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a> and <a href="http://qa.kinimetrix.com:8082/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                        By signing up, you are agreeing to KiniMetrix’s <br /><a onClick={tAndC} rel="noopener noreferrer">Terms of Use</a> and <a onClick={privacyPolicy} rel="noopener noreferrer">Privacy Policy</a>.
             </div>
             <div className="signup__form-cta">
               <button type="submit" className="btn btn-signup btn--block">Sign Up</button>

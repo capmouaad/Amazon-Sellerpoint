@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -15,11 +15,19 @@ class DashboardWelcome extends Component {
     setHeaderClass: PropTypes.func.isRequired
   };
 
-  componentDidMount(){
+  componentDidMount () {
     this.props.setHeaderClass('header--dash-welcome');
   }
 
-  render(){
+  render () {
+    const { DataImportComplete } = this.props
+
+    if (DataImportComplete) {
+      return (
+        <Redirect to={`${process.env.PUBLIC_URL}/dash/dashboards`} />
+      )
+    }
+
     return (
       <React.Fragment>
         <ImportProgress />
@@ -54,15 +62,12 @@ class DashboardWelcome extends Component {
 }
 
 
-const mapStateToProps = (state) => (
-  {
-  }
-);
+const mapStateToProps = (state) => ({
+  DataImportComplete: state.login.DataImportComplete
+});
 
-const mapDispatchToProps = (dispatch) => (
-  {
-    setHeaderClass: (data) => dispatch(setHeaderClass(data))
-  }
-);
+const mapDispatchToProps = (dispatch) => ({
+  setHeaderClass: (data) => dispatch(setHeaderClass(data))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardWelcome);

@@ -52,7 +52,7 @@ class ConnectMarketplaces extends Component{
     const { LWA, signupId } = this.props;
     // const options = this.state.connectedId
 
-    if ( !LWA.resp.code ){
+    if ( !LWA || !LWA.resp.code ){
       this.LWAAuth();
     } else {
 
@@ -150,7 +150,8 @@ class ConnectMarketplaces extends Component{
 
 
 const mapStateToProps = (state) => ({
-  signupId: state.signup.signupId
+  signupId: state.signup.signupId,
+  LWA: state.lwa
 });
 
 const mapDispatchToProps = (dispatch) => ({

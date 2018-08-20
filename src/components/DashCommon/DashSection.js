@@ -3,23 +3,64 @@ import QdtComponent from '../Qlik/QdtComponent';
 import TooltipSimple from '../Helpers/ToolTipSimple';
 import ToolTipTabbed from '../Helpers/ToolTipTabbed';
 
+const HIDE_OPTION = {
+    Hide: 'Hide',
+    Show: 'Show'
+}
+
 export default class DashSection extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            isTabOpened: true
+            isTabOpened: true,
+            qApp: null,
+            vShowChildSellerSKU: null
         }
     }
-    componentDidMount() {
-        // this.requestQlikData()
+
+    componentDidMount () {
+        this.getQApp()
+    }
+
+    componentDidUpdate (prevProps, prevState) {
+        if(!this.state.qApp && window.GlobalQdtComponents.qAppPromise) {
+            this.getQApp()
+        }
+    }
+
+    getQApp = async () => {
+        const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+        this.setState({
+            qApp,
+        })
+        this.checkShowChild()
+    }
+
+    checkShowChild = () => {
+        this.state.qApp && this.state.qApp.variable.getContent('vShowChildSellerSKU', (reply) => {
+            this.setState({
+                vShowChildSellerSKU: reply.qContent.qString
+            })
+        });
     }
 
     onResetQlik = async () => {
-        if (window.GlobalQdtComponents) {
-            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-            qApp.clearAll()
+        this.state.qApp && this.state.qApp.clearAll()
+    }
+
+    onHideChildSellerSku = async () => {
+        if (this.state.qApp) {
+            await this.state.qApp.variable.setStringValue('vShowChildSellerSKU', HIDE_OPTION.Hide)
+            this.checkShowChild()
+        }
+    }
+
+    onShowChildSellerSku = async () => {
+        if (this.state.qApp) {
+            await this.state.qApp.variable.setStringValue('vShowChildSellerSKU', HIDE_OPTION.Show)
+            this.checkShowChild()
         }
     }
 
@@ -29,7 +70,7 @@ export default class DashSection extends Component {
         })
     }
 
-    render() {
+    render () {
 
         const { name, qdt, toolTipSimple, toolTipTabbed, toolTipHeader, toolTipContent, toolTipTabs, toolTipTabContents, clearFilters } = this.props;
         const { isTabOpened } = this.state
@@ -46,8 +87,15 @@ export default class DashSection extends Component {
                 </div>
                 {
                     clearFilters && 
-                    <div className='wrapper-btn-clear'>
-                        <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
+                    <div>
+                        <div className='wrapper-btn-clear'>
+                            <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
+                        </div>
+                        <div className='wrapper-radio-sku'>
+                            <h5>Show child SKU</h5>
+                            <input type="radio" name="radio_sku_child" value={HIDE_OPTION.Hide} className='style-radio-sku' onClick={this.onHideChildSellerSku} checked={this.state.vShowChildSellerSKU === HIDE_OPTION.Hide} /><span>Hide</span>
+                            <input type="radio" name="radio_sku_child" value={HIDE_OPTION.Show} className='style-radio-sku' onClick={this.onShowChildSellerSku} checked={this.state.vShowChildSellerSKU === HIDE_OPTION.Show} /><span>Show</span>
+                        </div>
                     </div>
                 }
                 <div className="dash-section__chart">

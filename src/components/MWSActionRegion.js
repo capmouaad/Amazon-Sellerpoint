@@ -44,13 +44,13 @@ class MWSActionRegion extends Component {
         </div>
 
         <div className="signup__note">
-          <strong>From here, you will be redirected to Amazon to grant permission for KiniMetrix.</strong>
+          <strong>From here, you will be redirected to Amazon to grant permission for KiniMetrix Sellerpoint.</strong>
           <br /><br />
           1. Make sure that you sign into your SellerCentral account
           <br /><br />
-          2. The Amazon Marketplace Webservice will autopopulate KiniMetrix’s information
+          2. The Amazon Marketplace Webservice will autopopulate KiniMetrix Sellerpoint’s information
           <br /><br />
-          3. Grant permission to KiniMetrix by confirming
+          3. Grant permission to KiniMetrix Sellerpoint by confirming
           <br /><br />
           <span className="t-up">4. Once the connection is made, you will come back and input the    ‘Seller  ID’ and the ‘MWS Auth Token’</span>
         </div>

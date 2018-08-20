@@ -11,7 +11,7 @@ import api from '../services/Api'
 
 class SignupStep3 extends Component {
 
-  isAdvertisingOptedOut=false;
+  isAdvertisingOptedOut = false;
 
   static propTypes = {
     setSignupStep: PropTypes.func,
@@ -38,37 +38,37 @@ class SignupStep3 extends Component {
     })
   }
 
-  compleateSignup = () => {
-    // this.props.setSignupStep(1);
-
-    this.setState({
-      shouldRedirect: true
-    })
-
-    this.compleateSignupOnBackend()
-      .then(res => {
-        console.log(res)
+  compleateSignup = async () => {
+    try {
+      await this.compleateSignupOnBackend()
+      this.setState({
+        shouldRedirect: true
       })
-      .catch(err => {
-      });
-  }
-
-  advertisingOptedOutChange(checked){   
-this.isAdvertisingOptedOut=checked.target.checked;
-  }
-
-  async compleateSignupOnBackend(){
-
-    if (this.isAdvertisingOptedOut){
-      console.log(this.state);
-      console.log(this.props);
-      await api.post('AdvertisingOptOut', {sellerId : this.props.sellerId});
+      this.props.setSignupStep(1);
+    } catch (e) {
+      console.error(e)
     }
-   const res = await api.post('SignUpComplete');
-    return await res.data;
   }
 
-  render(){
+  advertisingOptedOutChange = (checked) => {   
+    this.isAdvertisingOptedOut = checked.target.checked;
+  }
+
+  compleateSignupOnBackend = async () => {
+    if (this.isAdvertisingOptedOut){
+      const resAd = await api.post('AdvertisingOptOut', {sellerId : this.props.sellerId});
+      if (!resAd.data.IsSuccess) {
+        throw new Error(resAd.data.ErrorMessage)
+      }
+    }
+
+    const ressignup = await api.post('SignUpComplete');
+    if (!ressignup.data.IsSuccess) {
+      throw new Error(ressignup.data.ErrorMessage)
+    }
+  }
+
+  render () {
     const { shouldRedirect, isFormSubmited, apiError } = this.state;
     // const { signupFields } = this.props;
 
@@ -107,7 +107,7 @@ this.isAdvertisingOptedOut=checked.target.checked;
 const mapStateToProps = (state) => ({
   signupId: state.signup.signupId,
   LWA: state.lwa,
-  sellerId: state.seller_Id
+  sellerId: state.signup.fields.seller_id
 });
 
 const mapDispatchToProps = (dispatch) => ({
