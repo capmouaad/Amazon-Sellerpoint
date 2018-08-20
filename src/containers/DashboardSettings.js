@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import api from '../services/Api';
 
 import { setHeaderClass } from '../actions/header';
 import DashboardNavTabs from '../components/DashCommon/DashboardNavTabs';

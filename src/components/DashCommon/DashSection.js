@@ -31,7 +31,11 @@ export default class DashSection extends Component {
     }
 
     getQApp = async () => {
+<<<<<<< HEAD
         const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+=======
+        const qApp = (await window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+>>>>>>> 9609c7abec9314a96e6f98528f640737256d2d91
         this.setState({
             qApp,
         })

@@ -12,10 +12,22 @@ class DashboardPlannings extends Component {
   static propTypes = {
     setHeaderClass: PropTypes.func.isRequired
   };
+  constructor(){
+    super();
+    this.addCustomScript();
+  }
 
   componentDidMount(){
     this.props.setHeaderClass('header--dash');
   }
+
+  addCustomScript(){
+    const script = document.createElement("script");
+    script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=3s";
+    script.async = true;
+    document.body.appendChild(script);
+}
+
 
   render(){
     if ( !this.props.authToken ){
@@ -27,18 +39,15 @@ class DashboardPlannings extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
-        <div className="dash">
-          <div className="container container--narrow">
-            <div className="dash__heading">
-              <h1 className="dash__title">Plannings page</h1>
-            </div>
+        <div className="dash-container">
+          <div className="container container--full">
+            <div className="_form_3 form-border"></div>  
           </div>
         </div>
       </React.Fragment>
     )
   }
 }
-
 
 const mapStateToProps = (state) => (
   {

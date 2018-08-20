@@ -5,11 +5,13 @@ import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
+import {ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class DashSKUASINGrouping extends Component {
-
 skuIds =[];
 parentSKUId=0;
+parentGroupId=0;
 
 constructor() {
   super();
@@ -19,24 +21,95 @@ constructor() {
       childPopupOpen:false,
       childSKUs:[],
       groupSelectedPopupOpen : false,
+      groupedSKUPopupOpen :false,
       selSKUs_data :[]
   };
   this.getUngroupedSKUs();  
-  this.getGroupedSKUs();  
+  this.getGroupedSKUs();
+}
+
+showToastMessage=(message, title)=> {
+    if (title==="Success"){
+        toast.success(message==null?"":message , {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose:5000
+          });
+    }
+    else {
+        toast.error(message==null ?"":message, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose:5000
+          });
+    }       
 }
 
 onCloseModal = () => {
   this.setState({ childPopupOpen: false,
-  groupSelectedPopupOpen:false });
+  groupSelectedPopupOpen:false,
+  groupedSKUPopupOpen:false
+ });
 };
 
 onOpenGroupSelectedModal = () => {
   if (this.skuIds.length>0){
     //this.setState({   groupSelectedPopupOpen:true });
     this.getDetailUnGroupBySKUIds(this.skuIds);
-  }
- 
+  } 
 };
+
+onOpenGroupedSKUModal = () => {
+    if (this.skuIds.length>0){
+      this.setState({   groupedSKUPopupOpen:true });    
+    } 
+  };
+
+createNewSKUGroup =()=>{
+    if (this.skuIds.length>1 && this.parentGroupId>0){     
+        api
+  .post(`CreateGroupSKUs`, {newGroupSKUId:this.parentGroupId, skuIds: this.skuIds})
+  .then((res) => {      
+      if (res.data.IsSuccess) {       
+        this.showToastMessage(res.data.ErrorMessage, "Success");
+          this.skuIds=[];
+          this.parentGroupId=0;
+      } else {
+        this.setState({
+            apiError: res.data.ErrorMessage
+        })
+        this.showToastMessage(res.data.ErrorMessage, "Error");
+      }    
+  })
+  .catch(function (error) {
+    this.showToastMessage("Unknown Issue", "Error");   
+  });
+    }else{
+        this.showToastMessage("Please select min. 2 SKUs.", "Error");      
+    }
+}
+
+updateExistingSKUGroup =()=>{
+    if (this.skuIds.length>0 && this.parentGroupId>0){     
+        api
+  .post(`UpdateGroupSKUsChild`, {groupSKUId:this.parentGroupId, skuIds: this.skuIds})
+  .then((res) => {    
+      if (res.data.IsSuccess) {   
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
+          this.skuIds=[];
+          this.parentGroupId=0;
+      } else {
+          this.setState({
+              apiError: res.data.ErrorMessage
+          })
+          this.showToastMessage(res.data.ErrorMessage, "Error");
+      }      
+  })
+  .catch(function (error) {
+      console.log(error);
+  });
+    }else{
+        this.showToastMessage("Please select atleast 1 SKUs.", "Error");
+    }
+}
 
 getDetailUnGroupBySKUIds =(skuIds)=>{
   api
@@ -47,8 +120,7 @@ getDetailUnGroupBySKUIds =(skuIds)=>{
           this.setState({
               selSKUs_data: res.data.LstCOGSTable,
               groupSelectedPopupOpen:true
-          });
-          this.skuIds=[];
+          });        
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
@@ -64,17 +136,15 @@ ungroupSKU(SKUId){
   console.log("ungroupSKU : "+ SKUId);
   api
   .get(`UngroupSKU?SKUId=${SKUId}`)
-  .then((res) => {
-      console.log('backend responce to GET UngroupSKU', res)
+  .then((res) => {     
       if (res.data.IsSuccess) {
-        console.log(res);
-          // this.setState({
-          //     data: res.data.LstCOGSTable
-          // });
+          console.log(res)
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
+          this.showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -86,17 +156,14 @@ ungroupAllSKUs(){
   console.log("UngroupAllChildSKU : "+ this.parentSKUId);
   api
   .get(`UngroupAllChildSKU?parentSkuId=${this.parentSKUId}`)
-  .then((res) => {
-      console.log('backend responce to GET UngroupAllChildSKU', res)
+  .then((res) => {      
       if (res.data.IsSuccess) {
-        console.log(res);
-          // this.setState({
-          //     data: res.data.LstCOGSTable
-          // });
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
+          this.showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -113,6 +180,7 @@ getUngroupedSKUs() {
               this.setState({
                   data: res.data.LstCOGSTable
               });
+
           } else {
               this.setState({
                   apiError: res.data.ErrorMessage
@@ -146,7 +214,7 @@ getGroupedSKUs() {
 
 checkboxChangedEvent=(e)=>{
 if(e.target.checked){
-  if(this.skuIds.indexOf(e.target.value)==-1){
+  if(this.skuIds.indexOf(e.target.value)===-1){
     this.skuIds.push(e.target.value)
   }
 }
@@ -162,6 +230,14 @@ renderMerchantListingId=(cellInfo)=>{
   onChange={this.checkboxChangedEvent}/>
 )}
 
+renderRadioBtnMerchantListingId=(cellInfo)=>{
+    return (<input type="radio" defaultValue={cellInfo.original.MerchantListingId} name="SKUGroups" 
+    onChange={(e)=>{
+       this.parentGroupId=e.target.value;
+       console.log(this.parentGroupId);
+    }}/>
+  )}
+
 renderAvgHistoricalPrice(cellInfo) {
   if (cellInfo.original.AvgHistoricalPrice === 0) {
       return ('N/A');
@@ -171,7 +247,6 @@ renderAvgHistoricalPrice(cellInfo) {
 }
 
 getChildSKUByParentSKUId=(parentId)=>{
-
   this.parentSKUId=parentId;
   api
   .get(`GetChildSKUByParentSKUId?SKUId=${parentId}`)
@@ -195,23 +270,24 @@ getChildSKUByParentSKUId=(parentId)=>{
 }
 
   render(){
-    const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data } = this.state;   
-    return(
-      <React.Fragment>
+    const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen } = this.state;   
+           return(
+      <React.Fragment>        
+<ToastContainer autoClose={8000} />
         <div className="dash-container">
           <div className="container container--full">
-                            <div class="panel panel-dark">
-                                <div class="panel-heading">
-                                    <div class="panel-btns">
-                                        <a href="" class="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i class="fa fa-minus-square-o"></i></a>
+                            <div className="panel panel-dark">
+                                <div className="panel-heading">
+                                    <div className="panel-btns">
+                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i className="fa fa-minus-square-o"></i></a>
                                     </div>
-                                    <h3 class="panel-title">SKU/ASIN Grouping</h3>
+                                    <h3 className="panel-title">SKU/ASIN Grouping</h3>
                                 </div>
 
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-lg-8">
-                                            <div class="instruction-notes">
+                                <div className="panel-body">
+                                    <div className="row">
+                                        <div className="col-lg-8">
+                                            <div className="instruction-notes">
                                                 <h3>
                                                     Group your SKU/ASINs into a single product to stay organized!
                                                 </h3>
@@ -233,21 +309,17 @@ getChildSKUByParentSKUId=(parentId)=>{
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="h3">Ungrouped SKUs</h3>
+                                    <h3 className="h3">Ungrouped SKUs</h3>
 
-                                    <div id="divTableUngroupDataHolder" class="tab-content  cust-cogs cust-confiq">
+                                    <div id="divTableUngroupDataHolder" className="tab-content  cust-cogs cust-confiq">
 
-                                        <div class="row clearfix">
+                                        <div className="row clearfix">
 
-                                            <div class="col-sm-6">                                                
+                                            <div className="col-sm-6">                                                
                                                 <div className="dash-new-marketplace btn-group">
               <a className="btn btn-new-marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
-            </div>
-                   
-            {/* <div className="dash-new-marketplace btn-group">
-              <a className="btn btn-new-marketplace" onClick={this.addNewMarketplace}>Add to existing group</a>
-            </div> */}
-
+              <a className="btn btn-new-marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
+            </div>                   
                                                 </div>                                             
                                            
                                         </div>
@@ -261,7 +333,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         columns={[
                                           {                                            
                                             id: "MerchantListingId",
-                                            maxWidth: 80,
+                                            maxWidth: 40,
                                             Cell: this.renderMerchantListingId,
                                             Filter: ({filter, onChange}) => (
                                               <div></div>                                             
@@ -340,13 +412,13 @@ getChildSKUByParentSKUId=(parentId)=>{
                                     />
                                     </div>
 
-                                    <h3>Grouped SKUs</h3>
+                                    <h3 className="h3">Grouped SKUs</h3>
 
-                                    <div class="instruction-notes">
-                                        <p class="font-bold">Note: Click into a grouped listing to view the products contained in the group.</p>
+                                    <div className="instruction-notes">
+                                        <p className="font-bold">Note: Click into a grouped listing to view the products contained in the group.</p>
                                     </div>
 
-                                    <div id="divTableGroupDataHolder" class="tab-content  cust-cogs">
+                                    <div id="divTableGroupDataHolder" className="tab-content  cust-cogs">
                                     <ReactTable id="TableGroupDataHolder"
                                         data={grouped_data}
                                         noDataText="No grouped skus found."
@@ -438,15 +510,16 @@ getChildSKUByParentSKUId=(parentId)=>{
           </div>
 
            <Modal open={childPopupOpen} onClose={this.onCloseModal}>
-                    <div class="modal-dialog modal-md">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Child SKUs</h4>
+                    <div className="modal-dialog modal-md">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title" id="myModalLabel">Child SKUs</h4>
                             </div>
-                            <div class="modal-body modal-body-update">
-                                <div class="row">                                    
-                                <div class="instruction-notes instruction-notes-last">
-                                <h4 class="instruct">
+                            <div className="modal-body modal-body-update">
+                                <div className="panel panel-dark">    
+                                <div className="panel-body">                                
+                                <div className="instruction-notes instruction-notes-last">
+                                <h4 className="instruct">
                                     Instructions/Notes:
                                 </h4>
                                 <ul>
@@ -458,11 +531,11 @@ getChildSKUByParentSKUId=(parentId)=>{
                                 </ul>
                             </div>
 
-                            <div id="divTableChildGroupBySKUIdsDataHolder" class="tab-content  cust-cogs">
-                                <div class="mar-b-15">
-                                    <div class="row">                                       
-                                        <div class="col-lg-9 text-right">
-                                            <button type="button" class="btn btn-primary btn-bordered" id="btnAllUngroupSKus" onClick={()=> {this.ungroupAllSKUs()}}>Ungroup all SKUs</button>
+                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
+                                <div className="mar-b-15">
+                                    <div className="row">                                       
+                                        <div className="col-lg-9 text-right content_col">
+                                            <button type="button" className="btn btn-primary btn-bordered pull-right" id="btnAllUngroupSKus" onClick={()=> {this.ungroupAllSKUs()}}>Ungroup all SKUs</button>
                                         </div>
                                     </div>
                                 </div>
@@ -559,20 +632,22 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                             </div>
                                 </div>
                             </div>
+                            </div>
                         </div>
                     </div>
                 </Modal>
 
                 <Modal open={groupSelectedPopupOpen} onClose={this.onCloseModal}>
-                    <div class="modal-dialog modal-md">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Group Selected SKUs</h4>
+                    <div className="modal-dialog modal-md">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title" id="myModalLabel">Group Selected SKUs</h4>
                             </div>
-                            <div class="modal-body modal-body-update">
-                                <div class="row">                                    
-                                <div class="instruction-notes instruction-notes-last">
-                                <h4 class="instruct">
+                            <div className="modal-body modal-body-update">
+                                <div className="panel panel-dark">  
+                                <div className="panel-body">                                    
+                                <div className="instruction-notes instruction-notes-last">
+                                <h4 className="instruct">
                                     Instructions/Notes:
                                 </h4>
                                 <ul>
@@ -583,18 +658,26 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                     <li>All of the sales for the corresponding grouped listings will roll up into this primary listing.</li>
 
                                 </ul>
-                                <p class="font-bold">Note: All grouped listings will inherit the Landed Cost of the primary listing.</p>
+                                <p className="font-bold">Note: All grouped listings will inherit the Landed Cost of the primary listing.</p>
                            
                             </div>
 
-                            <div id="divTableChildGroupBySKUIdsDataHolder" class="tab-content  cust-cogs">
+                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
                                                               <ReactTable
                                         data={selSKUs_data}
                                         noDataText="No child skus found."
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[                                        
+                                        columns={[  
+                                            {                                            
+                                                id: "MerchantListingId",
+                                                maxWidth: 40,
+                                                Cell: this.renderRadioBtnMerchantListingId,
+                                                Filter: ({filter, onChange}) => (
+                                                  <div></div>                                             
+                                                )                                     
+                                            },                                      
                                             {
                                                 Header: "Satus",
                                                 id: "Status",
@@ -666,9 +749,135 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                         nextText=">>"
                                         previousText="<<"                                      
                                     />
+
+                                    
+                                    <div className="text-centre">
+                                        <a id="btnSubmit" className="btn btn-primary btn-long" onClick={this.createNewSKUGroup}>Submit</a>
+                                    </div>
                             </div>
                                 </div>
                             </div>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+
+                 <Modal open={groupedSKUPopupOpen} onClose={this.onCloseModal}>
+                    <div className="modal-dialog modal-md">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title" id="myModalLabel">EXISTING GROUP</h4>
+                            </div>
+                            <div className="modal-body modal-body-update">
+                                <div className="panel panel-dark">  
+                                <div className="panel-body">    
+                              <div className="instruction-notes">
+                                <h4 className="instruct">
+                                    Instructions/Notes:
+                                </h4>
+                                <ul>
+                                    <li>
+                                        Select the existing listing group that you would like to add these listings to.
+                                    </li>
+                                    <li>All of the sales for the corresponding grouped listings will roll up into this primary listing.</li>
+                                </ul>
+                                <p className="font-bold">Note: All grouped listings will inherit the Landed Cost of the primary listing.</p>
+                            </div>
+                            <div id="divTableExistingGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
+                            <ReactTable id="TableGroupDataHolder"
+                                        data={grouped_data}
+                                        noDataText="No grouped skus found."
+                                        filterable
+                                        defaultFilterMethod={(filter, row) =>
+                                            String(row[filter.id]) === filter.value}
+                                        columns={[                                        
+                                            {                                            
+                                                id: "MerchantListingId",
+                                                maxWidth: 40,
+                                                Cell: this.renderRadioBtnMerchantListingId,
+                                                Filter: ({filter, onChange}) => (
+                                                  <div></div>                                             
+                                                )                                     
+                                            }, {
+                                                Header: "Satus",
+                                                id: "Status",
+                                                maxWidth: 80,
+                                                accessor: d => d.Status,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
+                                                filterAll: true
+                                            },
+                                            {
+                                                Header: "Seller SKU",
+                                                id: "SellerSKU",
+                                                maxWidth: 150,
+                                                accessor: d => d.SellerSKU,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
+                                                filterAll: true
+                                            },
+                                            {
+                                                Header: "Listing Name",
+                                                id: "Name",
+                                                maxWidth: 500,
+                                                accessor: d => d.Name,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
+                                                filterAll: true,
+                                                style: { 'white-space': 'unset' }
+                                            },
+                                            {
+                                                Header: "MarketPlace Name",
+                                                id: "MarketplaceName",
+                                                maxWidth: 140,
+                                                accessor: d => d.MarketplaceName,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
+                                                filterAll: true
+                                            },
+                                            {
+                                                Header: "Brand",
+                                                id: "Brand",
+                                                maxWidth: 130,
+                                                accessor: d => d.Brand,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
+                                                filterAll: true
+                                            },
+                                            {
+                                                Header: "Avg. Hist. Price",
+                                                id: "AvgHistoricalPrice",
+                                                maxWidth: 120,
+                                                accessor: d => d.AvgHistoricalPrice,
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
+                                                filterAll: true,
+                                                Cell: this.renderAvgHistoricalPrice
+                                            },
+                                            {
+                                                Header: "Landed Cost",
+                                                id: "LandedCost",
+                                                maxWidth: 120,
+                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
+                                                filterMethod: (filter, rows) =>
+                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+                                                filterAll: true                                               
+                                            }
+                                        ]}
+                                        defaultPageSize={10}
+                                        className="-striped -highlight"
+                                        nextText=">>"
+                                        previousText="<<"                                       
+                                    />
+
+                                     <div className="text-centre">
+                                        <a id="btnSubmit" className="btn btn-primary btn-long" onClick={this.updateExistingSKUGroup}>Submit</a>
+                                    </div>
+                            </div>
+
+                                </div>
+                            </div>
+                            </div> 
                         </div>
                     </div>
                 </Modal>
