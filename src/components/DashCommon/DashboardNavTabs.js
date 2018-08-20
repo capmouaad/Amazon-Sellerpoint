@@ -8,7 +8,7 @@ export default class DashboardNavTabs extends Component {
 
     return(
       <div className={"dash-nav " + modifierClass}>
-        <div className="container">
+        <div className="container container--full">
           <div className="dash-nav__wrapper">
             { routes.map( (route, i) => {
               return(

@@ -24,6 +24,8 @@ const qlik = (state = initialState, action) => {
         ...state,
         instance: action.payload
       }
+    case types.CLOSE_APP_QLIK:
+      return initialState
 
     default:
       return state;
