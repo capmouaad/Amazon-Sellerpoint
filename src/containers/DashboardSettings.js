@@ -24,7 +24,7 @@ class DashboardSettings extends Component {
       )
     }
     return (
-      <React.Fragment>
+      <React.Fragment>       
         <DashboardNavTabs
           routes={listNav}
           modifierClass="dash-nav--without-progress"

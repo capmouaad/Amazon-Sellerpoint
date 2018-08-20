@@ -41,9 +41,20 @@ class DashboardPlannings extends Component {
         <ImportProgress />
         <div className="dash-container">
           <div className="container container--full">
-            <div className="_form_3 form-border"></div>  
-          </div>
-        </div>
+                            <div className="panel panel-dark">
+                                <div className="panel-heading">
+                                    <div className="panel-btns">
+                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i className="fa fa-minus-square-o"></i></a>
+                                    </div>
+                                    <h3 className="panel-title">Planning</h3>
+                                </div>
+
+                                <div className="panel-body">
+                                <div className="_form_3 form-border"></div>   
+                                </div>
+                                </div>
+                                </div>
+                                </div>   
       </React.Fragment>
     )
   }

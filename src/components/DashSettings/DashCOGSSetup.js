@@ -5,25 +5,28 @@ import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
-import Dropzone from 'react-dropzone'
+import Dropzone from 'react-dropzone';
+import FormLoader from '../Forms/FormLoader';
 
 export default class DashCOGSSetup extends Component {
 
     lstEditedCOGS = [];
+   
     state = {
         data: [],
         open: false,
-        filename: ''
+        filename: ''              
     };
 
     constructor() {
         super();
         this.state = {
             data: [],
-            open: false
+            open: false,
+            loading:true                 
         };
         this.getAllCOGS();
-        this.renderLandedCost = this.renderLandedCost.bind(this);
+        this.renderLandedCost = this.renderLandedCost.bind(this);       
     }
 
     onOpenModal = () => {
@@ -58,15 +61,22 @@ export default class DashCOGSSetup extends Component {
     }
 
     onDownloadFile = () => {
+        this.setState({
+          loading:true
+        })
         api
             .get(`DownloadCogsTemplate`)
             .then((res) => {
                 console.log('backend responce to GET onDownloadFile', res)
                 if (res.data.IsSuccess) {
+                    this.setState({
+                        loading:false
+                      })
                     window.location.href = BACKEND_URL + "/Download?file=" + res.data.FileName;
                 } else {
                     this.setState({
-                        apiError: res.data.ErrorMessage
+                        apiError: res.data.ErrorMessage,
+                        loading:false
                     })
                 }
             })
@@ -82,33 +92,31 @@ export default class DashCOGSSetup extends Component {
                 console.log('backend responce to GET GetAllCOGS', res)
                 if (res.data.IsSuccess) {
                     this.setState({
-                        data: res.data.LstCOGSTable
-                    });
+                        data: res.data.LstCOGSTable,
+                        loading:false
+                    });                   
                 } else {
                     this.setState({
                         apiError: res.data.ErrorMessage
-                    })
-                }
+                    })                  
+                }                             
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error);              
             });
     }
 
     renderLandedCost(cellInfo) {
-
         return (<div className="inpt-landed-cost">{["$",
             <input type={"number"} min={0}
                 contentEditable
-                style={{ backgroundColor: "#fafafa", width: "100%", "text-align": "right" }}
+                style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
                 defaultValue={cellInfo.original.LandedCost.toFixed(2)}
                 onChange={e => {
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: e.target.value });
                 }}
             />]}</div>
-        );
-
-    }
+        );    }
 
 
     renderAvgHistoricalPrice(cellInfo) {
@@ -140,10 +148,14 @@ export default class DashCOGSSetup extends Component {
     }
 
     render() {
-        const { data, open, filename } = this.state;
-               return (
-            <React.Fragment>
-                <div className="dash-container">
+        const { data, open, filename, loading } = this.state;  
+        console.log(loading);     
+               return (               
+            <React.Fragment>    
+                        
+                <div className={"dash-container "+ (loading ? "" : "loading-over" )}>   
+                <FormLoader />  
+
                     <div className="container container--full">
                         <div className="panel panel-dark">
                             <div className="panel-heading">
@@ -151,14 +163,15 @@ export default class DashCOGSSetup extends Component {
                             </div>
 
                             <div className="panel-body">
-                                <div class="row">
-                                    <div class="custom-pagelist-left">
-                                        <div class="col-lg-12 mar-b-15 mar-t-5">
-                                            <button id="btnBulkCSV" class="btn btn-primary btn-rounded" onClick={this.onOpenModal}>Bulk CSV Edit</button>
-                                        </div>
-                                    </div></div>
+                                <div className="row">
+                                    <div className="custom-pagelist-left">
+                                       
+                                        <div className="dash-new-marketplace btn-group">
+              <a className="btn btn-new-marketplace" onClick={this.onOpenModal}>Bulk CSV Edit</a>
+             
+            </div>  </div></div>
 
-                                <div class="row">
+                                <div className="row">
                                     <ReactTable
                                         data={data}
                                         noDataText="No products found."
@@ -240,8 +253,8 @@ export default class DashCOGSSetup extends Component {
                                     />
                                     <br />
 
-                                    <div class="text-centre">
-                                        <a id="btnSaveCogs" class="btn btn-primary btn-long" onClick={this.saveCOGS}>SAVE</a>
+                                    <div className="text-centre">
+                                        <a id="btnSaveCogs" className="btn btn-primary btn-long" onClick={this.saveCOGS}>SAVE</a>
                                     </div>
                                 </div>
                             </div>
@@ -249,22 +262,22 @@ export default class DashCOGSSetup extends Component {
                 </div>
 
                 <Modal open={open} onClose={this.onCloseModal}>
-                    <div class="modal-dialog modal-md">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Bulk CSV Edit</h4>
+                    <div className="modal-dialog modal-md">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title" id="myModalLabel">Bulk CSV Edit</h4>
                             </div>
-                            <div class="modal-body modal-body-update">
-                                <div class="row">
-                                    <div class="upload-discription">
-                                        <p class="head">How to use this template</p>
+                            <div className="modal-body modal-body-update">
+                                <div className="row">
+                                    <div className="upload-discription">
+                                        <p className="head">How to use this template</p>
                                         <p>
                                             This template contains all the products imported via the Amazon MWS API.
                                             To edit your costs, proceed as follows:
                         </p>
 
                                         <p>
-                                            1. Click on button <b class="head">Download CSV template</b> and download the template file.
+                                            1. Click on button <b className="head">Download CSV template</b> and download the template file.
                         </p>
                                         <p>
                                             2. Enter your Landed Cost per unit in the format '12.34' in the respective columns
@@ -278,17 +291,17 @@ export default class DashCOGSSetup extends Component {
                                             Please note: The columns Status, Seller SKU, Listing Name, Marketplace Name, Brand,
                                             Avg. Historical Price, cannot be changed.
                         </p>
-                                        <p class="red">
+                                        <p className="red">
                                             Caution: Uploading this file will overwrite all previously entered costs.
                                             Empty cells will be interpreted as 0.00.
                         </p>
                                     </div>
-                                    <div class="upload-btn">
-                                        <button type="button" class="btn btn-primary btn-bordered" id="btnDownload" onClick={this.onDownloadFile}>Download CSV template</button>
+                                    <div className="upload-btn">
+                                        <button type="button" className="btn btn-primary btn-bordered" id="btnDownload" onClick={this.onDownloadFile}>Download CSV template</button>
 
                                     </div>
-                                    <div class="upload-btn mt-20">
-                                        <button type="button" class="btn btn-primary btn-rounded" id="btnUpload">Upload CSV template</button>
+                                    <div className="upload-btn mt-20">
+                                        <button type="button" className="btn btn-primary btn-rounded" id="btnUpload">Upload CSV template</button>
                                         <span id="filename">{filename}</span>
                                         <section>
                                             <div className="dropzone">
@@ -298,7 +311,7 @@ export default class DashCOGSSetup extends Component {
 
                                         </section>
                                     </div>
-                                    <div id="my-awesome-dropzone" class="dropzone dropzone-block" enctype='multipart/form-data'>
+                                    <div id="my-awesome-dropzone" className="dropzone dropzone-block" enctype='multipart/form-data'>
                                     </div>
                                 </div>
                             </div>
