@@ -19,7 +19,7 @@ export default class DashNotifications extends Component {
       <React.Fragment>
         <div className="dash-container">
           <div className="container container--full">
-            <div className="_form_3"></div>            
+            <div className="_form_3 form-border"></div>            
            
           </div>
         </div>

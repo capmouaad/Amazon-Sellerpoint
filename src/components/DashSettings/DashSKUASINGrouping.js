@@ -5,11 +5,10 @@ import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
-import { ToastContainer } from "react-toastr";
-let container;
+import {ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class DashSKUASINGrouping extends Component {
-
 skuIds =[];
 parentSKUId=0;
 parentGroupId=0;
@@ -26,8 +25,22 @@ constructor() {
       selSKUs_data :[]
   };
   this.getUngroupedSKUs();  
-  this.getGroupedSKUs(); 
-  
+  this.getGroupedSKUs();
+}
+
+showToastMessage=(message, title)=> {
+    if (title==="Success"){
+        toast.success(message==null?"":message , {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose:5000
+          });
+    }
+    else {
+        toast.error(message==null ?"":message, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose:5000
+          });
+    }       
 }
 
 onCloseModal = () => {
@@ -54,24 +67,23 @@ createNewSKUGroup =()=>{
     if (this.skuIds.length>1 && this.parentGroupId>0){     
         api
   .post(`CreateGroupSKUs`, {newGroupSKUId:this.parentGroupId, skuIds: this.skuIds})
-  .then((res) => {
-      console.log('backend responce to POST CreateGroupSKUs', res)
+  .then((res) => {      
       if (res.data.IsSuccess) {       
-        console.log(res);
+        this.showToastMessage(res.data.ErrorMessage, "Success");
           this.skuIds=[];
           this.parentGroupId=0;
       } else {
-          this.setState({
-              apiError: res.data.ErrorMessage
-          })
-      }      
+        this.setState({
+            apiError: res.data.ErrorMessage
+        })
+        this.showToastMessage(res.data.ErrorMessage, "Error");
+      }    
   })
   .catch(function (error) {
-      console.log(error);
+    this.showToastMessage("Unknown Issue", "Error");   
   });
-
     }else{
-console.log("Please select min. 2 SKUs.");
+        this.showToastMessage("Please select min. 2 SKUs.", "Error");      
     }
 }
 
@@ -79,24 +91,23 @@ updateExistingSKUGroup =()=>{
     if (this.skuIds.length>0 && this.parentGroupId>0){     
         api
   .post(`UpdateGroupSKUsChild`, {groupSKUId:this.parentGroupId, skuIds: this.skuIds})
-  .then((res) => {
-      console.log('backend responce to POST UpdateGroupSKUsChild', res)
-      if (res.data.IsSuccess) {       
-        console.log(res);
+  .then((res) => {    
+      if (res.data.IsSuccess) {   
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
           this.skuIds=[];
           this.parentGroupId=0;
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
+          this.showToastMessage(res.data.ErrorMessage, "Error");
       }      
   })
   .catch(function (error) {
       console.log(error);
   });
-
     }else{
-console.log("Please select atleast 1 SKUs.");
+        this.showToastMessage("Please select atleast 1 SKUs.", "Error");
     }
 }
 
@@ -125,17 +136,15 @@ ungroupSKU(SKUId){
   console.log("ungroupSKU : "+ SKUId);
   api
   .get(`UngroupSKU?SKUId=${SKUId}`)
-  .then((res) => {
-      console.log('backend responce to GET UngroupSKU', res)
+  .then((res) => {     
       if (res.data.IsSuccess) {
-        console.log(res);
-          // this.setState({
-          //     data: res.data.LstCOGSTable
-          // });
+          console.log(res)
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
+          this.showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -147,17 +156,14 @@ ungroupAllSKUs(){
   console.log("UngroupAllChildSKU : "+ this.parentSKUId);
   api
   .get(`UngroupAllChildSKU?parentSkuId=${this.parentSKUId}`)
-  .then((res) => {
-      console.log('backend responce to GET UngroupAllChildSKU', res)
+  .then((res) => {      
       if (res.data.IsSuccess) {
-        console.log(res);
-          // this.setState({
-          //     data: res.data.LstCOGSTable
-          // });
+        this.showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
+          this.showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -174,10 +180,6 @@ getUngroupedSKUs() {
               this.setState({
                   data: res.data.LstCOGSTable
               });
-
-              container.success(`hi! Now is ${new Date()}`, `///title\\\\\\`, {
-    closeButton: true,
-  })
 
           } else {
               this.setState({
@@ -212,7 +214,7 @@ getGroupedSKUs() {
 
 checkboxChangedEvent=(e)=>{
 if(e.target.checked){
-  if(this.skuIds.indexOf(e.target.value)==-1){
+  if(this.skuIds.indexOf(e.target.value)===-1){
     this.skuIds.push(e.target.value)
   }
 }
@@ -245,7 +247,6 @@ renderAvgHistoricalPrice(cellInfo) {
 }
 
 getChildSKUByParentSKUId=(parentId)=>{
-
   this.parentSKUId=parentId;
   api
   .get(`GetChildSKUByParentSKUId?SKUId=${parentId}`)
@@ -271,19 +272,14 @@ getChildSKUByParentSKUId=(parentId)=>{
   render(){
     const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen } = this.state;   
            return(
-      <React.Fragment>
-
-           {/* <ToastContainer
-    ref={ref => container = ref}
-    className="toast-top-right"
-  /> */}
-
+      <React.Fragment>        
+<ToastContainer autoClose={8000} />
         <div className="dash-container">
           <div className="container container--full">
                             <div className="panel panel-dark">
                                 <div className="panel-heading">
                                     <div className="panel-btns">
-                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i class="fa fa-minus-square-o"></i></a>
+                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i className="fa fa-minus-square-o"></i></a>
                                     </div>
                                     <h3 className="panel-title">SKU/ASIN Grouping</h3>
                                 </div>

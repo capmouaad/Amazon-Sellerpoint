@@ -39,18 +39,15 @@ class DashboardPlannings extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
-        <div className="dash">
-          <div className="container container--narrow">
-            <div className="dash__heading">
-            <div className="_form_3"></div>     
-            </div>
+        <div className="dash-container">
+          <div className="container container--full">
+            <div className="_form_3 form-border"></div>  
           </div>
         </div>
       </React.Fragment>
     )
   }
 }
-
 
 const mapStateToProps = (state) => (
   {

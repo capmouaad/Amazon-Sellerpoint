@@ -86,7 +86,7 @@
     "react-tabs": "^2.2.2",
     "react-text-mask": "^5.4.3",
     "react-tippy": "^1.2.2",
-    "react-toastr": "^3.0.0",
+    "react-toastify": "^4.2.0",    
     "react-youtube": "^7.6.0",
     "redux": "^4.0.0",
     "require-dir": "^1.0.0",
