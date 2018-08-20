@@ -45,7 +45,7 @@ const DASHBOARD_TAB_MAP = {
   'Financial Performance': {
     isExact: true,
     path: '',
-    name: 'Financial Performace',
+    name: 'Financial Performance',
     component: DashFinancialPerformance
   },
   'Business Results': {
