@@ -4,7 +4,6 @@ import store from '../store/store';
 //const BACKEND_URL = process.env.NODE_ENV === 'production' ? "http://name.herokuapp.com" : "http://localhost:8000/"
 //const BACKEND_URL = "http://localhost:10547/api/SellerPoint/"
 const BACKEND_URL = "https://qa.kinimetrix.com/api/SellerPoint/";
-//const BACKEND_URL = "http://qa.kinimetrix.com:8082/SellerPoint/";
 
 
 axios.defaults.withCredentials = true;
