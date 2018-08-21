@@ -5,6 +5,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'font-awesome/css/font-awesome.min.css'
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
+import Select from 'react-select';
 
 const filters = [
     {
@@ -15,7 +16,7 @@ const filters = [
                 id: 'uFJU', height: '40px', width: '200px'
             },
         }
-    },    
+    },
     {
         name: "SellerId",
         qdt: {
@@ -34,15 +35,15 @@ const filters = [
             },
         }
     },
-    {
-        name: "SellerSKU",
-        qdt: {
-            type: 'QdtViz',
-            props: {
-                id: 'jYJJpT', height: '40px', width: '200px'
-            },
-        }
-    }
+    // {
+    //     name: "SellerSKU",
+    //     qdt: {
+    //         type: 'QdtViz',
+    //         props: {
+    //             id: 'jYJJpT', height: '40px', width: '200px'
+    //         },
+    //     }
+    // }
 ]
 
 export default class DashFilters extends Component {
@@ -50,8 +51,17 @@ export default class DashFilters extends Component {
         super(props)
         this.state = {
             pickerStartDate: '',
-            pickerEndDate: ''
+            pickerEndDate: '',
+            isTabOpened: true,
+            options: [],
+            currentSelections:[]
         }
+        this.bindData = this.bindData.bind(this);
+    }
+    toggleTab = () => {
+        this.setState({
+            isTabOpened: !this.state.isTabOpened
+        })
     }
 
     handleEvent = async (event, picker) => {
@@ -76,6 +86,74 @@ export default class DashFilters extends Component {
             });
         }
     }
+    binddropdown = async () => {
+        if (window.GlobalQdtComponents) {
+            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+
+            qApp.createList({
+                "qFrequencyMode": "V",
+                "qDef": {
+                    "qFieldDefs": [
+                        "SellerSKU"
+                    ]
+                },
+                "qInitialDataFetch": [
+                    {
+                        "qHeight": 20,
+                        "qWidth": 1
+                    }
+                ]
+            }, this.bindData);
+        }
+    }
+    bindCurrentSelections(){
+        let app=window.qlik.currApp();
+        
+        app.getList("CurrentSelections", function(reply){
+            console.log(reply.qSelectionObject.qSelections);
+            //this.setState({ currentSelections: reply.qSelectionObject.qSelections });
+        });
+
+        // app.getList("CurrentSelections", function(reply){console.log(reply.qSelectionObject.qSelections); 
+        //     reply.qSelectionObject.qSelections.map((item) => {item.qSelectedFieldSelectionInfo.map((sel)=>{console.log(sel.qName)})}
+        // )});
+    }
+    bindData(reply, app) {
+        debugger;
+        var data = [];
+        reply.qListObject.qDataPages[0].qMatrix.forEach(function (item) {
+            debugger;
+            //if (item[0].qState === 'X') {
+            var row = new Object();
+            row.value = item[0].qText;
+            row.label = item[0].qText;
+            data.push(row);
+            //}
+        });
+
+        this.setState({ options: data });
+    }
+    handleChange = (optionSelected) => {
+        debugger;
+        // if(optionSelected.length>1)
+
+        // this.setState({ selectedOption:[{value: "Multiple", label: "Multiple selected ("+optionSelected.length+")"}] });
+        // else
+        this.setState({ selectedOption: optionSelected });
+
+        console.log(`Option selected:`, optionSelected);
+        let data = [];
+        optionSelected.forEach(function (item) {
+            var row = new Object();
+            row.qText = item.value;
+            data.push(row);
+        });
+
+
+        //window.qlik.app.field('SellerSKU').select(data, true, true);
+        var app = window.qlik.currApp();
+        app.field('SellerSKU').selectValues(data, false);
+    }
 
     componentDidMount() {
         this.initialSelection();
@@ -85,6 +163,11 @@ export default class DashFilters extends Component {
         const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
         const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
         this.handleDateSelection(startDate, endDate);
+        setTimeout(() => {
+            this.binddropdown();
+            this.bindCurrentSelections();
+        }, 4000);
+
     }
 
     onResetQlik = async () => {
@@ -95,9 +178,7 @@ export default class DashFilters extends Component {
     }
 
     render() {
-        const { pickerStartDate, pickerEndDate } = this.state
-
-        // TODO - not rendering - wrong type or/and props ?
+        const { pickerStartDate, pickerEndDate, selectedOption, options, isTabOpened } = this.state
         const ranges = {
             'Last 7 days': [moment().subtract(6, 'days'), moment().subtract(1, 'days')],
             'Last 30 days': [moment().subtract(29, 'days'), moment().subtract(1, 'days')],
@@ -129,6 +210,15 @@ export default class DashFilters extends Component {
                             )
                         })}
                         <div>
+                            <Select className="qlik-select" isMulti closeMenuOnSelect={false}
+                                hideSelectedOptions
+                                onChange={this.handleChange}
+                                options={this.state.options}
+                                isClearable={false}
+                                value={selectedOption}
+                            />
+                        </div>
+                        <div>
                             <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
                                 <div className="input-group">
                                     <span className="input-group-btn date-range-picker-calender-btn">
@@ -143,6 +233,17 @@ export default class DashFilters extends Component {
                                     />
                                 </div>
                             </DateRangePicker>
+                        </div>
+                    </div>
+                    <div className={"dash-section" + (isTabOpened ? "" : " is-closed")}>
+                        <div className="dash-section__heading">
+                            <div className={"dash-section__toggler"} onClick={this.toggleTab}>
+                                <div className="dash-section__toggler-icon"></div>
+                            </div>
+                            <h2 className="dash-filters__selected-title">Selected Filters</h2>
+                        </div>
+                        <div className="dash-filters__selection">
+                            {/*Selected filters from current selections will go here */}
                         </div>
                     </div>
                 </div>
