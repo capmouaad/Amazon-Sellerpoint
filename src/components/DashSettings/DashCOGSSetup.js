@@ -10,7 +10,6 @@ import Modal from 'react-responsive-modal';
 import Dropzone from 'react-dropzone';
 import FormLoader from '../Forms/FormLoader';
 import Toaster, {showToastMessage} from '../../services/toasterNotification'
-const exampleList = ['option1','option2','option3','option4','option n']
 
 export default class DashCOGSSetup extends Component {
 
@@ -126,8 +125,8 @@ export default class DashCOGSSetup extends Component {
             <input type={"number"} min={0}
                 contentEditable
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
-                defaultValue={cellInfo.original.LandedCost.toFixed(2)}
-                onChange={e => {
+                value={cellInfo.original.LandedCost.toFixed(2)}               
+                onChange={e => {     
                     this.lstEditedCOGS= this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)                  
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value>0 ? e.target.value :e.target.defaultValue) });
 }}
@@ -271,7 +270,7 @@ console.log(this.lstEditedCOGS);
                                                 maxWidth: 120,
                                                 accessor: "LandedCost",
                                                 filterMethod: (filter, rows) =>
-                                                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }), 
+                                                matchSorter(rows, filter.value, { keys: ["LandedCost"] }), 
                                                 filterAll: true,
                                                 Cell: this.renderLandedCost                                                                                              
                                             }
