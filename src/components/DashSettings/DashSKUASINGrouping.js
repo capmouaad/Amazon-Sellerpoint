@@ -7,6 +7,7 @@ import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
 import {ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Panel,OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class DashSKUASINGrouping extends Component {
 skuIds =[];
@@ -22,7 +23,8 @@ constructor() {
       childSKUs:[],
       groupSelectedPopupOpen : false,
       groupedSKUPopupOpen :false,
-      selSKUs_data :[]
+      selSKUs_data :[],
+      open:true
   };
   this.getUngroupedSKUs();  
   this.getGroupedSKUs();
@@ -279,12 +281,14 @@ getChildSKUByParentSKUId=(parentId)=>{
                             <div className="panel panel-dark">
                                 <div className="panel-heading">
                                     <div className="panel-btns">
-                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i className="fa fa-minus-square-o"></i></a>
+                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.open ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ open: !this.state.open })} id="tooltip1">
+                                    <i className={"fa " + (this.state.open ? "fa-minus-square-o":"fa-plus-square-o")}></i>
+    </OverlayTrigger>
                                     </div>
                                     <h3 className="panel-title">SKU/ASIN Grouping</h3>
                                 </div>
 
-                                <div className="panel-body">
+                               <Panel expanded={this.state.open}>   <Panel.Collapse><Panel.Body>
                                     <div className="row">
                                         <div className="col-lg-8">
                                             <div className="instruction-notes">
@@ -312,15 +316,12 @@ getChildSKUByParentSKUId=(parentId)=>{
                                     <h3 className="h3">Ungrouped SKUs</h3>
 
                                     <div id="divTableUngroupDataHolder" className="tab-content  cust-cogs cust-confiq">
-
                                         <div className="row clearfix">
-
                                             <div className="col-sm-6">                                                
-                                                <div className="dash-new-marketplace btn-group">
-              <a className="btn btn-new-marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
-              <a className="btn btn-new-marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
-            </div>                   
-                                                </div>                                             
+                                                <div className="dash-new-Marketplace btn-group">
+              <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
+              <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
+            </div>                                                                   </div>                                             
                                            
                                         </div>
                                       
@@ -340,7 +341,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                             )                                     
                                         },
                                             {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -368,7 +369,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
@@ -427,7 +428,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                             String(row[filter.id]) === filter.value}
                                         columns={[                                        
                                             {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -455,7 +456,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
@@ -504,7 +505,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         }}
                                     />
                                     </div>
-                                </div>
+                                    </Panel.Body> </Panel.Collapse>  </Panel>  
                             </div>
                        
           </div>
@@ -534,7 +535,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                             <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
                                 <div className="mar-b-15">
                                     <div className="row">                                       
-                                        <div className="col-lg-9 text-right content_col">
+                                        <div className="col-lg-12 text-right content_col">
                                             <button type="button" className="btn btn-primary btn-bordered pull-right" id="btnAllUngroupSKus" onClick={()=> {this.ungroupAllSKUs()}}>Ungroup all SKUs</button>
                                         </div>
                                     </div>
@@ -548,7 +549,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                             String(row[filter.id]) === filter.value}
                                         columns={[                                        
                                             {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -576,7 +577,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
@@ -679,7 +680,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                                 )                                     
                                             },                                      
                                             {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -707,7 +708,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
@@ -799,7 +800,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                                   <div></div>                                             
                                                 )                                     
                                             }, {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -827,7 +828,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import api, { BACKEND_URL}from '../../services/Api';
+import {Panel, OverlayTrigger, Tooltip} from 'react-bootstrap';
+
 // Import React Table
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
@@ -23,7 +25,8 @@ export default class DashCOGSSetup extends Component {
         this.state = {
             data: [],
             open: false,
-            loading:true                 
+            loading:true,
+            extended:true                 
         };
         this.getAllCOGS();
         this.renderLandedCost = this.renderLandedCost.bind(this);       
@@ -148,8 +151,7 @@ export default class DashCOGSSetup extends Component {
     }
 
     render() {
-        const { data, open, filename, loading } = this.state;  
-        console.log(loading);     
+        const { data, open, filename, loading } = this.state;              
                return (               
             <React.Fragment>    
                         
@@ -159,10 +161,16 @@ export default class DashCOGSSetup extends Component {
                     <div className="container container--full">
                         <div className="panel panel-dark">
                             <div className="panel-heading">
+                            <div className="panel-btns">
+                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.extended ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ extended: !this.state.extended })} id="tooltip1">
+                                    <i className={"fa " + (this.state.extended ? "fa-minus-square-o":"fa-plus-square-o")}></i>
+    </OverlayTrigger>
+                                    </div>
                                 <h3 className="panel-title">Products List</h3>
                             </div>
 
-                            <div className="panel-body">
+                         <Panel expanded={this.state.extended}>
+          <Panel.Collapse> <Panel.Body>
                                 <div className="row">
                                     <div className="custom-pagelist-left">
                                        
@@ -180,7 +188,7 @@ export default class DashCOGSSetup extends Component {
                                             String(row[filter.id]) === filter.value}
                                         columns={[
                                             {
-                                                Header: "Satus",
+                                                Header: "Status",
                                                 id: "Status",
                                                 maxWidth: 80,
                                                 accessor: d => d.Status,
@@ -208,7 +216,7 @@ export default class DashCOGSSetup extends Component {
                                                 style: { 'white-space': 'unset' }
                                             },
                                             {
-                                                Header: "MarketPlace Name",
+                                                Header: "Marketplace Name",
                                                 id: "MarketplaceName",
                                                 maxWidth: 140,
                                                 accessor: d => d.MarketplaceName,
@@ -256,8 +264,8 @@ export default class DashCOGSSetup extends Component {
                                     <div className="text-centre">
                                         <a id="btnSaveCogs" className="btn btn-primary btn-long" onClick={this.saveCOGS}>SAVE</a>
                                     </div>
-                                </div>
-                            </div>
+                                </div></Panel.Body> </Panel.Collapse>
+                                </Panel>
                         </div> </div>
                 </div>
 
