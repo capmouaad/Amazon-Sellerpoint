@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {Panel, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 import ImportProgress from '../components/DashCommon/ImportProgress';
 // import SvgIcon from '../components/Helpers/SvgIcon';
@@ -15,6 +16,9 @@ class DashboardPlannings extends Component {
   constructor(){
     super();
     this.addCustomScript();
+    this.state ={
+open:true
+    }
   }
 
   componentDidMount(){
@@ -38,23 +42,32 @@ class DashboardPlannings extends Component {
 
     return (
       <React.Fragment>
-        <ImportProgress />
-        <div className="dash-container">
+        <ImportProgress />        
+        <br />      
+
+         <div className="dash-container">
           <div className="container container--full">
                             <div className="panel panel-dark">
                                 <div className="panel-heading">
                                     <div className="panel-btns">
-                                        <a href="" className="panel-minimize tooltips" data-toggle="tooltip" title="Minimize"><i className="fa fa-minus-square-o"></i></a>
+                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.open ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ open: !this.state.open })} id="tooltip1">
+                                    <i className={"fa " + (this.state.open ? "fa-minus-square-o":"fa-plus-square-o")}></i>
+    </OverlayTrigger>
                                     </div>
                                     <h3 className="panel-title">Planning</h3>
                                 </div>
-
-                                <div className="panel-body">
-                                <div className="_form_3 form-border"></div>   
+                              
+                                <Panel id="collapsible-panel-example-1" expanded={this.state.open}>
+          <Panel.Collapse>
+            <Panel.Body>
+            <div className="_form_3 form-border"></div>   
+            </Panel.Body>
+          </Panel.Collapse>
+        </Panel>
+                               
                                 </div>
                                 </div>
-                                </div>
-                                </div>   
+                                </div>     
       </React.Fragment>
     )
   }
