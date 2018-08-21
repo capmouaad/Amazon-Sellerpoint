@@ -5,7 +5,7 @@ import api from '../services/Api';
 import DashboardWelcome from '../containers/DashboardWelcome';
 import DashboardDashboards from '../containers/DashboardDashboards';
 import DashboardPlannings from '../containers/DashboardPlannings';
-import DashboardSettings from '../containers/DashboardSettings';
+import DashboardConfiguration from '../containers/DashboardConfiguration';
 
 import DashFinancialPerformance from '../components/DashDashboards/DashFinancialPerformance'
 import DashBusinessResults from '../components/DashDashboards/DashBusinessResults'
@@ -17,7 +17,7 @@ import DashCOGSSetup from '../components/DashSettings/DashCOGSSetup'
 import DashSKUASINGrouping from '../components/DashSettings/DashSKUASINGrouping'
 import DashNotifications from '../components/DashSettings/DashNotifications'
 
-const SETTINGS_TAB_MAP = {
+const Configuration_TAB_MAP = {
     'COGS Setup': {
         isExact: true,
         path: '',
@@ -71,7 +71,7 @@ class DashboardSwitch extends React.Component {
         this.state = {
             apiError: null,
             ListOfTabs: [],
-            settingsRoutes: [],
+            configurationRoutes: [],
             dashboardRoutes: []
         }
     }
@@ -83,13 +83,13 @@ class DashboardSwitch extends React.Component {
             .then((res) => {
                 if (res.data.IsSuccess) {
                     const ListOfTabs = res.data.ListOfTabs
-                    const settingsTabs = ListOfTabs.find((item) => item.ModuleName === 'Settings').Tabs || []
+                    const configurationTabs = ListOfTabs.find((item) => item.ModuleName === 'Configuration').Tabs || []
                     const dashboardTabs = ListOfTabs.find((item) => item.ModuleName === 'Dashboards').Tabs || []
                     this.setState({
                         ListOfTabs: res.data.ListOfTabs,
-                        settingsRoutes: settingsTabs.map((tabString) => ({
-                            ...SETTINGS_TAB_MAP[tabString],
-                            path: `${match.url}/${SETTINGS_TAB_MAP[tabString].path}`
+                        configurationRoutes: configurationTabs.map((tabString) => ({
+                            ...Configuration_TAB_MAP[tabString],
+                            path: `${match.url}/${Configuration_TAB_MAP[tabString].path}`
                         })),
                         dashboardRoutes: dashboardTabs.map((tabString) => ({
                             ...DASHBOARD_TAB_MAP[tabString],
@@ -121,9 +121,9 @@ class DashboardSwitch extends React.Component {
                 return (
                     <DashboardPlannings match={match} />
                 )
-            case 'settings':
+            case 'configuration':
                 return (
-                    <DashboardSettings match={match} listNav={this.state.settingsRoutes} />
+                    <DashboardConfiguration match={match} listNav={this.state.configurationRoutes} />
                 )
             default:
                 return <DashboardWelcome />

@@ -23,8 +23,8 @@ const dashNavLinks = [
     icon: "dash-nav-planning"
   },
   {
-    name: "Settings",
-    path: "/dash/settings",
+    name: "Configuration",
+    path: "/dash/configuration",
     icon: "dash-nav-settings"
   }     
 ]
