@@ -11,6 +11,24 @@ import { logOut } from '../actions/login';
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
 
+const dashNavLinks = [
+  {
+    name: "Dashboards",
+    path: "/dash/dashboards",
+    icon: "dash-nav-dashboards"
+  },
+  {
+    name: "Planning",
+    path: "/dash/plannings",
+    icon: "dash-nav-planning"
+  },
+  {
+    name: "Settings",
+    path: "/dash/settings",
+    icon: "dash-nav-settings"
+  }     
+]
+
 class Header extends React.Component {
   static propTypes = {
     routes: PropTypes.array,
@@ -89,24 +107,6 @@ class Header extends React.Component {
 
     // const { isMenuOpened } = this.state;
     const { menuOpened } = this.props;
-
-    const dashNavLinks = [
-      {
-        name: "Dashboards",
-        path: "/dash/dashboards",
-        icon: "dash-nav-dashboards"
-      },
-      {
-        name: "Planning",
-        path: "/dash/plannings",
-        icon: "dash-nav-planning"
-      },
-      {
-        name: "Settings",
-        path: "/dash/settings",
-        icon: "dash-nav-settings"
-      }     
-    ]
 
     return(
       <div className={this.props.stateClass}>

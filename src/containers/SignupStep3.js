@@ -41,7 +41,7 @@ class SignupStep3 extends Component {
   compleateSignup = async () => {
     const { LWA } = this.props
     try {
-      if (!this.state.isAdvertisingOptedOut || (!LWA.resp.code && !LWA.resp.scope)) {
+      if (!this.state.isAdvertisingOptedOut && (!LWA.resp.code && !LWA.resp.scope)) {
         this.setState({
           error: true
         })
@@ -76,7 +76,8 @@ class SignupStep3 extends Component {
 
   onCheckedInput = () => {
     this.setState({
-      isAdvertisingOptedOut: !this.state.isAdvertisingOptedOut
+      isAdvertisingOptedOut: !this.state.isAdvertisingOptedOut,
+      error: ''
     })
   }
 
@@ -109,7 +110,7 @@ class SignupStep3 extends Component {
                 <span onClick={this.compleateSignup} className="btn btn-signup btn--block">Complete</span>
               </div>
               {
-                error && !isAdvertisingOptedOut && <div style={{ display: 'block', textAlign: 'center', paddingTop: '10px'}}>
+                error && <div style={{ display: 'block', textAlign: 'center', paddingTop: '10px'}}>
                 <span style={{ color: 'red', fontSize: 14 }}>{`Please click "Connect" to connect your advertising data or click the opt-out checkbox to continue`}</span>
               </div>
               }

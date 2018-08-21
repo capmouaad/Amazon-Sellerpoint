@@ -54,8 +54,8 @@ class MWSActionAuth extends Component {
     const { seller_id, mws_auth } = this.state;
 
     const leadObj = {
-      sellerId: seller_id,
-      mwsAuthToken: mws_auth
+      sellerId: seller_id.trim(),
+      mwsAuthToken: mws_auth.trim()
     }
 
     this.setState({

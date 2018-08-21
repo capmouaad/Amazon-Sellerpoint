@@ -79,7 +79,7 @@ export default class DashFilters extends Component {
         })
 
         if (window.GlobalQdtComponents) {
-            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(function () {
                 qApp.field('Date').lock();
             });
@@ -98,7 +98,7 @@ export default class DashFilters extends Component {
 
     onResetQlik = async () => {
         if (window.GlobalQdtComponents) {
-            const qApp = (window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             qApp.clearAll()
         }
     }
