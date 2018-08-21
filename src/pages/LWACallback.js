@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-// import axios from 'axios';
-// import api from '../services/Api';
+import api from '../services/Api'
 import PropTypes from 'prop-types';
 
 import { setLwaAuth } from '../actions/lwa';
@@ -26,39 +25,37 @@ class LWACallback extends Component {
     this.getLWAToken()
   }
 
-  getLWAToken = () => {
-    const redirectResponce = this.props.location.search
-    const authCode = this.getQueryVariable(redirectResponce, 'code')
-    const authScope = this.getQueryVariable(redirectResponce, 'scope')
-    // const ClientID = "amzn1.application-oa2-client.c66f0420a8fc4c13a7abb409399d9944"
-    // const RedirectUri = window.location.origin + "/SellerPoint/LWACallback"
+  getLWAToken = async () => {
+    try {
+      const { signupId, sellerId } = this.props;
 
-    this.props.setLwaAuth({
-      code: authCode,
-      scope: authScope
-    })
+      const redirectResponce = this.props.location.search
+      const authCode = this.getQueryVariable(redirectResponce, 'code')
+      const authScope = this.getQueryVariable(redirectResponce, 'scope')
+      // const ClientID = "amzn1.application-oa2-client.c66f0420a8fc4c13a7abb409399d9944"
+      // const RedirectUri = window.location.origin + "/SellerPoint/LWACallback"
 
-    this.setState({
-      shouldRedirect: true
-    })
+      this.props.setLwaAuth({
+        code: authCode,
+        scope: authScope
+      })
 
-    // auth LWA
-    // obtain access token
+      const obj = {
+        code: authCode,
+        scope: authScope,
+        clientId: signupId,
+        sellerId: sellerId
+      }
 
-    // axios.post('https://api.amazon.com/auth/o2/token', {
-    //     grant_type: 'Authorization_code',
-    //     code: authCode,
-    //     redirect_uri: RedirectUri,
-    //     client_id: ClientID
-    //     // client_secret:
-    //   })
-    //   .then(function (res) {
-    //     console.log(res);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+      const res = await api.post(`ConnectAdvertisingData`, obj)
+      console.log('backend responce to POST ConnectAdvertisingData', res)
 
+      this.setState({
+        shouldRedirect: true
+      })
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   getQueryVariable = (url, variable) => {
@@ -91,13 +88,13 @@ class LWACallback extends Component {
 }
 
 const mapStateToProps = (state) => ({
-
+  signupId: state.signup.signupId,
+  sellerId: state.signup.fields.seller_id,
+  LWA: state.lwa
 });
 
-const mapDispatchToProps = (dispatch) => (
-  {
+const mapDispatchToProps = (dispatch) => ({
     setLwaAuth: (data) => dispatch(setLwaAuth(data)),
-  }
-);
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(LWACallback);

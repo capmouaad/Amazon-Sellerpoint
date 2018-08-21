@@ -23,10 +23,6 @@ class Signup extends Component {
     this.props.setHeaderClass('header--logo-only');
   }
 
-  componentDidUpdate(){
-    this.updateURL();
-  }
-
   checkEmail = async () => {
     try {
       const { history, location } = this.props
@@ -48,11 +44,18 @@ class Signup extends Component {
   updateURL = () => {
     const { signupStep, location, history } = this.props
 
+    const params = new URLSearchParams(location.search)
+    const email = params.get('email')
+    const emailStr = email ? `?email=${email}` : null
+
     let newPath = process.env.PUBLIC_URL + "/signup/step-" + (signupStep);
     if ( location.pathname === newPath ){
       return
     }
-    history.push(newPath)
+    history.push({
+      pathname: newPath,
+      search: emailStr
+    })
   }
 
 
