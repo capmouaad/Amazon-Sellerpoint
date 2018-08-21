@@ -15,16 +15,7 @@ const filters = [
                 id: 'uFJU', height: '40px', width: '200px'
             },
         }
-    },
-    //{
-    //     name: "DatePicker",
-    //     qdt: {
-    //         type: 'QdtViz',
-    //         props: {
-    //             id: 'JQfpVS', height: '40px',width:'400px'
-    //         },
-    //     }
-    // },
+    },    
     {
         name: "SellerId",
         qdt: {
@@ -138,7 +129,7 @@ export default class DashFilters extends Component {
                             )
                         })}
                         <div>
-                            <DateRangePicker onEvent={this.handleEvent} ranges={ranges} containerClass="react-bootstrap-daterangepicker-container">
+                            <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
                                 <div className="input-group">
                                     <span className="input-group-btn date-range-picker-calender-btn">
                                         <button className="default date-range-toggle">
