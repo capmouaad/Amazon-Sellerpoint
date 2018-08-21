@@ -82,6 +82,7 @@
     "react-responsive-modal": "^3.2.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-select": "^2.0.0",
     "react-snap": "^1.17.0",
     "react-table": "^6.8.6",
     "react-tabs": "^2.2.2",
