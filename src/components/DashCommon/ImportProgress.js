@@ -96,7 +96,7 @@ const IBar = (props) => {
                 >
                     {
                         progress > 5 &&
-                        <span>{isCompleated ? "Complete" : progress + " %"}</span>
+                        <span>{isCompleated ? "Complete" : progress.toFixed(2) + " %"}</span>
                     }
                 </div>
             </div>
