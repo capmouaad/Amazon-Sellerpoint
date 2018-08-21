@@ -124,8 +124,9 @@ export default class DashCOGSSetup extends Component {
         return (<div className="inpt-landed-cost">{["$",
             <input type={"number"} min={0}
                 contentEditable
+                key={cellInfo.original.COGSId} 
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
-                value={cellInfo.original.LandedCost.toFixed(2)}               
+                defaultValue={cellInfo.original.LandedCost.toFixed(2)}               
                 onChange={e => {     
                     this.lstEditedCOGS= this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)                  
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value>0 ? e.target.value :e.target.defaultValue) });
@@ -324,12 +325,14 @@ console.log(this.lstEditedCOGS);
                                             Empty cells will be interpreted as 0.00.
                         </p>
                                     </div>
-                                    <div className="upload-btn">
-                                        <button type="button" className="btn btn-primary btn-bordered" id="btnDownload" onClick={this.onDownloadFile}>Download CSV template</button>
 
+                                    <div className="upload-btn">
+                                    <a className="btn btn-new-marketplace"  onClick={this.onDownloadFile}>Download CSV template</a>
                                     </div>
                                     <div className="upload-btn mt-20">
-                                        <button type="button" className="btn btn-primary btn-rounded" id="btnUpload">Upload CSV template</button>
+                                    
+                                    <a className="btn btn-primary btn-new-marketplace" id="btnUpload">Upload CSV template</a>
+                                    
                                         <span id="filename">{filename}</span>
                                         <section>
                                             <div className="dropzone">
