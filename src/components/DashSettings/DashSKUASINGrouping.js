@@ -5,7 +5,7 @@ import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
-import {ToastContainer, toast } from 'react-toastify';
+import Toaster, {showToastMessage} from '../../services/toasterNotification'
 import 'react-toastify/dist/ReactToastify.css';
 import {Panel,OverlayTrigger, Tooltip} from 'react-bootstrap';
 
@@ -28,21 +28,6 @@ constructor() {
   };
   this.getUngroupedSKUs();  
   this.getGroupedSKUs();
-}
-
-showToastMessage=(message, title)=> {
-    if (title==="Success"){
-        toast.success(message==null?"":message , {
-            position: toast.POSITION.TOP_RIGHT,
-            autoClose:5000
-          });
-    }
-    else {
-        toast.error(message==null ?"":message, {
-            position: toast.POSITION.TOP_RIGHT,
-            autoClose:5000
-          });
-    }       
 }
 
 onCloseModal = () => {
@@ -71,21 +56,21 @@ createNewSKUGroup =()=>{
   .post(`CreateGroupSKUs`, {newGroupSKUId:this.parentGroupId, skuIds: this.skuIds})
   .then((res) => {      
       if (res.data.IsSuccess) {       
-        this.showToastMessage(res.data.ErrorMessage, "Success");
+        showToastMessage(res.data.ErrorMessage, "Success");
           this.skuIds=[];
           this.parentGroupId=0;
       } else {
         this.setState({
             apiError: res.data.ErrorMessage
         })
-        this.showToastMessage(res.data.ErrorMessage, "Error");
+        showToastMessage(res.data.ErrorMessage, "Error");
       }    
   })
   .catch(function (error) {
-    this.showToastMessage("Unknown Issue", "Error");   
+    showToastMessage("Unknown Issue", "Error");   
   });
     }else{
-        this.showToastMessage("Please select min. 2 SKUs.", "Error");      
+        showToastMessage("Please select min. 2 SKUs.", "Error");      
     }
 }
 
@@ -95,21 +80,21 @@ updateExistingSKUGroup =()=>{
   .post(`UpdateGroupSKUsChild`, {groupSKUId:this.parentGroupId, skuIds: this.skuIds})
   .then((res) => {    
       if (res.data.IsSuccess) {   
-        this.showToastMessage(res.data.ErrorMessage, "Success");   
+        showToastMessage(res.data.ErrorMessage, "Success");   
           this.skuIds=[];
           this.parentGroupId=0;
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
-          this.showToastMessage(res.data.ErrorMessage, "Error");
+          showToastMessage(res.data.ErrorMessage, "Error");
       }      
   })
   .catch(function (error) {
       console.log(error);
   });
     }else{
-        this.showToastMessage("Please select atleast 1 SKUs.", "Error");
+        showToastMessage("Please select atleast 1 SKUs.", "Error");
     }
 }
 
@@ -141,12 +126,12 @@ ungroupSKU(SKUId){
   .then((res) => {     
       if (res.data.IsSuccess) {
           console.log(res)
-        this.showToastMessage(res.data.ErrorMessage, "Success");   
+        showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
-          this.showToastMessage(res.data.ErrorMessage, "Error");   
+          showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -160,12 +145,12 @@ ungroupAllSKUs(){
   .get(`UngroupAllChildSKU?parentSkuId=${this.parentSKUId}`)
   .then((res) => {      
       if (res.data.IsSuccess) {
-        this.showToastMessage(res.data.ErrorMessage, "Success");   
+        showToastMessage(res.data.ErrorMessage, "Success");   
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
-          this.showToastMessage(res.data.ErrorMessage, "Error");   
+          showToastMessage(res.data.ErrorMessage, "Error");   
       }
   })
   .catch(function (error) {
@@ -275,7 +260,7 @@ getChildSKUByParentSKUId=(parentId)=>{
     const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen } = this.state;   
            return(
       <React.Fragment>        
-<ToastContainer autoClose={8000} />
+<Toaster />
         <div className="dash-container">
           <div className="container container--full">
                             <div className="panel panel-dark">
@@ -516,7 +501,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Child SKUs</h4>
                             </div>
-                            <div className="modal-body modal-body-update">
+                            <div className="modal-body">
                                 <div className="panel panel-dark">    
                                 <div className="panel-body">                                
                                 <div className="instruction-notes instruction-notes-last">
@@ -644,7 +629,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Group Selected SKUs</h4>
                             </div>
-                            <div className="modal-body modal-body-update">
+                            <div className="modal-body">
                                 <div className="panel panel-dark">  
                                 <div className="panel-body">                                    
                                 <div className="instruction-notes instruction-notes-last">
@@ -769,7 +754,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">EXISTING GROUP</h4>
                             </div>
-                            <div className="modal-body modal-body-update">
+                            <div className="modal-body">
                                 <div className="panel panel-dark">  
                                 <div className="panel-body">    
                               <div className="instruction-notes">

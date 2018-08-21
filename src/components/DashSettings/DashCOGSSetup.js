@@ -9,6 +9,8 @@ import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
 import Dropzone from 'react-dropzone';
 import FormLoader from '../Forms/FormLoader';
+import Toaster, {showToastMessage} from '../../services/toasterNotification'
+const exampleList = ['option1','option2','option3','option4','option n']
 
 export default class DashCOGSSetup extends Component {
 
@@ -26,7 +28,7 @@ export default class DashCOGSSetup extends Component {
             data: [],
             open: false,
             loading:true,
-            extended:true                 
+            expanded:true                 
         };
         this.getAllCOGS();
         this.renderLandedCost = this.renderLandedCost.bind(this);       
@@ -44,21 +46,28 @@ export default class DashCOGSSetup extends Component {
         if (files.length > 0) {
             var data = new FormData();
             data.append("file", files[0]);            
-            this.setState({ filename: files[0].name });
+            this.setState({ filename: files[0].name, loading:true });
             api
                 .post(`UploadCogsData`, data)
                 .then((res) => {
                     console.log('backend responce to GET UploadCogsData', res)
                     if (res.data.IsSuccess) {
-                        console.log(res.data);
+                        //console.log(res.data);
+                        showToastMessage(res.data.ErrorMessage, "Success");
+                        this.getAllCOGS();
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage
                         })
+                        showToastMessage(res.data.ErrorMessage, "Error");
                     }
+
+                    this.setState({ loading:false });
                 })
                 .catch(function (error) {
                     console.log(error);
+                    showToastMessage("!Unknown Issue", "Error");
+                    this.setState({ loading:false });
                 });
         }
     }
@@ -85,6 +94,9 @@ export default class DashCOGSSetup extends Component {
             })
             .catch(function (error) {
                 console.log(error);
+                this.setState({
+                    loading:false
+                  })
             });
     }
 
@@ -116,8 +128,9 @@ export default class DashCOGSSetup extends Component {
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
                 defaultValue={cellInfo.original.LandedCost.toFixed(2)}
                 onChange={e => {
-                    this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: e.target.value });
-                }}
+                    this.lstEditedCOGS= this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)                  
+                    this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value>0 ? e.target.value :e.target.defaultValue) });
+}}
             />]}</div>
         );    }
 
@@ -131,7 +144,10 @@ export default class DashCOGSSetup extends Component {
     }
 
     saveCOGS = () => {
-        if (this.lstEditedCOGS.length > 0) {
+        this.setState({ loading: true });
+
+        if (this.lstEditedCOGS.length > 0) {          
+console.log(this.lstEditedCOGS);
             api
                 .post(`UpdateCOGS`, this.lstEditedCOGS)
                 .then((res) => {
@@ -142,11 +158,16 @@ export default class DashCOGSSetup extends Component {
                         this.setState({
                             apiError: res.data.ErrorMessage
                         })
+                        this.setState({ loading: false });
                     }
                 })
                 .catch(function (error) {
                     console.log(error);
+                    this.setState({ loading: false });
                 });
+        }
+        else{
+            setTimeout(()=>{ this.setState({ loading: false });}, 2000);           
         }
     }
 
@@ -154,7 +175,7 @@ export default class DashCOGSSetup extends Component {
         const { data, open, filename, loading } = this.state;              
                return (               
             <React.Fragment>    
-                        
+                        <Toaster/>
                 <div className={"dash-container "+ (loading ? "" : "loading-over" )}>   
                 <FormLoader />  
 
@@ -162,14 +183,14 @@ export default class DashCOGSSetup extends Component {
                         <div className="panel panel-dark">
                             <div className="panel-heading">
                             <div className="panel-btns">
-                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.extended ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ extended: !this.state.extended })} id="tooltip1">
-                                    <i className={"fa " + (this.state.extended ? "fa-minus-square-o":"fa-plus-square-o")}></i>
+                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.expanded ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ expanded: !this.state.expanded })} id="tooltip1">
+                                    <i className={"fa " + (this.state.expanded ? "fa-minus-square-o":"fa-plus-square-o")}></i>
     </OverlayTrigger>
                                     </div>
                                 <h3 className="panel-title">Products List</h3>
                             </div>
 
-                         <Panel expanded={this.state.extended}>
+                         <Panel expanded={this.state.expanded} defaultExpanded="true">
           <Panel.Collapse> <Panel.Body>
                                 <div className="row">
                                     <div className="custom-pagelist-left">
@@ -181,6 +202,7 @@ export default class DashCOGSSetup extends Component {
 
                                 <div className="row">
                                     <ReactTable
+                                    key="1"
                                         data={data}
                                         noDataText="No products found."
                                         filterable
@@ -213,7 +235,7 @@ export default class DashCOGSSetup extends Component {
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Name"] }),
                                                 filterAll: true,
-                                                style: { 'white-space': 'unset' }
+                                                style: { whiteSpace: 'unset' }
                                             },
                                             {
                                                 Header: "Marketplace Name",
@@ -237,11 +259,11 @@ export default class DashCOGSSetup extends Component {
                                                 Header: "Avg. Hist. Price",
                                                 id: "AvgHistoricalPrice",
                                                 maxWidth: 120,
-                                                accessor: d => ["$", () => { return d.AvgHistoricalPrice.toFixed(2) }],
+                                                accessor: d => d.AvgHistoricalPrice,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
                                                 filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
+                                                Cell: this.renderAvgHistoricalPrice                                               
                                             },
                                             {
                                                 Header: "Landed Cost",
@@ -249,9 +271,9 @@ export default class DashCOGSSetup extends Component {
                                                 maxWidth: 120,
                                                 accessor: "LandedCost",
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+                                                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }), 
                                                 filterAll: true,
-                                                Cell: this.renderLandedCost
+                                                Cell: this.renderLandedCost                                                                                              
                                             }
                                         ]}
                                         defaultPageSize={10}
@@ -275,8 +297,7 @@ export default class DashCOGSSetup extends Component {
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Bulk CSV Edit</h4>
                             </div>
-                            <div className="modal-body modal-body-update">
-                                <div className="row">
+                            <div className="modal-body modal-body-update">                             
                                     <div className="upload-discription">
                                         <p className="head">How to use this template</p>
                                         <p>
@@ -321,7 +342,7 @@ export default class DashCOGSSetup extends Component {
                                     </div>
                                     <div id="my-awesome-dropzone" className="dropzone dropzone-block" enctype='multipart/form-data'>
                                     </div>
-                                </div>
+                              
                             </div>
 
                         </div>
