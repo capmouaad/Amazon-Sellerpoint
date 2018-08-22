@@ -9,9 +9,9 @@
     border: 1px solid #CCC
     float: right
     margin-right: 4px
-
 .panel
-  &.panel-dark   
+  &.panel-dark
+    border-color: #c5d6de
     .panel-heading
       padding: 10px !important
       color: white
@@ -35,7 +35,8 @@
   border-radius: 0px
   -moz-border-radius: 0px
   -webkit-border-radius: 0px
-  -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, 0)  
+  -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, 0)
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0) 
 
 .panel-body
   padding: 15px
@@ -193,7 +194,7 @@ p.red
   max-width: 55px
 
 .pagination-bottom
-    width: 50%
+    width: 45%
     float: right
     margin: auto
 
@@ -307,8 +308,11 @@ body
 .dash-new-marketplace 
   margin: 0px 0 7px 15px;
 
-.modal-body-update
-  padding: 15px;
+.modal-body
+  &.modal-body-update
+    padding: 25px 30px
+  position: relative
+  padding: 15px
 
 .loader
   z-index: 99999;
@@ -316,6 +320,33 @@ body
 .mt-20
   margin-top: 20px;
 
+.ml-13
+  margin-left: 13px;
 
+.modal-body .pagination-bottom
+  width: 60%;
      
+.status
+  width: 1% !important;
+
+.name
+  width: 22% !important;
+
+.sellersku
+  width: 3% !important;
+
+.marketplacename
+  width: 5% !important;
+
+.avgprice
+  width: 3% !important;
+
+.brand
+  width: 3% !important;
+
+.landedcost
+  width: 1% !important;
+  
+.action
+  width: 1% !important;
  

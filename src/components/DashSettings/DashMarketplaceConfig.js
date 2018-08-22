@@ -32,7 +32,14 @@ export default class DashMarketplaceConfig extends Component {
       <React.Fragment>
         <div className="dash-container">
           <div className="container container--full">
-            <div className="dash-new-marketplace">
+
+          <div className="panel panel-dark">
+         
+                                <div className="panel-heading">                                   
+                                    <h3 className="panel-title">Marketplace Configuration</h3>
+                                </div>
+                              <div className="panel-body"></div>
+                              <div className="dash-new-marketplace">
               <a className="btn btn-new-marketplace" onClick={this.addNewMarketplace}>Add New Marketplace</a>
             </div>
 
@@ -40,6 +47,10 @@ export default class DashMarketplaceConfig extends Component {
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
             />
+
+                              </div>
+
+           
           </div>
         </div>
       </React.Fragment>

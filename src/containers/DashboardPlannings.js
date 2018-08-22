@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {Panel, OverlayTrigger, Tooltip} from 'react-bootstrap';
-
 import ImportProgress from '../components/DashCommon/ImportProgress';
-// import SvgIcon from '../components/Helpers/SvgIcon';
-
 import { setHeaderClass } from '../actions/header';
 
 class DashboardPlannings extends Component {

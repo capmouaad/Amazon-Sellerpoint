@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {Panel, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class DashNotifications extends Component {
   

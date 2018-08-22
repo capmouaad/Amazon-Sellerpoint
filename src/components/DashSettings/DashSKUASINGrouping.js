@@ -1,21 +1,100 @@
 import React, { Component } from 'react';
 import api from '../../services/Api';
-// Import React Table
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
 import Toaster, {showToastMessage} from '../../services/toasterNotification'
+import FormLoader from '../Forms/FormLoader';
 import 'react-toastify/dist/ReactToastify.css';
-import {Panel,OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class DashSKUASINGrouping extends Component {
 skuIds =[];
 parentSKUId=0;
 parentGroupId=0;
 
+commonColumns=[                                        
+     {
+        Header: "Status",
+        id: "Status",
+        headerClassName:"status",
+       className:"status",       
+        accessor: d => d.Status,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["Status"] }),
+        filterAll: true
+    },
+    {
+        Header: "Seller SKU",
+        id: "SellerSKU",
+        headerClassName:"sellersku",
+        className:"sellersku",
+        accessor: d => d.SellerSKU,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
+        filterAll: true
+    },
+    {
+        Header: "Listing Name",
+        id: "Name",
+        headerClassName:"name",
+        className:"name",
+        accessor: d => d.Name,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["Name"] }),
+        filterAll: true,
+        style: { 'white-space': 'unset' }
+    },
+    {
+        Header: "Marketplace Name",
+        id: "MarketplaceName",
+        headerClassName:"marketplacename",
+        className:"marketplacename",
+        accessor: d => d.MarketplaceName,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
+        filterAll: true
+    },
+    {
+        Header: "Brand",
+        id: "Brand",
+        headerClassName:"brand",
+        className:"brand",
+        accessor: d => d.Brand,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["Brand"] }),
+        filterAll: true
+    },
+    {
+        Header: "Avg. Hist. Price",
+        id: "AvgHistoricalPrice",
+        headerClassName:"avgprice",
+        className:"avgprice",
+        accessor: d => d.AvgHistoricalPrice,
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
+        filterAll: true,
+        Cell: this.renderAvgHistoricalPrice
+    },
+    {
+        Header: "Landed Cost",
+        id: "LandedCost",
+        headerClassName:"landedcost",
+        className:"landedcost",
+        accessor: d => ['$',d.LandedCost.toFixed(2)],
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+        filterAll: true                                               
+    }
+];
+
+existingGroupColumns={};
+ungroupTableColumns={};
+childSKUTableColumns=[];
+
 constructor() {
   super();
+  
   this.state = {
       data: [],
       grouped_data:[],
@@ -24,8 +103,49 @@ constructor() {
       groupSelectedPopupOpen : false,
       groupedSKUPopupOpen :false,
       selSKUs_data :[],
-      open:true
-  };
+      open:true,
+      loading:true
+  }; 
+  
+this.existingGroupColumns ={                                            
+    id: "MerchantListingId",
+    maxWidth: 25,
+    Cell: this.renderRadioBtnMerchantListingId,
+    Filter: ({filter, onChange}) => (
+      <div></div>                                             
+    )                                     
+};
+
+this.ungroupTableColumns={                                            
+    id: "MerchantListingId",
+    maxWidth: 40,
+    Cell: this.renderMerchantListingId,
+    Filter: ({filter, onChange}) => (
+      <div></div>                                             
+    )                                     
+};
+
+let childSKUActionColumn={
+    Header: "Action",
+    id: "Action",
+    headerClassName:"action",
+    className:"action",
+    Filter: ({filter, onChange}) => (
+      <div></div>                                             
+    ),                                             
+    Cell:(cellInfo)=>{
+return <button type='button' class='btn btn-primary btn-bordered btn-small btnUnGroupSku'  title='Ungroup SKU' onClick={() => { this.ungroupSKU(cellInfo.original.MerchantListingId); }}><i class='fa fa fa-object-ungroup'></i></button>
+    }
+};
+
+this.commonColumns.forEach(x=>{
+    this.childSKUTableColumns.push(x);
+})
+this.childSKUTableColumns.push(childSKUActionColumn);
+
+this.ungroupTableColumns=[this.ungroupTableColumns].concat(this.commonColumns);
+  this.existingGroupColumns = [this.existingGroupColumns].concat(this.commonColumns);
+
   this.getUngroupedSKUs();  
   this.getGroupedSKUs();
 }
@@ -35,23 +155,33 @@ onCloseModal = () => {
   groupSelectedPopupOpen:false,
   groupedSKUPopupOpen:false
  });
+
+ this.parentGroupId=0;
 };
 
 onOpenGroupSelectedModal = () => {
   if (this.skuIds.length>0){
     //this.setState({   groupSelectedPopupOpen:true });
     this.getDetailUnGroupBySKUIds(this.skuIds);
-  } 
+  } else{
+      showToastMessage("Please select minimum 2 SKUs.", "Error");
+  }
 };
 
 onOpenGroupedSKUModal = () => {
     if (this.skuIds.length>0){
       this.setState({   groupedSKUPopupOpen:true });    
     } 
+    else{
+        showToastMessage("Please select atleast 1 SKU.", "Error");
+    }
   };
 
 createNewSKUGroup =()=>{
-    if (this.skuIds.length>1 && this.parentGroupId>0){     
+    if (this.skuIds.length>1 && this.parentGroupId>0){    
+        this.setState({           
+            loading:true
+        });        
         api
   .post(`CreateGroupSKUs`, {newGroupSKUId:this.parentGroupId, skuIds: this.skuIds})
   .then((res) => {      
@@ -59,23 +189,33 @@ createNewSKUGroup =()=>{
         showToastMessage(res.data.ErrorMessage, "Success");
           this.skuIds=[];
           this.parentGroupId=0;
+          this.onCloseModal();
+          this.getUngroupedSKUs();
+          this.getGroupedSKUs();
       } else {
         this.setState({
-            apiError: res.data.ErrorMessage
+            apiError: res.data.ErrorMessage,
+            loading:false
         })
-        showToastMessage(res.data.ErrorMessage, "Error");
-      }    
+        showToastMessage(res.data.ErrorMessage, "Error");        
+      }
+      this.setState({           
+        loading:false
+    })    
   })
   .catch(function (error) {
-    showToastMessage("Unknown Issue", "Error");   
+    showToastMessage("!Unknown Issue", "Error");   
   });
     }else{
-        showToastMessage("Please select min. 2 SKUs.", "Error");      
+        showToastMessage("Please select a SKU before submitting.", "Error");      
     }
 }
 
 updateExistingSKUGroup =()=>{
-    if (this.skuIds.length>0 && this.parentGroupId>0){     
+    if (this.skuIds.length>0 && this.parentGroupId>0){ 
+        this.setState({           
+            loading:true
+        });     
         api
   .post(`UpdateGroupSKUsChild`, {groupSKUId:this.parentGroupId, skuIds: this.skuIds})
   .then((res) => {    
@@ -85,7 +225,8 @@ updateExistingSKUGroup =()=>{
           this.parentGroupId=0;
       } else {
           this.setState({
-              apiError: res.data.ErrorMessage
+              apiError: res.data.ErrorMessage,
+              loading:false
           })
           showToastMessage(res.data.ErrorMessage, "Error");
       }      
@@ -94,11 +235,15 @@ updateExistingSKUGroup =()=>{
       console.log(error);
   });
     }else{
-        showToastMessage("Please select atleast 1 SKUs.", "Error");
+        showToastMessage("Please select a SKU before submitting.", "Error");      
     }
 }
 
 getDetailUnGroupBySKUIds =(skuIds)=>{
+    this.setState({
+        loading:true
+    });
+
   api
   .get(`GetDetailUnGroupBySKUIds?skuIds=${skuIds.join(',')}`)
   .then((res) => {
@@ -106,11 +251,13 @@ getDetailUnGroupBySKUIds =(skuIds)=>{
       if (res.data.IsSuccess) {       
           this.setState({
               selSKUs_data: res.data.LstCOGSTable,
-              groupSelectedPopupOpen:true
+              groupSelectedPopupOpen:true,
+              loading:false
           });        
       } else {
           this.setState({
-              apiError: res.data.ErrorMessage
+              apiError: res.data.ErrorMessage,
+              loading:false
           })
       }      
   })
@@ -120,42 +267,65 @@ getDetailUnGroupBySKUIds =(skuIds)=>{
 }
 
 ungroupSKU(SKUId){
-  console.log("ungroupSKU : "+ SKUId);
+    this.setState({
+        loading:true
+    });
+
   api
   .get(`UngroupSKU?SKUId=${SKUId}`)
   .then((res) => {     
-      if (res.data.IsSuccess) {
-          console.log(res)
-        showToastMessage(res.data.ErrorMessage, "Success");   
+      if (res.data.IsSuccess) {   
+        showToastMessage(res.data.ErrorMessage, "Success");  
+        this.getChildSKUByParentSKUId(this.parentSKUId);
+        this.getUngroupedSKUs(); 
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
           showToastMessage(res.data.ErrorMessage, "Error");   
       }
+      this.setState({
+        loading:false
+    });
   })
   .catch(function (error) {
       console.log(error);
   });
 }
 
-ungroupAllSKUs(){
-  console.log("UngroupAllChildSKU : "+ this.parentSKUId);
+ungroupAllSKUs(){    
+
+    if (this.state.childSKUs.length>0){
+        this.setState({
+            loading:true
+        });
   api
   .get(`UngroupAllChildSKU?parentSkuId=${this.parentSKUId}`)
   .then((res) => {      
-      if (res.data.IsSuccess) {
+      if (res.data.IsSuccess) {      
         showToastMessage(res.data.ErrorMessage, "Success");   
+        this.onCloseModal();
+        this.getUngroupedSKUs();
+        this.getGroupedSKUs();
       } else {
           this.setState({
               apiError: res.data.ErrorMessage
           })
           showToastMessage(res.data.ErrorMessage, "Error");   
       }
+
+      this.setState({
+        loading:false
+    });
   })
   .catch(function (error) {
       console.log(error);
   });
+}
+else{
+    this.onCloseModal();
+    this.getGroupedSKUs();
+}
 }
 
 getUngroupedSKUs() {
@@ -165,12 +335,14 @@ getUngroupedSKUs() {
           console.log('backend responce to GET GetUngroupedSKUs', res)
           if (res.data.IsSuccess) {
               this.setState({
-                  data: res.data.LstCOGSTable
+                  data: res.data.LstCOGSTable,
+                  loading:false
               });
 
           } else {
               this.setState({
-                  apiError: res.data.ErrorMessage
+                  apiError: res.data.ErrorMessage,
+                  loading:false
               })
           }
       })
@@ -217,7 +389,7 @@ renderMerchantListingId=(cellInfo)=>{
   onChange={this.checkboxChangedEvent}/>
 )}
 
-renderRadioBtnMerchantListingId=(cellInfo)=>{
+renderRadioBtnMerchantListingId=(cellInfo)=>{   
     return (<input type="radio" defaultValue={cellInfo.original.MerchantListingId} name="SKUGroups" 
     onChange={(e)=>{
        this.parentGroupId=e.target.value;
@@ -234,20 +406,26 @@ renderAvgHistoricalPrice(cellInfo) {
 }
 
 getChildSKUByParentSKUId=(parentId)=>{
+
+    this.setState({      
+        loading:true
+    })
+
   this.parentSKUId=parentId;
   api
   .get(`GetChildSKUByParentSKUId?SKUId=${parentId}`)
   .then((res) => {
       console.log('backend responce to GET GetChildSKUByParentSKUId', res)
-      if (res.data.IsSuccess) {
-        console.log(res.data);
+      if (res.data.IsSuccess) {       
           this.setState({
               childSKUs: res.data.LstCOGSTable,
-              childPopupOpen:true
-          });
+              childPopupOpen:true,
+              loading:false
+          });         
       } else {
           this.setState({
-              apiError: res.data.ErrorMessage
+              apiError: res.data.ErrorMessage,
+              loading:false
           })
       }
   })
@@ -257,25 +435,20 @@ getChildSKUByParentSKUId=(parentId)=>{
 }
 
   render(){
-    const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen } = this.state;   
+    const { data,grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen, loading } = this.state;   
+  
            return(
       <React.Fragment>        
-<Toaster />
-        <div className="dash-container">
+<Toaster />           
+        <div className={"dash-container "+ (loading ? "" : "loading-over" )}>
+        <FormLoader />  
           <div className="container container--full">
                             <div className="panel panel-dark">
-                                <div className="panel-heading">
-                                    <div className="panel-btns">
-                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.open ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ open: !this.state.open })} id="tooltip1">
-                                    <i className={"fa " + (this.state.open ? "fa-minus-square-o":"fa-plus-square-o")}></i>
-    </OverlayTrigger>
-                                    </div>
+                                <div className="panel-heading">                                   
                                     <h3 className="panel-title">SKU/ASIN Grouping</h3>
                                 </div>
-
-                               <Panel expanded={this.state.open}>   <Panel.Collapse><Panel.Body>
-                                    <div className="row">
-                                        <div className="col-lg-8">
+                              <div className="panel-body">
+                                    <div className="row">                                       
                                             <div className="instruction-notes">
                                                 <h3>
                                                     Group your SKU/ASINs into a single product to stay organized!
@@ -293,9 +466,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                                     <li>
                                                         Out of those selected, choose a single SKU/ASIN that you would like to assign as the <b>primary SKU</b>. <br /> All other products in the group will inherit product and Landed Cost information of the primary SKU.
                                                     </li>
-                                                </ul>
-
-                                            </div>
+                                                </ul>                                            
                                         </div>
                                     </div>
                                     <h3 className="h3">Ungrouped SKUs</h3>
@@ -316,81 +487,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[
-                                          {                                            
-                                            id: "MerchantListingId",
-                                            maxWidth: 40,
-                                            Cell: this.renderMerchantListingId,
-                                            Filter: ({filter, onChange}) => (
-                                              <div></div>                                             
-                                            )                                     
-                                        },
-                                            {
-                                                Header: "Status",
-                                                id: "Status",
-                                                maxWidth: 80,
-                                                accessor: d => d.Status,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Seller SKU",
-                                                id: "SellerSKU",
-                                                maxWidth: 150,
-                                                accessor: d => d.SellerSKU,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Listing Name",
-                                                id: "Name",
-                                                maxWidth: 500,
-                                                accessor: d => d.Name,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true,
-                                                style: { 'white-space': 'unset' }
-                                            },
-                                            {
-                                                Header: "Marketplace Name",
-                                                id: "MarketplaceName",
-                                                maxWidth: 140,
-                                                accessor: d => d.MarketplaceName,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Brand",
-                                                id: "Brand",
-                                                maxWidth: 130,
-                                                accessor: d => d.Brand,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Avg. Hist. Price",
-                                                id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
-                                                accessor: d => d.AvgHistoricalPrice,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
-                                                filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
-                                            },
-                                            {
-                                                Header: "Landed Cost",
-                                                id: "LandedCost",
-                                                maxWidth: 120,
-                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
-                                                filterAll: true                                               
-                                            }
-                                        ]}
+                                        columns={this.ungroupTableColumns}
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
@@ -411,73 +508,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[                                        
-                                            {
-                                                Header: "Status",
-                                                id: "Status",
-                                                maxWidth: 80,
-                                                accessor: d => d.Status,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Seller SKU",
-                                                id: "SellerSKU",
-                                                maxWidth: 150,
-                                                accessor: d => d.SellerSKU,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Listing Name",
-                                                id: "Name",
-                                                maxWidth: 500,
-                                                accessor: d => d.Name,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true,
-                                                style: { 'white-space': 'unset' }
-                                            },
-                                            {
-                                                Header: "Marketplace Name",
-                                                id: "MarketplaceName",
-                                                maxWidth: 140,
-                                                accessor: d => d.MarketplaceName,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Brand",
-                                                id: "Brand",
-                                                maxWidth: 130,
-                                                accessor: d => d.Brand,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Avg. Hist. Price",
-                                                id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
-                                                accessor: d => d.AvgHistoricalPrice,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
-                                                filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
-                                            },
-                                            {
-                                                Header: "Landed Cost",
-                                                id: "LandedCost",
-                                                maxWidth: 120,
-                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
-                                                filterAll: true                                               
-                                            }
-                                        ]}
+                                        columns={this.commonColumns}
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
@@ -490,7 +521,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         }}
                                     />
                                     </div>
-                                    </Panel.Body> </Panel.Collapse>  </Panel>  
+                                   </div>
                             </div>
                        
           </div>
@@ -532,84 +563,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[                                        
-                                            {
-                                                Header: "Status",
-                                                id: "Status",
-                                                maxWidth: 80,
-                                                accessor: d => d.Status,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Seller SKU",
-                                                id: "SellerSKU",
-                                                maxWidth: 150,
-                                                accessor: d => d.SellerSKU,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Listing Name",
-                                                id: "Name",
-                                                maxWidth: 500,
-                                                accessor: d => d.Name,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true,
-                                                style: { 'white-space': 'unset' }
-                                            },
-                                            {
-                                                Header: "Marketplace Name",
-                                                id: "MarketplaceName",
-                                                maxWidth: 140,
-                                                accessor: d => d.MarketplaceName,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Brand",
-                                                id: "Brand",
-                                                maxWidth: 130,
-                                                accessor: d => d.Brand,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Avg. Hist. Price",
-                                                id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
-                                                accessor: d => d.AvgHistoricalPrice,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
-                                                filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
-                                            },
-                                            {
-                                                Header: "Landed Cost",
-                                                id: "LandedCost",
-                                                maxWidth: 120,
-                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
-                                                filterAll: true                                               
-                                            },
-                                            {
-                                              Header: "Action",
-                                              id: "Action",
-                                              maxWidth: 50,
-                                              Filter: ({filter, onChange}) => (
-                                                <div></div>                                             
-                                              ),                                             
-                                              Cell:(cellInfo)=>{
-return <button type='button' class='btn btn-primary btn-bordered btn-small btnUnGroupSku'  title='Ungroup SKU' onClick={() => { this.ungroupSKU(cellInfo.original.MerchantListingId); }}><i class='fa fa fa-object-ungroup'></i></button>
-                                              }
-                                          }
-                                        ]}
+                                        columns={this.childSKUTableColumns}
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
@@ -629,7 +583,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Group Selected SKUs</h4>
                             </div>
-                            <div className="modal-body">
+                            <div className="modal-body modal-body-update">
                                 <div className="panel panel-dark">  
                                 <div className="panel-body">                                    
                                 <div className="instruction-notes instruction-notes-last">
@@ -655,81 +609,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[  
-                                            {                                            
-                                                id: "MerchantListingId",
-                                                maxWidth: 40,
-                                                Cell: this.renderRadioBtnMerchantListingId,
-                                                Filter: ({filter, onChange}) => (
-                                                  <div></div>                                             
-                                                )                                     
-                                            },                                      
-                                            {
-                                                Header: "Status",
-                                                id: "Status",
-                                                maxWidth: 80,
-                                                accessor: d => d.Status,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Seller SKU",
-                                                id: "SellerSKU",
-                                                maxWidth: 150,
-                                                accessor: d => d.SellerSKU,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Listing Name",
-                                                id: "Name",
-                                                maxWidth: 500,
-                                                accessor: d => d.Name,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true,
-                                                style: { 'white-space': 'unset' }
-                                            },
-                                            {
-                                                Header: "Marketplace Name",
-                                                id: "MarketplaceName",
-                                                maxWidth: 140,
-                                                accessor: d => d.MarketplaceName,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Brand",
-                                                id: "Brand",
-                                                maxWidth: 130,
-                                                accessor: d => d.Brand,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Avg. Hist. Price",
-                                                id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
-                                                accessor: d => d.AvgHistoricalPrice,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
-                                                filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
-                                            },
-                                            {
-                                                Header: "Landed Cost",
-                                                id: "LandedCost",
-                                                maxWidth: 120,
-                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
-                                                filterAll: true                                               
-                                            }                                          
-                                        ]}
+                                        columns={this.existingGroupColumns}
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
@@ -737,7 +617,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                     />
 
                                     
-                                    <div className="text-centre">
+                                    <div className="text-centre mt-20">
                                         <a id="btnSubmit" className="btn btn-primary btn-long" onClick={this.createNewSKUGroup}>Submit</a>
                                     </div>
                             </div>
@@ -754,7 +634,7 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">EXISTING GROUP</h4>
                             </div>
-                            <div className="modal-body">
+                            <div className="modal-body modal-body-update">
                                 <div className="panel panel-dark">  
                                 <div className="panel-body">    
                               <div className="instruction-notes">
@@ -776,87 +656,14 @@ return <button type='button' class='btn btn-primary btn-bordered btn-small btnUn
                                         filterable
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
-                                        columns={[                                        
-                                            {                                            
-                                                id: "MerchantListingId",
-                                                maxWidth: 40,
-                                                Cell: this.renderRadioBtnMerchantListingId,
-                                                Filter: ({filter, onChange}) => (
-                                                  <div></div>                                             
-                                                )                                     
-                                            }, {
-                                                Header: "Status",
-                                                id: "Status",
-                                                maxWidth: 80,
-                                                accessor: d => d.Status,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Seller SKU",
-                                                id: "SellerSKU",
-                                                maxWidth: 150,
-                                                accessor: d => d.SellerSKU,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Listing Name",
-                                                id: "Name",
-                                                maxWidth: 500,
-                                                accessor: d => d.Name,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
-                                                filterAll: true,
-                                                style: { 'white-space': 'unset' }
-                                            },
-                                            {
-                                                Header: "Marketplace Name",
-                                                id: "MarketplaceName",
-                                                maxWidth: 140,
-                                                accessor: d => d.MarketplaceName,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Brand",
-                                                id: "Brand",
-                                                maxWidth: 130,
-                                                accessor: d => d.Brand,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
-                                                filterAll: true
-                                            },
-                                            {
-                                                Header: "Avg. Hist. Price",
-                                                id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
-                                                accessor: d => d.AvgHistoricalPrice,
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
-                                                filterAll: true,
-                                                Cell: this.renderAvgHistoricalPrice
-                                            },
-                                            {
-                                                Header: "Landed Cost",
-                                                id: "LandedCost",
-                                                maxWidth: 120,
-                                                accessor: d => ['$',d.LandedCost.toFixed(2)],
-                                                filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
-                                                filterAll: true                                               
-                                            }
-                                        ]}
+                                        columns={this.existingGroupColumns}
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
                                         previousText="<<"                                       
                                     />
 
-                                     <div className="text-centre">
+                                     <div className="text-centre mt-20">
                                         <a id="btnSubmit" className="btn btn-primary btn-long" onClick={this.updateExistingSKUGroup}>Submit</a>
                                     </div>
                             </div>

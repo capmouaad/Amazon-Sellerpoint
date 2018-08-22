@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import api, { BACKEND_URL}from '../../services/Api';
-import {Panel, OverlayTrigger, Tooltip} from 'react-bootstrap';
-
-// Import React Table
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import "react-table/react-table.css";
@@ -13,8 +10,7 @@ import Toaster, {showToastMessage} from '../../services/toasterNotification'
 
 export default class DashCOGSSetup extends Component {
 
-    lstEditedCOGS = [];
-   
+    lstEditedCOGS = [];   
     state = {
         data: [],
         open: false,
@@ -34,11 +30,12 @@ export default class DashCOGSSetup extends Component {
     }
 
     onOpenModal = () => {
-        this.setState({ open: true });
+        this.setState({ open: true
+             });
     };
 
     onCloseModal = () => {
-        this.setState({ open: false });
+        this.setState({ open: false,filename:'' });
     };
 
     onDrop(files) {
@@ -145,9 +142,7 @@ export default class DashCOGSSetup extends Component {
 
     saveCOGS = () => {
         this.setState({ loading: true });
-
-        if (this.lstEditedCOGS.length > 0) {          
-console.log(this.lstEditedCOGS);
+        if (this.lstEditedCOGS.length > 0) {  
             api
                 .post(`UpdateCOGS`, this.lstEditedCOGS)
                 .then((res) => {
@@ -156,10 +151,10 @@ console.log(this.lstEditedCOGS);
                         this.getAllCOGS();
                     } else {
                         this.setState({
-                            apiError: res.data.ErrorMessage
-                        })
-                        this.setState({ loading: false });
-                    }
+                            apiError: res.data.ErrorMessage,
+                            loading:false
+                        })                      
+                    }                    
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -181,17 +176,11 @@ console.log(this.lstEditedCOGS);
 
                     <div className="container container--full">
                         <div className="panel panel-dark">
-                            <div className="panel-heading">
-                            <div className="panel-btns">
-                                    <OverlayTrigger placement="top" overlay={<Tooltip placement="right" className="in" id="tooltip-right"> {(this.state.expanded ? "Minimize":"Maximize")}</Tooltip>} onClick={() => this.setState({ expanded: !this.state.expanded })} id="tooltip1">
-                                    <i className={"fa " + (this.state.expanded ? "fa-minus-square-o":"fa-plus-square-o")}></i>
-    </OverlayTrigger>
-                                    </div>
+                            <div className="panel-heading">                           
                                 <h3 className="panel-title">Products List</h3>
                             </div>
 
-                         <Panel expanded={this.state.expanded} defaultExpanded="true">
-          <Panel.Collapse> <Panel.Body>
+                        <div className="panel-body">
                                 <div className="row">
                                     <div className="custom-pagelist-left">
                                        
@@ -212,7 +201,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Status",
                                                 id: "Status",
-                                                maxWidth: 80,
+                                                headerClassName:"status",
+                                                className:"status",
                                                 accessor: d => d.Status,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Status"] }),
@@ -221,7 +211,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Seller SKU",
                                                 id: "SellerSKU",
-                                                maxWidth: 150,
+                                                headerClassName:"sellersku",
+                                                className:"sellersku",
                                                 accessor: d => d.SellerSKU,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
@@ -230,7 +221,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Listing Name",
                                                 id: "Name",
-                                                maxWidth: 500,
+                                                headerClassName:"name",
+        className:"name",
                                                 accessor: d => d.Name,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Name"] }),
@@ -240,7 +232,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Marketplace Name",
                                                 id: "MarketplaceName",
-                                                maxWidth: 140,
+                                                headerClassName:"marketplacename",
+        className:"marketplacename",
                                                 accessor: d => d.MarketplaceName,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
@@ -249,7 +242,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Brand",
                                                 id: "Brand",
-                                                maxWidth: 130,
+                                                headerClassName:"brand",
+        className:"brand",
                                                 accessor: d => d.Brand,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["Brand"] }),
@@ -258,7 +252,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Avg. Hist. Price",
                                                 id: "AvgHistoricalPrice",
-                                                maxWidth: 120,
+                                                headerClassName:"avgprice",
+        className:"avgprice",
                                                 accessor: d => d.AvgHistoricalPrice,
                                                 filterMethod: (filter, rows) =>
                                                     matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
@@ -268,7 +263,8 @@ console.log(this.lstEditedCOGS);
                                             {
                                                 Header: "Landed Cost",
                                                 id: "LandedCost",
-                                                maxWidth: 120,
+                                                headerClassName:"landedcost",
+        className:"landedcost",
                                                 accessor: "LandedCost",
                                                 filterMethod: (filter, rows) =>
                                                 matchSorter(rows, filter.value, { keys: ["LandedCost"] }), 
@@ -286,8 +282,7 @@ console.log(this.lstEditedCOGS);
                                     <div className="text-centre">
                                         <a id="btnSaveCogs" className="btn btn-primary btn-long" onClick={this.saveCOGS}>SAVE</a>
                                     </div>
-                                </div></Panel.Body> </Panel.Collapse>
-                                </Panel>
+                                </div></div>
                         </div> </div>
                 </div>
 
