@@ -166,7 +166,7 @@ class SignupStep1 extends Component {
         if ( res.data.IsSuccess ){
           // this.props.setSignupId(res.data.id); // TODO
           this.props.setSignupEmail(res.config.data.email);
-          this.props.setSignupId(res.data.ClientId);
+          this.props.setSignupId(res.data.UserInfo.ClientID);
           this.updateSignup();
           
           //TODO : dynamic message should come
