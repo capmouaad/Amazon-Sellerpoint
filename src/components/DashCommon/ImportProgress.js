@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import api from '../../services/Api';
 
-class ImportProgress extends Component {
-    static propTypes = {
-        signupId: PropTypes.number
-    };
+export default class ImportProgress extends Component {
 
     constructor(props) {
         super(props);
@@ -36,11 +32,8 @@ class ImportProgress extends Component {
     }
 
     getImportStatus = () => {
-
-        const { signupId } = this.props; // prodcution
-
         api
-            .get(`GetDataImportStatus?clientid=${signupId}`)
+            .get(`GetDataImportStatus`)
             .then((res) => {
                 console.log('backend responce to GET GetDataImportStatus', res)
 
@@ -103,14 +96,3 @@ const IBar = (props) => {
         </div>
     )
 }
-
-
-const mapStateToProps = (state) => ({
-    signupId: state.signup.signupId
-});
-
-const mapDispatchToProps = (dispatch) => ({
-    // setSignupFields: (data) => dispatch(setSignupFields(data))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ImportProgress);
