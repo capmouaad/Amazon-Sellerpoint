@@ -5,9 +5,6 @@ import store from '../store/store';
 //const BACKEND_URL = "http://localhost:10547/api/SellerPoint/"
 const BACKEND_URL = "https://qa.kinimetrix.com/api/SellerPoint/";
 
-
-axios.defaults.withCredentials = true;
-
 const api = axios.create({
   baseURL: BACKEND_URL,
   headers: {
@@ -19,8 +16,15 @@ const api = axios.create({
   withCredentials: true
 });
 
+// Add a response interceptor
+api.interceptors.response.use(null, function (error) {
+  // Logout on 403 response error
+  if (error.response.status === 403) {
+    // log out user if already logged in else send user to login screen
+  }
+  return Promise.reject(error);
+});
+
 export default api;
-export { BACKEND_URL};
-
-
+export { BACKEND_URL };
 
