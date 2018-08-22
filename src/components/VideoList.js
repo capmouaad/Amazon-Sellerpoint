@@ -9,27 +9,27 @@ class VideoList extends Component {
       {
         name: "NAVIGATION",
         desc: "Learn how to move around the app.",
-        videoIdYouTube: "P1qEF1SkWgo"
+        videoIdYouTube: "kcLIqGuFHDg"
       },{
         name: "SETTINGS",
         desc: "How to setup product costs information and create SKU groups.",
-        videoIdYouTube: "BSJusXMBEKI"
+        videoIdYouTube: "bAmn4eS5-10"
       },{
         name: "CHARTS",
         desc: "Control your chart views.",
-        videoIdYouTube: "NOWGx_42PCk"
+        videoIdYouTube: "pY-3qZIXq34"
       },{
         name: "FINANCIAL DASHBOARD",
         desc: "Understand net and gross profit and how to read trend charts.",
-        videoIdYouTube: "SFL_yYLjlDA"
+        videoIdYouTube: "oK3ebrIiFFc"
       },{
         name: "BUSINESS RESULTS DASHBOARD",
         desc: "Learn how to quickly scan revenue, sales quantity, pricing and profit margin.",
-        videoIdYouTube: "8t2vHTuaoAc"
+        videoIdYouTube: "_nk0VGcM5lc"
       },{
         name: "OPERATIONS DASHBOARD",
         desc: "Understand how key performance metrics can save you time in managing the business.",
-        videoIdYouTube: "fhijNpJyqTs"
+        videoIdYouTube: "xrpdlKM3yH8"
       }
     ]
 

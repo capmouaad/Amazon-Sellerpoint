@@ -16,7 +16,6 @@ const showToastMessage=(message, title)=> {
     }       
 }
 
-
 const Toaster = (props) => {
     return(
         <ToastContainer autoClose={5000} />

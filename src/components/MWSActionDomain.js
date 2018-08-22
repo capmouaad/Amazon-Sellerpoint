@@ -67,6 +67,8 @@ class MWSActionDomain extends Component {
         marketplaces: filteredMarketplaces
       }
 
+      if(filteredMarketplaces.length>0){
+      
       console.log('POST obj', obj)
       //butch save
       api
@@ -105,7 +107,12 @@ class MWSActionDomain extends Component {
         .catch(function (error) {
           console.log(error);
         });
-
+      }else{
+        this.setState({
+          apiError: "Please select one marketplace.",
+          isFormSubmited: false // reset submit status
+        })
+      }
     } // end if
   }
 
@@ -113,7 +120,6 @@ class MWSActionDomain extends Component {
     const res = await api.post('UpdateCurrentStepAsync?step=ConnectAdvertising');
     return await res.data;
   }
-
 
   render(){
     const { marketplaceDomains, isFormSubmited, apiError } = this.state
@@ -128,7 +134,9 @@ class MWSActionDomain extends Component {
     })
 
     return(
+      
       <div className={"loader-container " + (isFormSubmited ? "is-loading" : null) }>
+      
         <FormLoader />
         { apiError &&
           <span className="ui-input-validation">{apiError}</span>
@@ -150,6 +158,7 @@ class MWSActionDomain extends Component {
           <span onClick={this.nextAction} className="btn btn-signup btn--block">Next</span>
         </div>
       </div>
+     
     )
   }
 }
