@@ -172,9 +172,7 @@ class SignupStep1 extends Component {
           //TODO : dynamic message should come
     showToastMessage("User account is created successfully.", "Success"); 
 
-          this.props.setSignupAuthStep(
-      this.props.signupAuthStep + 1
-    )
+         // this.props.setSignupAuthStep(      this.props.signupAuthStep + 1    )
     
         } else {
           if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
@@ -251,7 +249,7 @@ class SignupStep1 extends Component {
 
     return(
       <div className="signup__container">
-   <Toaster/>
+     <Toaster/>
         <Formsy
           className="signup__form"
           onSubmit={this.submitForm}
