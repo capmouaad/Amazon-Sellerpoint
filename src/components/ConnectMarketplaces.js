@@ -17,11 +17,8 @@ class ConnectMarketplaces extends Component{
   }
 
   getSellerMarketplaces = () => {
-
-    const {signupId} = this.props
-
     api
-      .get(`GetSellerMarketPlaces?ClientId=${signupId}`)
+      .get(`GetSellerMarketPlaces`)
       .then((res) => {
         console.log('backend responce to GET GetSellerMarketPlaces', res)
 
@@ -48,8 +45,7 @@ class ConnectMarketplaces extends Component{
 
 
   connectMarketplace = (marketPlaceId, sellerId) => {
-    const { LWA, signupId } = this.props;
-    // const options = this.state.connectedId
+    const { LWA } = this.props;
 
     if ( !LWA || !LWA.resp.code ){
       this.LWAAuth();
@@ -60,7 +56,6 @@ class ConnectMarketplaces extends Component{
       const obj = {
         code: LWA.resp.code,
         scope: LWA.resp.scope,
-        clientId: signupId,
         sellerId: sellerId
       }
 
@@ -152,7 +147,6 @@ class ConnectMarketplaces extends Component{
 
 
 const mapStateToProps = (state) => ({
-  signupId: state.signup.signupId,
   LWA: state.lwa
 });
 
