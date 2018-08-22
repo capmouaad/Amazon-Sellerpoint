@@ -8,6 +8,7 @@ import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
 import { setSignupStep } from '../actions/signup';
+import { RESET_STATE_SIGNUP } from '../store/ActionTypes';
 
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
@@ -103,6 +104,8 @@ class Login extends Component {
                             break
                     }
                     return
+                } else {
+                    this.props.resetSignUp()
                 }
 
                 const importStatusRes = await api.get(`GetDataImportStatus?clientid=${UserInfo.ClientID}`)
@@ -212,7 +215,8 @@ const mapDispatchToProps = (dispatch) => ({
     setAuthToken: (data) => dispatch(setAuthToken(data)),
     setSignupId: (data) => dispatch(setSignupId(data)),
     setSignupStep: (data) => dispatch(setSignupStep(data)),
-    setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed))
+    setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
+    resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
