@@ -148,12 +148,14 @@ export default class DashCOGSSetup extends Component {
                 .then((res) => {
                     console.log('backend responce to GET UpdateCOGS', res)
                     if (res.data.IsSuccess) {
-                        this.getAllCOGS();
+                        showToastMessage(res.data.ErrorMessage, "Success");
+                        this.getAllCOGS();                        
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,
                             loading:false
-                        })                      
+                        })
+                        showToastMessage(res.data.ErrorMessage, "Error");                      
                     }                    
                 })
                 .catch(function (error) {

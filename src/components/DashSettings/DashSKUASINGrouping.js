@@ -156,7 +156,7 @@ onCloseModal = () => {
   groupedSKUPopupOpen:false
  });
 
- this.parentGroupId=0;
+ this.parentGroupId=0; 
 };
 
 onOpenGroupSelectedModal = () => {

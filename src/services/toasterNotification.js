@@ -2,7 +2,7 @@ import React from 'react';
 import {ToastContainer, toast } from 'react-toastify';
 
 const showToastMessage=(message, title)=> {
-    if (title==="Success"){
+    if (title.toLowerCase()==="success"){
         toast.success(message==null?"":message , {
             position: toast.POSITION.TOP_RIGHT,
             autoClose:5000
