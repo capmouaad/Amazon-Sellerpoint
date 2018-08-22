@@ -11,6 +11,7 @@ import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
 import { tAndC, privacyPolicy } from '../components/Footer';
+import Toaster, {showToastMessage} from '../services/toasterNotification'
 
 // Formsy.addValidationRule('isValidPassword', (values, value) => {
 //   // const min_length = value ? value.length >= 8 : false
@@ -142,7 +143,7 @@ class SignupStep1 extends Component {
       .then((res) => {
         console.log('backend responce to Get CheckEmail', res)
         if ( res.data.IsDuplicateUser ){
-          history.push(`/login`)
+          history.push(`/login`)         
           this.formRef.current.updateInputsWithError({
             email: res.data.ErrorMessage
           });
@@ -154,7 +155,6 @@ class SignupStep1 extends Component {
       .catch(function (error) {
         console.log(error);
       });
-
   }
 
   createUser = (leadObj) => {
@@ -168,6 +168,10 @@ class SignupStep1 extends Component {
           this.props.setSignupEmail(res.config.data.email);
           this.props.setSignupId(res.data.ClientId);
           this.updateSignup();
+          this.props.setSignupAuthStep(
+      this.props.signupAuthStep + 1
+    )
+    showToastMessage("User account is created successfully.", "Success");
         } else {
           if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
             this.recaptchaRef.reset && this.recaptchaRef.reset()
@@ -175,6 +179,8 @@ class SignupStep1 extends Component {
           this.setState({
             apiError: res.data.ErrorMessage
           })
+
+          showToastMessage(res.data.ErrorMessage, "Error");
         }
 
         this.setState({isFormSubmited: false})
@@ -241,7 +247,7 @@ class SignupStep1 extends Component {
 
     return(
       <div className="signup__container">
-
+   <Toaster/>
         <Formsy
           className="signup__form"
           onSubmit={this.submitForm}

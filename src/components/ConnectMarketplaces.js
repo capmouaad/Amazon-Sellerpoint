@@ -140,7 +140,10 @@ class ConnectMarketplaces extends Component{
                   </td>
                 </tr>
               )
-            }) }
+            })           
+          }
+
+           {(sellerMarketplaces.length===0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
           </tbody>
         }
       </table>

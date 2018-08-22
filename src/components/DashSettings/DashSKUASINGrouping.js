@@ -160,7 +160,7 @@ onCloseModal = () => {
 };
 
 onOpenGroupSelectedModal = () => {
-  if (this.skuIds.length>0){
+  if (this.skuIds.length>1){
     //this.setState({   groupSelectedPopupOpen:true });
     this.getDetailUnGroupBySKUIds(this.skuIds);
   } else{

@@ -61,7 +61,7 @@ class SignupStep3 extends Component {
   }
 
   compleateSignupOnBackend = async () => {
-    if (this.state.isAdvertisingOptedOut){
+    if (this.state.isAdvertisingOptedOut){      
       const resAd = await api.post('AdvertisingOptOut', {sellerId : this.props.sellerId});
       if (!resAd.data.IsSuccess) {
         throw new Error(resAd.data.ErrorMessage)
@@ -82,7 +82,7 @@ class SignupStep3 extends Component {
   }
 
   render () {
-    const { shouldRedirect, isFormSubmited, apiError, error, isAdvertisingOptedOut } = this.state;
+    const { shouldRedirect, isFormSubmited, apiError, error } = this.state;
     // const { signupFields } = this.props;
 
     if ( shouldRedirect ){
