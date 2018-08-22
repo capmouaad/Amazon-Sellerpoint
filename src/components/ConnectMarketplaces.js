@@ -19,7 +19,6 @@ class ConnectMarketplaces extends Component{
   getSellerMarketplaces = () => {
 
     const {signupId} = this.props
-    // const signupId = 3212 // for testing
 
     api
       .get(`GetSellerMarketPlaces?ClientId=${signupId}`)
