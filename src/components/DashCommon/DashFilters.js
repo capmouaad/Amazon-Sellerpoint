@@ -106,8 +106,8 @@ export default class DashFilters extends Component {
             }, this.bindData);
         }
     }
-    bindCurrentSelections(){
-        let app=window.qlik.currApp();
+    bindCurrentSelections = async () => {
+        let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
         
         app.getList("CurrentSelections", function(reply){
             console.log(reply.qSelectionObject.qSelections);
@@ -118,11 +118,10 @@ export default class DashFilters extends Component {
         //     reply.qSelectionObject.qSelections.map((item) => {item.qSelectedFieldSelectionInfo.map((sel)=>{console.log(sel.qName)})}
         // )});
     }
-    bindData(reply, app) {
-        debugger;
+
+    bindData = (reply, app) => {
         var data = [];
         reply.qListObject.qDataPages[0].qMatrix.forEach(function (item) {
-            debugger;
             //if (item[0].qState === 'X') {
             var row = new Object();
             row.value = item[0].qText;
@@ -133,8 +132,8 @@ export default class DashFilters extends Component {
 
         this.setState({ options: data });
     }
-    handleChange = (optionSelected) => {
-        debugger;
+
+    handleChange = async (optionSelected) => {
         // if(optionSelected.length>1)
 
         // this.setState({ selectedOption:[{value: "Multiple", label: "Multiple selected ("+optionSelected.length+")"}] });
@@ -144,14 +143,14 @@ export default class DashFilters extends Component {
         console.log(`Option selected:`, optionSelected);
         let data = [];
         optionSelected.forEach(function (item) {
-            var row = new Object();
+            var row = {};
             row.qText = item.value;
             data.push(row);
         });
 
 
         //window.qlik.app.field('SellerSKU').select(data, true, true);
-        var app = window.qlik.currApp();
+        let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
         app.field('SellerSKU').selectValues(data, false);
     }
 

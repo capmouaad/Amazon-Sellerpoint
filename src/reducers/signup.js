@@ -49,6 +49,8 @@ const signup = (state = initialState, action) => {
         ...state,
         fields: action.payload
       }
+    case types.RESET_STATE_SIGNUP:
+      return initialState
     default:
       return state;
   }

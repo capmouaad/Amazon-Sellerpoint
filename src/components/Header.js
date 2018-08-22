@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
-import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK } from '../store/ActionTypes';
+import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK, RESET_STATE_SIGNUP } from '../store/ActionTypes';
 import { setQlikConnection, setQlikInstance } from '../actions/qlik'
 import { logOut } from '../actions/login';
 
@@ -70,6 +70,18 @@ class Header extends React.Component {
 
   logOutUser = async () => {
     try {
+       // reset qlik connection redux
+       this.props.setQlikConnection(false)
+       this.props.setQlikInstance(null)
+       // close qlik app
+       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+       await qApp.close()
+       // clear qlik window object
+       window.GlobalQdtComponents = null
+       // destroy session
+       this.props.resetSignUp()
+       this.props.logOut()
+       window.location.reload()
       // let the API know about it
 
       // TODO
@@ -79,19 +91,8 @@ class Header extends React.Component {
 
       const { IsSuccess } = logOffRes.data;
 
-      if ( IsSuccess ){
-        // reset qlik connection redux
-        this.props.setQlikConnection(false)
-        this.props.setQlikInstance(null)
-        // close qlik app
-        const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-        await qApp.close()
-        // clear qlik window object
-        window.GlobalQdtComponents = null
-        // destroy session
-        this.props.logOut()
-        window.location.reload()
-      }
+      // if ( IsSuccess ){
+      // }
     } catch (e) {
       console.error(e)
     }
@@ -205,6 +206,7 @@ const mapDispatchToProps = (dispatch) => ({
   closeQlik: () => dispatch({ type: CLOSE_APP_QLIK }),
   setQlikConnection: (data) => dispatch(setQlikConnection(data)),
   setQlikInstance: (data) => dispatch(setQlikInstance(data)),
+  resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
   logOut: () => dispatch(logOut())
 });
 
