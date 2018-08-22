@@ -78,18 +78,14 @@ class Header extends React.Component {
       this.props.setQlikInstance(null)
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-      if(qApp)
-      await qApp.close()
+      if (qApp)
+        await qApp.close()
       // clear qlik window object
       window.GlobalQdtComponents = null
       // destroy session
       this.props.resetSignUp()
       this.props.logOut()
       //window.location.reload()
-      const { IsSuccess } = logOffRes.data;
-
-      // if ( IsSuccess ){
-      // }
     } catch (e) {
       console.error(e)
     }
