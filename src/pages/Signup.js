@@ -23,6 +23,10 @@ class Signup extends Component {
     this.props.setHeaderClass('header--logo-only');
   }
 
+  componentDidUpdate(){
+    this.updateURL();
+  }
+  
   checkEmail = async () => {
     try {
       const { history, location } = this.props
