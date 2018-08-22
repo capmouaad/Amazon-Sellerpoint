@@ -26,7 +26,7 @@ const dashNavLinks = [
     name: "Configuration",
     path: "/dash/configuration",
     icon: "dash-nav-settings"
-  }     
+  }
 ]
 
 class Header extends React.Component {
@@ -39,7 +39,7 @@ class Header extends React.Component {
     logOut: PropTypes.func
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -70,25 +70,22 @@ class Header extends React.Component {
 
   logOutUser = async () => {
     try {
-       // reset qlik connection redux
-       this.props.setQlikConnection(false)
-       this.props.setQlikInstance(null)
-       // close qlik app
-       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-       await qApp.close()
-       // clear qlik window object
-       window.GlobalQdtComponents = null
-       // destroy session
-       this.props.resetSignUp()
-       this.props.logOut()
-       window.location.reload()
-      // let the API know about it
-
-      // TODO
-      // For some reason IsSuccess is false
       const logOffRes = await api.get(`LogOff`)
       console.log('backend responce to GET LogOff', logOffRes)
 
+      // reset qlik connection redux
+      this.props.setQlikConnection(false)
+      this.props.setQlikInstance(null)
+      // close qlik app
+      const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+      if(qApp)
+      await qApp.close()
+      // clear qlik window object
+      window.GlobalQdtComponents = null
+      // destroy session
+      this.props.resetSignUp()
+      this.props.logOut()
+      //window.location.reload()
       const { IsSuccess } = logOffRes.data;
 
       // if ( IsSuccess ){
@@ -104,19 +101,19 @@ class Header extends React.Component {
     })
   }
 
-  render(){
+  render() {
 
     // const { isMenuOpened } = this.state;
     const { menuOpened } = this.props;
 
-    return(
+    return (
       <div className={this.props.stateClass}>
         <header className='header'>
           <div className="container container--full">
             <div className="header__wrapper">
               <div className="header__hamburger">
                 <div
-                  className={"hamburger hamburger--squeeze " + (menuOpened ? "is-active" : "" ) }
+                  className={"hamburger hamburger--squeeze " + (menuOpened ? "is-active" : "")}
                   onClick={this.toggleHamburger}>
                   <div className="hamburger-box">
                     <div className="hamburger-inner">
@@ -134,18 +131,18 @@ class Header extends React.Component {
                 </Link>
               </div>
               <ul className="header__dash-nav">
-                { dashNavLinks.map( (link, i) => {
-                  return(
+                {dashNavLinks.map((link, i) => {
+                  return (
                     <li key={i}>
                       <NavLink to={`${process.env.PUBLIC_URL + link.path}`} className="" activeClassName="is-active">
                         <div className="header__dash-icon">
-                          <SvgIcon name={link.icon}/>
+                          <SvgIcon name={link.icon} />
                         </div>
                         <span>{link.name}</span>
                       </NavLink>
                     </li>
                   )
-                }) }
+                })}
               </ul>
               <HeaderUser
                 toggleUsermenu={this.toggleUsermenu}
@@ -156,13 +153,13 @@ class Header extends React.Component {
           </div>
         </header>
 
-        { /* Mobile navi */ }
-        <div className={"mobile-nav " + (menuOpened ? "is-active" : "" ) }>
+        { /* Mobile navi */}
+        <div className={"mobile-nav " + (menuOpened ? "is-active" : "")}>
           <div className="container">
             <div className="mobile-nav__wrapper">
               <div className="mobile-nav__menu">
-                { dashNavLinks.map( (link, i) => {
-                  return(
+                {dashNavLinks.map((link, i) => {
+                  return (
                     <li key={i}>
                       <NavLink
                         to={`${process.env.PUBLIC_URL + link.path}`}
@@ -171,13 +168,13 @@ class Header extends React.Component {
                         onClick={this.toggleHamburger}
                       >
                         <div className="mobile-nav__icon">
-                          <SvgIcon name={link.icon}/>
+                          <SvgIcon name={link.icon} />
                         </div>
                         <span>{link.name}</span>
                       </NavLink>
                     </li>
                   )
-                }) }
+                })}
               </div>
               <div className="mobile-nav__user">
                 <HeaderUser
@@ -210,4 +207,4 @@ const mapDispatchToProps = (dispatch) => ({
   logOut: () => dispatch(logOut())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure:false})(onClickOutside(Header));
+export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(onClickOutside(Header));
