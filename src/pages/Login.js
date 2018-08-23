@@ -145,15 +145,18 @@ class Login extends Component {
             <div className="signup login">
                 <div className="container">
                     <div className="login-container">
-
+                   
                         <Formsy
-                            className="signup__form"
+                            className="signup__form login-form"
                             onSubmit={this.submitForm}
                             onValidSubmit={this.handleSubmit}
                             onValid={this.formValid}
                             onInvalid={this.formInvalid}
                             ref={this.formRef}
                         >
+                         <h2>Sign In</h2>
+                         <p>Sign In to start using our powerful</p>
+                         <p>Business Intelligence tools</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
@@ -161,7 +164,7 @@ class Login extends Component {
                                 }
                                 <FormInput
                                     name="email"
-                                    label="Email Address"
+                                    label="Email"
                                     placeholder="jennifer@saleswarehouse.com"
                                     value={email}
                                     validations="isEmail"
@@ -192,9 +195,12 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
+                                <a href={`${process.env.PUBLIC_URL}/forgotpassword`}>Forgot password</a>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Login</button>
                                 </div>
+
+                                <a href={`${process.env.PUBLIC_URL}/signup`} className="pull-right">Not a member? Sign Up</a>
                             </div>
                         </Formsy>
                     </div>

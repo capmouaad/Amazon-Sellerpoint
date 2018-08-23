@@ -34,6 +34,11 @@ export const LWACallback = MyLoadable({
   modules: ['./pages/LWACallback'],
   webpack: () => [require.resolveWeak('./pages/LWACallback')]
 });
+export const ForgotPassword = MyLoadable({
+  loader: () => import("./pages/ForgotPassword"),
+  modules: ['./pages/ForgotPassword'],
+  webpack: () => [require.resolveWeak('./pages/ForgotPassword')]
+});
 export const NotFound = MyLoadable({
   loader: () => import("./pages/NotFound"),
   modules: ['./pages/NotFound'],
@@ -67,6 +72,11 @@ export const routes = [
     path: '/LWACallback',
     name: 'LWACallback',
     component: LWACallback
+  },
+  {
+    path: '/forgotpassword',
+    name: 'ForgotPassword',
+    component: ForgotPassword
   },
    {
     path: '',
