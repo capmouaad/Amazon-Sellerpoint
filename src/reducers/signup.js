@@ -5,6 +5,7 @@ export const initialState = {
   signupAuthStep: 1,
   signupEmail: undefined,
   signupId: undefined,
+  addMarketStep: 1,
   fields: {
     first_name: '',
     last_name: '',
@@ -51,6 +52,11 @@ const signup = (state = initialState, action) => {
       }
     case types.RESET_STATE_SIGNUP:
       return initialState
+    case types.SET_ADD_MARKET_STEP:
+      return {
+        ...state,
+        addMarketStep: action.payload
+      }
     default:
       return state;
   }

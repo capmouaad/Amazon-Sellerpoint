@@ -4,6 +4,7 @@ import CheckBox from './Forms/CheckBox';
 import FormLoader from './Forms/FormLoader';
 import api from '../services/Api';
 import { setSignupFields, setSignupStep, setSignupAuthStep } from '../actions/signup';
+import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
 
 class MWSActionDomain extends Component {
 
@@ -61,7 +62,7 @@ class MWSActionDomain extends Component {
 
 
       const obj = {
-        clientId: this.props.signupId,
+        clientId: this.props.signupId || this.props.clientId,
         sellerId: seller_id,
         authToken: mws_auth,
         marketplaces: filteredMarketplaces
@@ -82,8 +83,9 @@ class MWSActionDomain extends Component {
               // connected_marketplaces: filteredMarketplaces
             })
 
-            this.props.setSignupAuthStep(1); // reset ?
+            this.props.setAddMarketStep(2)
             this.props.setSignupStep(3);
+            this.props.setSignupAuthStep(1); // reset ?
 
             this.updateStepOnBackend()
               .then(res => {
@@ -165,6 +167,7 @@ class MWSActionDomain extends Component {
 
 const mapStateToProps = (state) => ({
   signupId: state.signup.signupId,
+  clientId: state.login.userInfo.ClientID,
   signupFields: state.signup.fields,
   signupAuthStep: state.signup.signupAuthStep,
   sellerId:state.seller_id
@@ -173,7 +176,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   setSignupFields: (data) => dispatch(setSignupFields(data)),
   setSignupAuthStep: (data) => dispatch(setSignupAuthStep(data)),
-  setSignupStep: (data) => dispatch(setSignupStep(data))
+  setSignupStep: (data) => dispatch(setSignupStep(data)),
+  setAddMarketStep: (data) => dispatch({ type: SET_ADD_MARKET_STEP, payload: data })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MWSActionDomain);
