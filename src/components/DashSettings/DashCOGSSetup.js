@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactHTMLElement } from 'react';
 import api, { BACKEND_URL}from '../../services/Api';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
@@ -10,7 +10,7 @@ import Toaster, {showToastMessage} from '../../services/toasterNotification'
 
 export default class DashCOGSSetup extends Component {
 
-    lstEditedCOGS = [];   
+     lstEditedCOGS = [];   
     state = {
         data: [],
         open: false,
@@ -24,9 +24,9 @@ export default class DashCOGSSetup extends Component {
             open: false,
             loading:true,
             expanded:true                 
-        };
+        };     
         this.getAllCOGS();
-        this.renderLandedCost = this.renderLandedCost.bind(this);       
+        this.renderLandedCost = this.renderLandedCost.bind(this);  
     }
 
     onOpenModal = () => {
@@ -47,8 +47,7 @@ export default class DashCOGSSetup extends Component {
                 .post(`UploadCogsData`, data)
                 .then((res) => {
                     console.log('backend responce to GET UploadCogsData', res)
-                    if (res.data.IsSuccess) {
-                        //console.log(res.data);
+                    if (res.data.IsSuccess) {                      
                         showToastMessage(res.data.ErrorMessage, "Success");
                         this.getAllCOGS();
                     } else {
@@ -57,7 +56,6 @@ export default class DashCOGSSetup extends Component {
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");
                     }
-
                     this.setState({ loading:false });
                 })
                 .catch(function (error) {
@@ -99,18 +97,19 @@ export default class DashCOGSSetup extends Component {
     getAllCOGS() {
         api
             .get(`GetAllCOGS`)
-            .then((res) => {
-                console.log('backend responce to GET GetAllCOGS', res)
+            .then((res) => {                
+                this.setState({                   
+                    loading:false
+                }); 
                 if (res.data.IsSuccess) {
                     this.setState({
-                        data: res.data.LstCOGSTable,
-                        loading:false
+                        data: res.data.LstCOGSTable                      
                     });                   
                 } else {
                     this.setState({
                         apiError: res.data.ErrorMessage
                     })                  
-                }                             
+                }                       
             })
             .catch(function (error) {
                 console.log(error);              
@@ -147,13 +146,13 @@ export default class DashCOGSSetup extends Component {
                 .post(`UpdateCOGS`, this.lstEditedCOGS)
                 .then((res) => {
                     console.log('backend responce to GET UpdateCOGS', res)
+                    this.setState({ loading: false });
                     if (res.data.IsSuccess) {
                         showToastMessage(res.data.ErrorMessage, "Success");
                         this.getAllCOGS();                        
                     } else {
                         this.setState({
-                            apiError: res.data.ErrorMessage,
-                            loading:false
+                            apiError: res.data.ErrorMessage                           
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");                      
                     }                    

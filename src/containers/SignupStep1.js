@@ -168,12 +168,6 @@ class SignupStep1 extends Component {
           this.props.setSignupEmail(res.config.data.email);
           this.props.setSignupId(res.data.UserInfo.ClientID);
           this.updateSignup();
-          
-          //TODO : dynamic message should come
-    showToastMessage("User account is created successfully.", "Success"); 
-
-         // this.props.setSignupAuthStep(      this.props.signupAuthStep + 1    )
-    
         } else {
           if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
             this.recaptchaRef.reset && this.recaptchaRef.reset()
