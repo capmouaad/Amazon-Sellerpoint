@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import api from '../../services/Api';
 
 export default class ImportProgress extends Component {
