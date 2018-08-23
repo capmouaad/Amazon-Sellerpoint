@@ -6,6 +6,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { withRouter } from 'react-router-dom'
 
 import { setSignupStep, setSignupEmail, setSignupId, setSignupFields } from '../actions/signup';
+import {  setAuthToken  } from '../actions/login';
 import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
@@ -48,6 +49,7 @@ class SignupStep1 extends Component {
     setSignupId: PropTypes.func,
     setSignupEmail: PropTypes.func,
     setSignupFields: PropTypes.func,
+    setAuthToken: PropTypes.func,
   };
 
   constructor(props) {
@@ -167,6 +169,7 @@ class SignupStep1 extends Component {
           // this.props.setSignupId(res.data.id); // TODO
           this.props.setSignupEmail(res.config.data.email);
           this.props.setSignupId(res.data.UserInfo.ClientID);
+          this.props.setAuthToken(res.data.AuthToken);
           this.updateSignup();
         } else {
           if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
@@ -383,7 +386,8 @@ const mapDispatchToProps = (dispatch) => ({
   setSignupStep: (data) => dispatch(setSignupStep(data)),
   setSignupFields: (data) => dispatch(setSignupFields(data)),
   setSignupEmail: (data) => dispatch(setSignupEmail(data)),
-  setSignupId: (data) => dispatch(setSignupId(data))
+  setSignupId: (data) => dispatch(setSignupId(data)),
+  setAuthToken: (data) => dispatch(setAuthToken(data))
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SignupStep1));
