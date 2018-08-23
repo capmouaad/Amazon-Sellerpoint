@@ -9,11 +9,11 @@ function MyLoadable(opts) {
   }, opts));
 };
 
-export const Home = MyLoadable({
-  loader: () => import("./pages/Home"),
-  modules: ['./pages/Home'],
-  webpack: () => [require.resolveWeak('./pages/Home')]
-});
+// export const Home = MyLoadable({
+//   loader: () => import("./pages/Home"),
+//   modules: ['./pages/Home'],
+//   webpack: () => [require.resolveWeak('./pages/Home')]
+// });
 export const Dashboard = MyLoadable({
   loader: () => import("./pages/Dashboard"),
   modules: ['./pages/Dashboard'],
@@ -44,8 +44,8 @@ export const routes = [
   {
     isExact: true,
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Login',
+    component: Login
   },
   {
     isExact: true,
