@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import YouTube from 'react-youtube';
+import api from '../services/Api';
 
-class VideoList extends Component {
-
+export default class VideoList extends Component {
   render(){
-
     const videoList = [
       {
         name: "NAVIGATION",
@@ -52,9 +51,19 @@ class VideoList extends Component {
   }
 }
 
-
 const VideoEl = (props) => {
   const { name, desc, videoIdYouTube } = props
+
+  const _onPlay = (event) =>{
+    api
+      .post(`VideoWatched`)
+      .then((res) => {
+        console.log('back-end responce to post videowatched', res)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   return(
     <div className="video-list__col">
@@ -63,6 +72,7 @@ const VideoEl = (props) => {
           <div className="video-element__frame">
             <YouTube
               videoId={videoIdYouTube}
+              onPlay={_onPlay}
               opts={{
                 height: '100%',
                 width: '100%',
@@ -85,5 +95,3 @@ const VideoEl = (props) => {
     </div>
   )
 }
-
-export default VideoList
