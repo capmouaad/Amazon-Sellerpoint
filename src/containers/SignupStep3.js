@@ -7,6 +7,7 @@ import { setSignupStep } from '../actions/signup';
 import FormLoader from '../components/Forms/FormLoader';
 import ConnectMarketplaces from '../components/ConnectMarketplaces';
 import api from '../services/Api'
+import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
 
 
 class SignupStep3 extends Component {
@@ -69,8 +70,14 @@ class SignupStep3 extends Component {
     }
 
     const ressignup = await api.post('SignUpComplete');
+
+
+
     if (!ressignup.data.IsSuccess) {
       throw new Error(ressignup.data.ErrorMessage)
+    } else {
+      this.props.onGoBackMarket && this.props.onGoBackMarket()
+      this.props.setAddMarketStep(1)
     }
   }
 
@@ -130,6 +137,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   setSignupStep: (data) => dispatch(setSignupStep(data)),
+  setAddMarketStep: (data) => dispatch({ type: SET_ADD_MARKET_STEP, payload: data })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignupStep3);
