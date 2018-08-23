@@ -90,7 +90,7 @@ class Login extends Component {
                 this.props.setAuthToken(AuthToken);
                 this.props.setSignupId(UserInfo.ClientID)
 
-                if (!UserInfo.KMASignUpCompleted) {
+                if (UserInfo.KMASignUpCompleted === false && UserInfo.KMACurrentStep) {
                     switch (UserInfo.KMACurrentStep) {
                         case APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.key:
                             setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step)
@@ -111,7 +111,7 @@ class Login extends Component {
                 const importStatusRes = await api.get(`GetDataImportStatus?clientid=${UserInfo.ClientID}`)
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
-                   setDataImportComplete(true)
+                    setDataImportComplete(true)
                 }
 
                 this.setState({
