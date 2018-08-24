@@ -219,10 +219,14 @@ updateExistingSKUGroup =()=>{
         api
   .post(`UpdateGroupSKUsChild`, {groupSKUId:this.parentGroupId, skuIds: this.skuIds})
   .then((res) => {    
+    this.setState({ loading:false    })
+
       if (res.data.IsSuccess) {   
         showToastMessage(res.data.ErrorMessage, "Success");   
           this.skuIds=[];
           this.parentGroupId=0;
+          this.onCloseModal();
+          this.getUngroupedSKUs();
       } else {
           this.setState({
               apiError: res.data.ErrorMessage,
@@ -305,7 +309,7 @@ ungroupAllSKUs(){
       if (res.data.IsSuccess) {      
         showToastMessage(res.data.ErrorMessage, "Success");   
         this.onCloseModal();
-        this.getUngroupedSKUs();
+       this.getUngroupedSKUs();
         this.getGroupedSKUs();
       } else {
           this.setState({
@@ -385,12 +389,12 @@ else{
 }
 
 renderMerchantListingId=(cellInfo)=>{
-  return (<input type="checkbox" defaultValue={cellInfo.original.MerchantListingId} 
+  return (<input type="checkbox" key={cellInfo.original.MerchantListingId} defaultValue={cellInfo.original.MerchantListingId} 
   onChange={this.checkboxChangedEvent}/>
 )}
 
 renderRadioBtnMerchantListingId=(cellInfo)=>{   
-    return (<input type="radio" defaultValue={cellInfo.original.MerchantListingId} name="SKUGroups" 
+    return (<input type="radio" key={cellInfo.original.MerchantListingId} defaultValue={cellInfo.original.MerchantListingId} name="SKUGroups" 
     onChange={(e)=>{
        this.parentGroupId=e.target.value;
        console.log(this.parentGroupId);
