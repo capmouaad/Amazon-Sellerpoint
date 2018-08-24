@@ -47,8 +47,8 @@ export default class DashCOGSSetup extends Component {
                     if (res.data.IsSuccess) {                      
                         showToastMessage(res.data.ErrorMessage, "Success");
                         //close the popup window after updation
-                        this.onCloseModal();
-                        this.getAllCOGS();
+                        //this.onCloseModal();
+                        //this.getAllCOGS();
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage
@@ -325,16 +325,15 @@ export default class DashCOGSSetup extends Component {
                                     </div>
                                     <div className="upload-btn mt-20">
                                     
-                                    <a className="btn btn-primary btn-new-marketplace" id="btnUpload">Upload CSV template</a>
-                                    
-                                        <span id="filename">{filename}</span>
-                                        <section>
-                                            <div className="dropzone">
+                                    <a className="btn btn-primary btn-new-marketplace" id="btnUpload">Upload CSV template
+                                                                    
+                                          
                                                 <Dropzone onDrop={this.onDrop.bind(this)} accept=".xlsx">                                                   
                                                 </Dropzone>
-                                            </div>
-
-                                        </section>
+                                        </a>
+                                    
+                                        <span id="filename">{filename}</span>
+                                       
                                     </div>                                  
                                                           </div>
 
