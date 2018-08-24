@@ -8,7 +8,7 @@ import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
 import { setSignupStep } from '../actions/signup';
-import { RESET_STATE_SIGNUP } from '../store/ActionTypes';
+import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
@@ -89,6 +89,15 @@ class Login extends Component {
                 this.props.logIn(UserInfo);
                 this.props.setAuthToken(AuthToken);
                 this.props.setSignupId(UserInfo.ClientID)
+                this.props.setStatusProgress({
+                    finaceDataProgress: 0,
+                    reportDataProgress: 0,
+                    adDataProgress: 0
+                })
+                this.props.setNavbarDashboard({
+                    dashboards: [],
+                    settings: []
+                })
 
                 if (UserInfo.KMASignUpCompleted === false && UserInfo.KMACurrentStep) {
                     switch (UserInfo.KMACurrentStep) {
@@ -221,6 +230,8 @@ const mapDispatchToProps = (dispatch) => ({
     setSignupStep: (data) => dispatch(setSignupStep(data)),
     setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
     resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
+    setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }) 
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

@@ -2,7 +2,16 @@ import * as types from '../store/ActionTypes';
 
 const initialState = {
   menuOpened: false,
-  stateClass: ''
+  stateClass: '',
+  navDashboard: {
+    dashboards: [],
+    settings: []
+  },
+  statusProgress: {
+    adDataProgress: 0,
+    finaceDataProgress: 0,
+    reportDataProgress: 0
+  }
 }
 
 const header = (state = initialState, action) => {
@@ -24,6 +33,16 @@ const header = (state = initialState, action) => {
       return {
         ...state,
         stateClass: action.payload
+      }
+    case types.SET_NAVBAR_DASHBOARD:
+      return {
+        ...state,
+        navDashboard: action.payload
+      }
+    case types.SET_STATUS_PROGRESS:
+      return {
+        ...state,
+        statusProgress: action.payload
       }
 
     default:
