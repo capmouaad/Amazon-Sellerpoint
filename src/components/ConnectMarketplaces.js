@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import api from '../services/Api'
+import { setSignupFields } from '../actions/signup';
 
-class ConnectMarketplaces extends Component{
+class ConnectMarketplaces extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -12,7 +13,7 @@ class ConnectMarketplaces extends Component{
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getSellerMarketplaces();
   }
 
@@ -22,17 +23,17 @@ class ConnectMarketplaces extends Component{
       .then((res) => {
         console.log('backend responce to GET GetSellerMarketPlaces', res)
 
-        if ( res.data.IsSuccess ){
+        if (res.data.IsSuccess) {
 
           // filter out unavaiable ?
-          const availableMarketplaces = res.data.Marketplaces.filter( x => x.IsAdvertisingAvailable)
+          const availableMarketplaces = res.data.Marketplaces.filter(x => x.IsAdvertisingAvailable)
 
           this.setState({
             sellerMarketplaces: availableMarketplaces
           })
         } else {
 
-          if ( this.props.onApiError ){
+          if (this.props.onApiError) {
             this.props.onApiError(res.data.ErrorMessage)
           }
         }
@@ -44,49 +45,56 @@ class ConnectMarketplaces extends Component{
   }
 
 
-  connectMarketplace = (marketPlaceId, sellerId) => {
+  connectMarketplace = (sellerId) => {
     const { LWA } = this.props;
+    this.props.setSignupFields({ // update redux store
+      ...this.props.signupFields,
+      seller_id: sellerId,
+    })
+    this.LWAAuth();
+    this.props.onFormSubmited(false)
 
-    if ( !LWA || !LWA.resp.code ){
-      this.LWAAuth();
-    } else {
+    // if ( !LWA || !LWA.resp.code ){
+    //   this.LWAAuth();
+    //   this.props.onFormSubmited(false)
+    // } else {
 
-      this.props.onFormSubmited(true)
+    //   this.props.onFormSubmited(true)
 
-      const obj = {
-        code: LWA.resp.code,
-        scope: LWA.resp.scope,
-        sellerId: sellerId
-      }
+    //   const obj = {
+    //     code: LWA.resp.code,
+    //     scope: LWA.resp.scope,
+    //     sellerId: sellerId
+    //   }
 
-      api
-        .post(`ConnectAdvertisingData`, obj)
-        .then((res) => {
-          console.log('backend responce to POST ConnectAdvertisingData', res)
+    //   api
+    //     .post(`ConnectAdvertisingData`, obj)
+    //     .then((res) => {
+    //       console.log('backend responce to POST ConnectAdvertisingData', res)
 
-          if ( res.data.IsSuccess ){
-            // options.push(marketPlaceId) // only push as it's imposible to deselect in design
+    //       if ( res.data.IsSuccess ){
+    //         // options.push(marketPlaceId) // only push as it's imposible to deselect in design
 
-            // this.setState({
-            //   connectedId: options
-            // })
+    //         // this.setState({
+    //         //   connectedId: options
+    //         // })
 
-            // instead of connectedID from state, just get new state from API
-            this.getSellerMarketplaces()
+    //         // instead of connectedID from state, just get new state from API
+    //         this.getSellerMarketplaces()
 
-          } else {
-            // refresh token (guessed error)
-            this.LWAAuth();
-          }
+    //       } else {
+    //         // refresh token (guessed error)
+    //         this.LWAAuth();
+    //       }
 
-          this.props.onFormSubmited(false) // set state in parent isFormSubmited
+    //       this.props.onFormSubmited(false) // set state in parent isFormSubmited
 
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
 
-    }
+    // }
   }
 
 
@@ -98,7 +106,7 @@ class ConnectMarketplaces extends Component{
 
   }
 
-  render(){
+  render() {
     const tableHeads = [
       "Marketplace Name",
       "Seller ID",
@@ -108,18 +116,18 @@ class ConnectMarketplaces extends Component{
 
     const { sellerMarketplaces } = this.state;
 
-    return(
+    return (
       <table className="signup__table">
         <thead>
           <tr>
-            { tableHeads.map( (name,index) => {
-              return ( <td key={index}>{name}</td> )
-            }) }
+            {tableHeads.map((name, index) => {
+              return (<td key={index}>{name}</td>)
+            })}
           </tr>
         </thead>
-        { sellerMarketplaces &&
+        {sellerMarketplaces &&
           <tbody>
-            { sellerMarketplaces.map( (mp, index) => {
+            {sellerMarketplaces.map((mp, index) => {
               const isConnected = mp.IsAdvertisingConnected
               return (
                 <tr key={index}>
@@ -129,15 +137,15 @@ class ConnectMarketplaces extends Component{
                   <td>
                     {isConnected ?
                       <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
-                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, mp.MarketPlaceId, mp.SellerId)}>Connect</span>
+                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, mp.SellerId)}>Connect</span>
                     }
                   </td>
                 </tr>
               )
-            })           
-          }
+            })
+            }
 
-           {(sellerMarketplaces.length===0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
+            {(sellerMarketplaces.length === 0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
           </tbody>
         }
       </table>
@@ -151,7 +159,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  // setSignupFields: (data) => dispatch(setSignupFields(data))
+  setSignupFields: (data) => dispatch(setSignupFields(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConnectMarketplaces);

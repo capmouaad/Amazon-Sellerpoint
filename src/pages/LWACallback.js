@@ -12,7 +12,7 @@ class LWACallback extends Component {
     location: PropTypes.object.isRequired
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -21,19 +21,17 @@ class LWACallback extends Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getLWAToken()
   }
 
   getLWAToken = async () => {
     try {
-      const { signupId, sellerId } = this.props;
+      const { sellerId } = this.props;
 
       const redirectResponce = this.props.location.search
       const authCode = this.getQueryVariable(redirectResponce, 'code')
       const authScope = this.getQueryVariable(redirectResponce, 'scope')
-      // const ClientID = "amzn1.application-oa2-client.c66f0420a8fc4c13a7abb409399d9944"
-      // const RedirectUri = window.location.origin + "/SellerPoint/LWACallback"
 
       this.props.setLwaAuth({
         code: authCode,
@@ -43,7 +41,6 @@ class LWACallback extends Component {
       const obj = {
         code: authCode,
         scope: authScope,
-        clientId: signupId,
         sellerId: sellerId
       }
 
@@ -74,7 +71,7 @@ class LWACallback extends Component {
   render() {
     const { shouldRedirect } = this.state;
 
-    if ( shouldRedirect ){
+    if (shouldRedirect) {
       return <Redirect to={`${process.env.PUBLIC_URL}/signup/step-3`} />
     }
 
@@ -89,13 +86,12 @@ class LWACallback extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  signupId: state.signup.signupId,
   sellerId: state.signup.fields.seller_id,
   LWA: state.lwa
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    setLwaAuth: (data) => dispatch(setLwaAuth(data)),
+  setLwaAuth: (data) => dispatch(setLwaAuth(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LWACallback);
