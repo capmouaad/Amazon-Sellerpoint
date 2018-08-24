@@ -12,19 +12,19 @@ import { APP_CONFIG } from '../constants'
 
 class ForgotPassword extends Component {
     static propTypes = {
-        setHeaderClass: PropTypes.func.isRequired,       
+        setHeaderClass: PropTypes.func.isRequired,
         setAuthToken: PropTypes.func.isRequired
     };
 
     constructor(props) {
-        super(props);    
-        this.state={
-            isFormSubmited:false,
+        super(props);
+        this.state = {
+            isFormSubmited: false,
             apiError: null,
-            email:"",
-            formIsValid:false
-        }    
-    }    
+            email: "",
+            formIsValid: false
+        }
+    }
 
     componentDidMount() {
         this.props.setHeaderClass('header--logo-only');
@@ -50,56 +50,56 @@ class ForgotPassword extends Component {
         }
     };
 
-    forgotPasswordSubmit = async () => {     
-            try {
-                const { email} = this.state; 
+    forgotPasswordSubmit = async () => {
+        try {
+            const { email } = this.state;
+            this.setState({
+                isFormSubmited: true // reset submit status
+            })
+            const forgotPasswordData = {
+                userEmail: email
+            }
+            const forgotPasswordRes = await api.post(`ForgotPassword`, forgotPasswordData)
+            console.log('backend responce to POST ForgotPassword ', forgotPasswordRes)
+
+            const { IsSuccess } = forgotPasswordRes.data;
+            if (IsSuccess) {
                 this.setState({
-                    isFormSubmited: true // reset submit status
-                })    
-                const forgotPasswordData={
-                    userEmail: email
-                }
-                const forgotPasswordRes = await api.post(`ForgotPassword`, forgotPasswordData)
-                console.log('backend responce to POST ForgotPassword ', forgotPasswordRes)
-    
-                const { IsSuccess } = forgotPasswordRes.data;
-                if (IsSuccess) {  
-                    this.setState({
-                        email:"",
-                    });                   
-                } else {
-                    this.setState({
-                        apiError: forgotPasswordRes.data.ErrorMessage
-                    })
-                }    
-                this.setState({                   
-                    isFormSubmited: false // reset submit status
+                    email: "",
+                });
+            } else {
+                this.setState({
+                    apiError: forgotPasswordRes.data.ErrorMessage
                 })
-            } catch (e) {
-                console.log(e)
-            }        
+            }
+            this.setState({
+                isFormSubmited: false // reset submit status
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    render() {  
-        const { email, apiError, isFormSubmited } = this.state;       
+    render() {
+        const { email, apiError, isFormSubmited } = this.state;
 
         return (
-            
+
             <div className="signup login">
                 <div className="container">
-                    <div className="login-container">                    
+                    <div className="login-container">
 
-                    <Formsy
-                            className="signup__form login-form" 
+                        <Formsy
+                            className="signup__form login-form"
                             onSubmit={this.submitForm}
                             onValidSubmit={this.handleSubmit}
                             onValid={this.formValid}
-                            onInvalid={this.formInvalid}                          
+                            onInvalid={this.formInvalid}
                             ref={this.formRef}
                         >
-                        <h2>Reset Password</h2>
-                         <p>We will send you an e-mail with instructions</p>
-                         <p>on how to reset your password</p>
+                            <h2>Reset Password</h2>
+                            <p>We will send you an e-mail with instructions</p>
+                            <p>on how to reset your password</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
@@ -118,16 +118,16 @@ class ForgotPassword extends Component {
                                     }}
                                     onChangeHandler={this.handleChange}
                                     required
-                                />                                
-                               
+                                />
+
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
                                 </div>
                                 <Link to='login' className="cancel-btn"> Cancel </Link>
- 
+
                             </div>
                         </Formsy>
-                        
+
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     setHeaderClass: (data) => dispatch(setHeaderClass(data)),
-    setAuthToken: (data) => dispatch(setAuthToken(data))  
+    setAuthToken: (data) => dispatch(setAuthToken(data))
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ForgotPassword));

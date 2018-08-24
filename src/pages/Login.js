@@ -154,7 +154,7 @@ class Login extends Component {
             <div className="signup login">
                 <div className="container">
                     <div className="login-container">
-                   
+
                         <Formsy
                             className="signup__form login-form"
                             onSubmit={this.submitForm}
@@ -163,15 +163,15 @@ class Login extends Component {
                             onInvalid={this.formInvalid}
                             ref={this.formRef}
                         >
-                         <h2>Sign In</h2>
-                         <p>Sign In to start using our powerful</p>
-                         <p>Business Intelligence tools</p>
+                            <h2>Sign In</h2>
+                            <p>Sign In to start using our powerful</p>
+                            <p>Business Intelligence tools</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
                                     <span className="ui-input-validation">{apiError}</span>
                                 }
-                                                                
+
                                 <FormInput
                                     name="email"
                                     label="Email"
@@ -183,26 +183,26 @@ class Login extends Component {
                                         isEmail: "This is not a valid email",
                                         isDefaultRequiredValue: 'Please enter email'
                                     }}
-                                    onChangeHandler={this.handleChange}                                  
-                                    required
-                                />
-                               
-                               <div className="password">
-                                <FormInput
-                                    name="password"
-                                    type="password" 
-                                    label="Password"
-                                    icon="lock.png"
-                                    placeholder=""
-                                    value={password}
                                     onChangeHandler={this.handleChange}
-                                    validationErrors={{
-                                        isDefaultRequiredValue: 'Please enter password'
-                                    }}
                                     required
                                 />
+
+                                <div className="password">
+                                    <FormInput
+                                        name="password"
+                                        type="password"
+                                        label="Password"
+                                        icon="lock.png"
+                                        placeholder=""
+                                        value={password}
+                                        onChangeHandler={this.handleChange}
+                                        validationErrors={{
+                                            isDefaultRequiredValue: 'Please enter password'
+                                        }}
+                                        required
+                                    />
                                 </div>
-                               
+
                                 <div className="login-remember ui-group">
                                     <CheckBox
                                         name="remember"
@@ -212,11 +212,11 @@ class Login extends Component {
                                     />
                                 </div>
                                 <Link to='forgotpassword' className="forgot"> Forgot Password? </Link>
-                                                       <div className="signup__form-cta">
+                                <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Login</button>
                                 </div>
                                 <Link to='signup' className="memeber"> Not a member? Sign up </Link>
-                                                           </div>
+                            </div>
                         </Formsy>
                     </div>
                 </div>
@@ -239,7 +239,7 @@ const mapDispatchToProps = (dispatch) => ({
     setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
     resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
     setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }) 
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
