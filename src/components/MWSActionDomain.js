@@ -62,7 +62,6 @@ class MWSActionDomain extends Component {
 
 
       const obj = {
-        clientId: this.props.signupId || this.props.clientId,
         sellerId: seller_id,
         authToken: mws_auth,
         marketplaces: filteredMarketplaces
@@ -166,8 +165,6 @@ class MWSActionDomain extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  signupId: state.signup.signupId,
-  clientId: state.login.userInfo.ClientID,
   signupFields: state.signup.fields,
   signupAuthStep: state.signup.signupAuthStep,
   sellerId:state.seller_id

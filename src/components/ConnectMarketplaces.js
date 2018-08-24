@@ -17,13 +17,8 @@ class ConnectMarketplaces extends Component{
   }
 
   getSellerMarketplaces = () => {
-    const { signupId, clientId } = this.props
     api
-      .get(`GetSellerMarketPlaces`, {
-        params: {
-          ClientId: signupId || clientId
-        }
-      })
+      .get(`GetSellerMarketPlaces`)
       .then((res) => {
         console.log('backend responce to GET GetSellerMarketPlaces', res)
 
@@ -152,9 +147,7 @@ class ConnectMarketplaces extends Component{
 
 
 const mapStateToProps = (state) => ({
-  LWA: state.lwa,
-  clientId: state.login.userInfo.ClientID,
-  signupId: state.signup.signupId
+  LWA: state.lwa
 });
 
 const mapDispatchToProps = (dispatch) => ({

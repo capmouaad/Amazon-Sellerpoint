@@ -108,7 +108,7 @@ class Login extends Component {
                     this.props.resetSignUp()
                 }
 
-                const importStatusRes = await api.get(`GetDataImportStatus?clientid=${UserInfo.ClientID}`)
+                const importStatusRes = await api.get(`GetDataImportStatus`)
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
@@ -195,12 +195,10 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-                                <a href={`${process.env.PUBLIC_URL}/forgotpassword`}>Forgot password</a>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Login</button>
                                 </div>
 
-                                <a href={`${process.env.PUBLIC_URL}/signup`} className="pull-right">Not a member? Sign Up</a>
                             </div>
                         </Formsy>
                     </div>

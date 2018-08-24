@@ -43,7 +43,6 @@ class LWACallback extends Component {
       const obj = {
         code: authCode,
         scope: authScope,
-        clientId: signupId,
         sellerId: sellerId
       }
 
