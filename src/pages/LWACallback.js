@@ -43,16 +43,18 @@ class LWACallback extends Component {
       const obj = {
         code: authCode,
         scope: authScope,
+        clientId: signupId,
         sellerId: sellerId
       }
 
       const res = await api.post(`ConnectAdvertisingData`, obj)
-      console.log('backend responce to POST ConnectAdvertisingData', res)
+      console.log('>>>>>>> backend response to POST ConnectAdvertisingData', res)
 
       this.setState({
         shouldRedirect: true
       })
     } catch (e) {
+      console.log('>>>> backend response error to POST ConnectAdvertisingData')
       console.error(e)
     }
   }

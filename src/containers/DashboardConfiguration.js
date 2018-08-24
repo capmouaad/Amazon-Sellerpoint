@@ -5,6 +5,10 @@ import PropTypes from 'prop-types';
 
 import { setHeaderClass } from '../actions/header';
 import DashboardNavTabs from '../components/DashCommon/DashboardNavTabs';
+import DashMarketplaceConfig from '../components/DashSettings/DashMarketplaceConfig'
+import DashCOGSSetup from '../components/DashSettings/DashCOGSSetup'
+import DashSKUASINGrouping from '../components/DashSettings/DashSKUASINGrouping'
+import DashNotifications from '../components/DashSettings/DashNotifications'
 
 class DashboardConfiguration extends Component {
   static propTypes = {
@@ -15,8 +19,24 @@ class DashboardConfiguration extends Component {
     this.props.setHeaderClass('header--dash');
   }
 
+  renderRouteComponent = (route) => {
+    switch (route.name) {
+      case 'COGS Setup':
+        return DashCOGSSetup
+      case 'SKU/ASIN Grouping':
+        return DashSKUASINGrouping
+      case 'Marketplace Configuration':
+        return DashMarketplaceConfig
+      case 'Notifications':
+        return DashNotifications
+      default:
+        return null
+    }
+  }
+
   render(){
-    const { listNav } = this.props
+    const { navDashboard } = this.props // from the router
+    const { settings } = navDashboard
 
     if ( !this.props.authToken ){
       return (
@@ -26,15 +46,15 @@ class DashboardConfiguration extends Component {
     return (
       <React.Fragment>       
         <DashboardNavTabs
-          routes={listNav}
+          routes={settings}
           modifierClass="dash-nav--without-progress"
         />
-         {listNav.map(route => (
+         {settings.map(route => (
             <Route
               key={route.path}
               exact={route.isExact}
               path={process.env.PUBLIC_URL + route.path}
-              component={route.component}
+              component={this.renderRouteComponent(route)}
             />
           ))}
       </React.Fragment>
@@ -45,7 +65,8 @@ class DashboardConfiguration extends Component {
 
 const mapStateToProps = (state) => (
   {
-    authToken: state.login.authToken
+    authToken: state.login.authToken,
+    navDashboard: state.header.navDashboard
   }
 );
 

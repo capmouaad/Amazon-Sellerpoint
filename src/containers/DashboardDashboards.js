@@ -7,6 +7,10 @@ import ImportProgress from '../components/DashCommon/ImportProgress';
 import DashboardNavTabs from '../components/DashCommon/DashboardNavTabs';
 
 import { setHeaderClass } from '../actions/header';
+import DashFinancialPerformance from '../components/DashDashboards/DashFinancialPerformance'
+import DashBusinessResults from '../components/DashDashboards/DashBusinessResults'
+import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
+import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
 
 class DashboardDashboards extends Component {
   static propTypes = {
@@ -16,9 +20,25 @@ class DashboardDashboards extends Component {
   componentDidMount(){
     this.props.setHeaderClass('header--dash');
   }
+  
+  renderRouteComponent = (route) => {
+    switch (route.name) {
+      case 'Financial Performance':
+        return DashFinancialPerformance
+      case 'Business Results':
+        return DashBusinessResults
+      case 'Operational Performance':
+        return DashOperationalPerformance
+      case 'Advertising Performance':
+        return DashAdvertisingPerformance
+      default:
+        return null
+    }
+  }
 
   render(){
-    const { listNav } = this.props // from the router
+    const { navDashboard } = this.props // from the router
+    const { dashboards } = navDashboard
 
     if ( !this.props.authToken ){
       return (
@@ -28,15 +48,15 @@ class DashboardDashboards extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
-        <DashboardNavTabs routes={listNav} />
+        <DashboardNavTabs routes={dashboards} />
 
         <div className="dash">
-          {listNav.map(route => (
+          {dashboards.map(route => (
             <Route
               key={route.path}
               exact={route.isExact}
               path={process.env.PUBLIC_URL + route.path}
-              component={route.component}
+              component={this.renderRouteComponent(route)}
             />
           ))}
         </div>
@@ -48,7 +68,8 @@ class DashboardDashboards extends Component {
 
 const mapStateToProps = (state) => (
   {
-    authToken: state.login.authToken
+    authToken: state.login.authToken,
+    navDashboard: state.header.navDashboard
   }
 );
 

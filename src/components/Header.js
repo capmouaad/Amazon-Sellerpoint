@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
-import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK, RESET_STATE_SIGNUP } from '../store/ActionTypes';
+import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes';
 import { setQlikConnection, setQlikInstance } from '../actions/qlik'
 import { logOut } from '../actions/login';
 
@@ -76,6 +76,15 @@ class Header extends React.Component {
       // reset qlik connection redux
       this.props.setQlikConnection(false)
       this.props.setQlikInstance(null)
+      this.props.setStatusProgress({
+        finaceDataProgress: 0,
+        reportDataProgress: 0,
+        adDataProgress: 0
+    })
+    this.props.setNavbarDashboard({
+        dashboards: [],
+        settings: []
+    })
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
@@ -200,6 +209,8 @@ const mapDispatchToProps = (dispatch) => ({
   setQlikConnection: (data) => dispatch(setQlikConnection(data)),
   setQlikInstance: (data) => dispatch(setQlikInstance(data)),
   resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
+  setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
+  setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }), 
   logOut: () => dispatch(logOut())
 });
 

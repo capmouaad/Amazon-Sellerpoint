@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import App from './App';
 import './css/app.css';
+import 'font-awesome/css/font-awesome.min.css'
 
 // hyndrate is a method for react-snap for a simple Server side rendering=
 const rootElement = document.getElementById('root');
