@@ -12,6 +12,7 @@ export default class DashSKUASINGrouping extends Component {
 skuIds =[];
 parentSKUId=0;
 parentGroupId=0;
+pageSizeOptions=[10, 25, 50, 100];
 
 commonColumns=[                                        
      {
@@ -496,6 +497,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         className="-striped -highlight"
                                         nextText=">>"
                                         previousText="<<"
+                                        pageSizeOptions={this.pageSizeOptions}
                                     />
                                     </div>
 
@@ -517,6 +519,7 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         className="-striped -highlight"
                                         nextText=">>"
                                         previousText="<<"
+                                        pageSizeOptions={this.pageSizeOptions}
                                         getTrProps={(state,rowInfo) => {
                                           return {
                                             onClick: (e) => {                                            
@@ -571,7 +574,8 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
-                                        previousText="<<"                                      
+                                        previousText="<<" 
+                                        pageSizeOptions={this.pageSizeOptions}                                     
                                     />
                             </div>
                                 </div>
@@ -617,7 +621,8 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
-                                        previousText="<<"                                      
+                                        previousText="<<"   
+                                        pageSizeOptions={this.pageSizeOptions}                                   
                                     />
 
                                     
@@ -664,7 +669,8 @@ getChildSKUByParentSKUId=(parentId)=>{
                                         defaultPageSize={10}
                                         className="-striped -highlight"
                                         nextText=">>"
-                                        previousText="<<"                                       
+                                        previousText="<<" 
+                                        pageSizeOptions={this.pageSizeOptions}                                      
                                     />
 
                                      <div className="text-centre mt-20">

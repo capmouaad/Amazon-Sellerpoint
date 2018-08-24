@@ -211,11 +211,11 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-                                <Link to={`${process.env.PUBLIC_URL}/forgotpassword`} className="forgot"> Forgot Password? </Link>
+                                <Link to='forgotpassword' className="forgot"> Forgot Password? </Link>
                                                        <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Login</button>
                                 </div>
-                                <Link to={`${process.env.PUBLIC_URL}/forgotpassword`} className="memeber"> Not a member? Sign up </Link>
+                                <Link to='signup' className="memeber"> Not a member? Sign up </Link>
                                                            </div>
                         </Formsy>
                     </div>

@@ -11,7 +11,8 @@ import Toaster, {showToastMessage} from '../../services/toasterNotification'
 export default class DashCOGSSetup extends Component {
 
      lstEditedCOGS = [];  
-   
+     pageSizeOptions=[10, 25, 50, 100];
+
     constructor() {
         super();
         this.state = {
@@ -275,6 +276,7 @@ export default class DashCOGSSetup extends Component {
                                         className="-striped -highlight"
                                         nextText=">>"
                                         previousText="<<"
+                                        pageSizeOptions={this.pageSizeOptions}
                                     />
                                     <br />
 
