@@ -82,6 +82,7 @@ class ConnectMarketplaces extends Component {
           <tbody>
             {sellerMarketplaces.map((mp, index) => {
               const isConnected = mp.IsAdvertisingConnected
+              const isAvailable = mp.IsAdvertisingAvailable
               return (
                 <tr key={index}>
                   <td><span className="for-desktop">{tableHeads[0]}</span>{mp.Name}</td>
@@ -90,7 +91,9 @@ class ConnectMarketplaces extends Component {
                   <td>
                     {isConnected ?
                       <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
-                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, this.props.advState, mp.SellerId)}>Connect</span>
+                      isAvailable?
+                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, this.props.advState, mp.SellerId)}>Connect</span>:
+                      <span className="signup__table-connection"> Not Available</span>
                     }
                   </td>
                 </tr>
