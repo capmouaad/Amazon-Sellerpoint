@@ -175,7 +175,7 @@ class Login extends Component {
                                 <FormInput
                                     name="email"
                                     label="Email"
-                                    icon="mail.png"
+                                    
                                     placeholder="jennifer@saleswarehouse.com"
                                     value={email}
                                     validations="isEmail"
@@ -192,7 +192,7 @@ class Login extends Component {
                                         name="password"
                                         type="password"
                                         label="Password"
-                                        icon="lock.png"
+                                        
                                         placeholder=""
                                         value={password}
                                         onChangeHandler={this.handleChange}

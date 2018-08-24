@@ -108,7 +108,7 @@ class ForgotPassword extends Component {
                                 <FormInput
                                     name="email"
                                     label="Email"
-                                    icon="mail.png"
+                                    
                                     placeholder="jennifer@saleswarehouse.com"
                                     value={email}
                                     validations="isEmail"
