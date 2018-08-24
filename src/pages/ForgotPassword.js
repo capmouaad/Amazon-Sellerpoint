@@ -123,7 +123,8 @@ class ForgotPassword extends Component {
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
                                 </div>
-                                <Link to='login' className="cancel-btn"> Cancel </Link>
+
+                                <Link to='/login' className="cancel-btn"> Cancel </Link>
 
                             </div>
                         </Formsy>
