@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect, withRouter } from 'react-router-dom';
+import { Redirect, withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
 import api from '../services/Api';
@@ -162,9 +162,11 @@ class Login extends Component {
                                 {apiError &&
                                     <span className="ui-input-validation">{apiError}</span>
                                 }
+                                                                
                                 <FormInput
                                     name="email"
                                     label="Email"
+                                    icon="mail.png"
                                     placeholder="jennifer@saleswarehouse.com"
                                     value={email}
                                     validations="isEmail"
@@ -172,13 +174,16 @@ class Login extends Component {
                                         isEmail: "This is not a valid email",
                                         isDefaultRequiredValue: 'Please enter email'
                                     }}
-                                    onChangeHandler={this.handleChange}
+                                    onChangeHandler={this.handleChange}                                  
                                     required
                                 />
+                               
+                               <div className="password">
                                 <FormInput
                                     name="password"
-                                    type="password"
+                                    type="password" 
                                     label="Password"
+                                    icon="lock.png"
                                     placeholder=""
                                     value={password}
                                     onChangeHandler={this.handleChange}
@@ -187,6 +192,8 @@ class Login extends Component {
                                     }}
                                     required
                                 />
+                                </div>
+                               
                                 <div className="login-remember ui-group">
                                     <CheckBox
                                         name="remember"
@@ -195,11 +202,12 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-                                <div className="signup__form-cta">
+                                <Link to={`${process.env.PUBLIC_URL}/forgotpassword`} className="forgot"> Forgot Password? </Link>
+                                                       <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Login</button>
                                 </div>
-
-                            </div>
+                                <Link to={`${process.env.PUBLIC_URL}/forgotpassword`} className="memeber"> Not a member? Sign up </Link>
+                                                           </div>
                         </Formsy>
                     </div>
                 </div>

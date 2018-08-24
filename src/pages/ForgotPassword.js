@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { setHeaderClass } from '../actions/header';
 import { setAuthToken } from '../actions/login';
@@ -108,6 +108,7 @@ class ForgotPassword extends Component {
                                 <FormInput
                                     name="email"
                                     label="Email"
+                                    icon="mail.png"
                                     placeholder="jennifer@saleswarehouse.com"
                                     value={email}
                                     validations="isEmail"
@@ -122,7 +123,8 @@ class ForgotPassword extends Component {
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
                                 </div>
-                                <a href={`${process.env.PUBLIC_URL}/login`} className="cancel-btn" >Cancel</a>
+                                <Link to={`${process.env.PUBLIC_URL}/login`} className="cancel-btn"> Cancel </Link>
+ 
                             </div>
                         </Formsy>
                         
