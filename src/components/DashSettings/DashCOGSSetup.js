@@ -1,4 +1,4 @@
-import React, { Component, ReactHTMLElement } from 'react';
+import React, { Component } from 'react';
 import api, { BACKEND_URL}from '../../services/Api';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
@@ -10,20 +10,16 @@ import Toaster, {showToastMessage} from '../../services/toasterNotification'
 
 export default class DashCOGSSetup extends Component {
 
-     lstEditedCOGS = [];   
-    state = {
-        data: [],
-        open: false,
-        filename: ''              
-    };
-
+     lstEditedCOGS = [];  
+   
     constructor() {
         super();
         this.state = {
             data: [],
             open: false,
             loading:true,
-            expanded:true                 
+            expanded:true,
+            filename:''                 
         };     
         this.getAllCOGS();
         this.renderLandedCost = this.renderLandedCost.bind(this);  
@@ -47,16 +43,18 @@ export default class DashCOGSSetup extends Component {
                 .post(`UploadCogsData`, data)
                 .then((res) => {
                     console.log('backend responce to GET UploadCogsData', res)
+                    this.setState({ loading:false });
                     if (res.data.IsSuccess) {                      
                         showToastMessage(res.data.ErrorMessage, "Success");
+                        //close the popup window after updation
+                        this.onCloseModal();
                         this.getAllCOGS();
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");
-                    }
-                    this.setState({ loading:false });
+                    }                   
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -337,11 +335,8 @@ export default class DashCOGSSetup extends Component {
                                             </div>
 
                                         </section>
-                                    </div>
-                                    <div id="my-awesome-dropzone" className="dropzone dropzone-block" enctype='multipart/form-data'>
-                                    </div>
-                              
-                            </div>
+                                    </div>                                  
+                                                          </div>
 
                         </div>
                     </div>
