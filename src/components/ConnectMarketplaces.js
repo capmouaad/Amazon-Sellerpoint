@@ -27,7 +27,7 @@ class ConnectMarketplaces extends Component {
         if (res.data.IsSuccess) {
 
           this.setState({
-            sellerMarketplaces:  res.data.Marketplaces;
+            sellerMarketplaces:  res.data.Marketplaces
           })
         } else {
 
