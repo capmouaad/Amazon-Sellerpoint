@@ -3,21 +3,19 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { setSignupStep } from '../actions/signup';
-// import SvgIcon from '../components/SvgIcon';
 import FormLoader from '../components/Forms/FormLoader';
 import ConnectMarketplaces from '../components/ConnectMarketplaces';
 import api from '../services/Api'
 import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
-
+import { APP_CONFIG } from '../constants'
 
 class SignupStep3 extends Component {
 
   static propTypes = {
     setSignupStep: PropTypes.func,
-    // setSignupFields: PropTypes.func
   };
 
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -62,8 +60,8 @@ class SignupStep3 extends Component {
   }
 
   compleateSignupOnBackend = async () => {
-    if (this.state.isAdvertisingOptedOut){      
-      const resAd = await api.post('AdvertisingOptOut', {sellerId : this.props.sellerId});
+    if (this.state.isAdvertisingOptedOut) {
+      const resAd = await api.post('AdvertisingOptOut', { sellerId: this.props.sellerId });
       if (!resAd.data.IsSuccess) {
         throw new Error(resAd.data.ErrorMessage)
       }
@@ -88,40 +86,40 @@ class SignupStep3 extends Component {
     })
   }
 
-  render () {
+  render() {
     const { shouldRedirect, isFormSubmited, apiError, error } = this.state;
-    // const { signupFields } = this.props;
 
-    if ( shouldRedirect ){
+    if (shouldRedirect) {
       return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
     }
 
-    return(
+    return (
       <div className="signup__container signup__container--wide">
-        <div className={"loader-container " + (isFormSubmited ? "is-loading" : null) }>
+        <div className={"loader-container " + (isFormSubmited ? "is-loading" : null)}>
           <FormLoader />
-          { apiError &&
+          {apiError &&
             <span className="ui-input-validation">{apiError}</span>
           }
-            <div className="signup__form">
-              <div className="signup__heading">Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns</div>
-              <ConnectMarketplaces
-                onApiError={this.setApiError}
-                onFormSubmited={this.onFormSubmited}
-              />
-               <div className="signup__form-cta signup__form-cta--centered">
-               <input type="checkbox"onChange={this.onCheckedInput}/> I don't have advertising data to connect
+          <div className="signup__form">
+            <div className="signup__heading">Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns</div>
+            <ConnectMarketplaces
+              advState={APP_CONFIG.LWA_Source.SignUpStep3.state}
+              onApiError={this.setApiError}
+              onFormSubmited={this.onFormSubmited}
+            />
+            <div className="signup__form-cta signup__form-cta--centered">
+              <input type="checkbox" onChange={this.onCheckedInput} /> I don't have advertising data to connect
               </div>
 
-              <div className="signup__form-cta signup__form-cta--centered">
-                <span onClick={this.compleateSignup} className="btn btn-signup btn--block">Complete</span>
-              </div>
-              {
-                error && <div style={{ display: 'block', textAlign: 'center', paddingTop: '10px'}}>
+            <div className="signup__form-cta signup__form-cta--centered">
+              <span onClick={this.compleateSignup} className="btn btn-signup btn--block">Complete</span>
+            </div>
+            {
+              error && <div style={{ display: 'block', textAlign: 'center', paddingTop: '10px' }}>
                 <span style={{ color: 'red', fontSize: 14 }}>{`Please click "Connect" to connect your advertising data or click the opt-out checkbox to continue`}</span>
               </div>
-              }
-            </div>
+            }
+          </div>
         </div>
       </div>
     )

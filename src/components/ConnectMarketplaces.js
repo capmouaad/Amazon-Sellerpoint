@@ -9,7 +9,8 @@ class ConnectMarketplaces extends Component {
     super(props)
 
     this.state = {
-      sellerMarketplaces: []
+      sellerMarketplaces: [],
+      advState: null
     }
   }
 
@@ -25,11 +26,8 @@ class ConnectMarketplaces extends Component {
 
         if (res.data.IsSuccess) {
 
-          // filter out unavaiable ?
-          const availableMarketplaces = res.data.Marketplaces.filter(x => x.IsAdvertisingAvailable)
-
           this.setState({
-            sellerMarketplaces: availableMarketplaces
+            sellerMarketplaces:  res.data.Marketplaces;
           })
         } else {
 
@@ -44,66 +42,21 @@ class ConnectMarketplaces extends Component {
 
   }
 
-
-  connectMarketplace = (sellerId) => {
+  connectMarketplace = (advState, sellerId) => {
     const { LWA } = this.props;
     this.props.setSignupFields({ // update redux store
       ...this.props.signupFields,
       seller_id: sellerId,
     })
-    this.LWAAuth();
+
+    this.LWAAuth(advState);
     this.props.onFormSubmited(false)
-
-    // if ( !LWA || !LWA.resp.code ){
-    //   this.LWAAuth();
-    //   this.props.onFormSubmited(false)
-    // } else {
-
-    //   this.props.onFormSubmited(true)
-
-    //   const obj = {
-    //     code: LWA.resp.code,
-    //     scope: LWA.resp.scope,
-    //     sellerId: sellerId
-    //   }
-
-    //   api
-    //     .post(`ConnectAdvertisingData`, obj)
-    //     .then((res) => {
-    //       console.log('backend responce to POST ConnectAdvertisingData', res)
-
-    //       if ( res.data.IsSuccess ){
-    //         // options.push(marketPlaceId) // only push as it's imposible to deselect in design
-
-    //         // this.setState({
-    //         //   connectedId: options
-    //         // })
-
-    //         // instead of connectedID from state, just get new state from API
-    //         this.getSellerMarketplaces()
-
-    //       } else {
-    //         // refresh token (guessed error)
-    //         this.LWAAuth();
-    //       }
-
-    //       this.props.onFormSubmited(false) // set state in parent isFormSubmited
-
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     });
-
-    // }
   }
 
-
-  LWAAuth = () => {
-    // "On button click redirect user to below URL where user enters his LWA credentials
+  LWAAuth = (advState) => {
     const ClientID = "amzn1.application-oa2-client.c66f0420a8fc4c13a7abb409399d9944"
     const RedirectUri = window.location.origin + "/SellerPoint/LWACallback"
-    window.location.href = `https://www.amazon.com/ap/oa?client_id=${ClientID}&scope=cpc_advertising:campaign_management&response_type=code&redirect_uri=${RedirectUri}`
-
+    window.location.href = `https://www.amazon.com/ap/oa?client_id=${ClientID}&scope=cpc_advertising:campaign_management&response_type=code&redirect_uri=${RedirectUri}&state=${advState}`
   }
 
   render() {
@@ -137,7 +90,7 @@ class ConnectMarketplaces extends Component {
                   <td>
                     {isConnected ?
                       <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
-                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, mp.SellerId)}>Connect</span>
+                      <span className="btn btn-connect" onClick={this.connectMarketplace.bind(this, this.props.advState, mp.SellerId)}>Connect</span>
                     }
                   </td>
                 </tr>

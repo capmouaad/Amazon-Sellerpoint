@@ -6,15 +6,16 @@ import MWSActionDomain from '../MWSActionDomain'
 import { setSignupAuthStep } from '../../actions/signup'
 import { connect } from 'react-redux';
 import SignupStep3 from '../../containers/SignupStep3'
+import { APP_CONFIG } from '../../constants'
 
-const  SignupNavEl = (props) => {
+const SignupNavEl = (props) => {
 
   const classControl = "signup-nav__el" + (props.step === props.number ? " is-current" : "") + (props.step > props.number ? " is-done-step" : "")
 
   return (
     <div className={classControl}>
-      <div className="signup-nav__number"><span style={{ color: '#333', fontWeight: 'bold'}}>{props.number}</span></div>
-      <div className="signup-nav__name" dangerouslySetInnerHTML={{__html: props.name}} />
+      <div className="signup-nav__number"><span style={{ color: '#333', fontWeight: 'bold' }}>{props.number}</span></div>
+      <div className="signup-nav__name" dangerouslySetInnerHTML={{ __html: props.name }} />
     </div>
   )
 }
@@ -32,14 +33,14 @@ class AddMarketSwitch extends Component {
               <MWSActionAuth />
             </div>
           )
-        case 3: 
+        case 3:
           return (
             <div className='wrapper-market-step'>
               <MWSActionDomain />
             </div>
           )
         default:
-        return null
+          return null
       }
     } else {
       return <SignupStep3 onGoBackMarket={this.props.onGoBack} />
@@ -65,7 +66,7 @@ class AddMarketSwitch extends Component {
     }
   }
 
-  render () {
+  render() {
     const { addMarketStep } = this.props
     return (
       <div>
@@ -83,14 +84,14 @@ class AddMarketSwitch extends Component {
             this.renderTitleStep()
           }
         </div>
-          {this.renderAddMarketStep()}
+        {this.renderAddMarketStep()}
       </div>
     )
   }
 }
 
 class DashMarketplaceConfig extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -100,7 +101,7 @@ class DashMarketplaceConfig extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.setState({
       addMarketStep: 0
     })
@@ -138,20 +139,21 @@ class DashMarketplaceConfig extends Component {
               <a className="btn btn-new-marketplace" onClick={this.addNewMarketplace}>Add New Marketplace</a>
             </div>
             <ConnectMarketplaces
+              advState={APP_CONFIG.LWA_Source.Configuration.state}
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
             />
           </div>
         )
       case 1:
-        return <AddMarketSwitch signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep}/>
+        return <AddMarketSwitch signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
       default:
-      return null
+        return null
     }
   }
 
-  render () {
-    return(
+  render() {
+    return (
       <React.Fragment>
         <div className="dash-container">
           <div className="container container--full">

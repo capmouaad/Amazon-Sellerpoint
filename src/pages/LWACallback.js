@@ -3,8 +3,8 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import api from '../services/Api'
 import PropTypes from 'prop-types';
-
 import { setLwaAuth } from '../actions/lwa';
+import { APP_CONFIG } from '../constants'
 
 class LWACallback extends Component {
   static propTypes = {
@@ -17,7 +17,7 @@ class LWACallback extends Component {
 
     this.state = {
       shouldRedirect: false,
-      authStatus: null
+      destination: null
     }
   }
 
@@ -28,10 +28,24 @@ class LWACallback extends Component {
   getLWAToken = async () => {
     try {
       const { sellerId } = this.props;
-
       const redirectResponce = this.props.location.search
       const authCode = this.getQueryVariable(redirectResponce, 'code')
       const authScope = this.getQueryVariable(redirectResponce, 'scope')
+      const state = this.getQueryVariable(redirectResponce, 'state')
+      switch (state) {
+        case APP_CONFIG.LWA_Source.SignUpStep3.state:
+          this.setState({
+            destination: APP_CONFIG.LWA_Source.SignUpStep3.destination
+          });
+          break
+        case APP_CONFIG.LWA_Source.Configuration.state:
+          this.setState({
+            destination: APP_CONFIG.LWA_Source.Configuration.destination
+          });
+          break
+        default:
+          break
+      }
 
       this.props.setLwaAuth({
         code: authCode,
@@ -46,7 +60,6 @@ class LWACallback extends Component {
 
       const res = await api.post(`ConnectAdvertisingData`, obj)
       console.log('>>>>>>> backend response to POST ConnectAdvertisingData', res)
-
       this.setState({
         shouldRedirect: true
       })
@@ -69,10 +82,10 @@ class LWACallback extends Component {
   }
 
   render() {
-    const { shouldRedirect } = this.state;
+    const { shouldRedirect, destination } = this.state;
 
     if (shouldRedirect) {
-      return <Redirect to={`${process.env.PUBLIC_URL}/signup/step-3`} />
+      return <Redirect to={`${process.env.PUBLIC_URL}${destination}`} />
     }
 
     return (
