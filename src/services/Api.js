@@ -1,5 +1,7 @@
 import axios from 'axios';
 import store from '../store/store';
+import { logOut } from '../actions/login'
+import { closeAppQlik } from '../actions/qlik'
 
 //const BACKEND_URL = process.env.NODE_ENV === 'production' ? "http://name.herokuapp.com" : "http://localhost:8000/"
 //const BACKEND_URL = "http://localhost:10547/api/SellerPoint/"
@@ -21,6 +23,8 @@ api.interceptors.response.use(null, function (error) {
   // Logout on 403 response error
   if (error.response.status === 403) {
     // log out user if already logged in else send user to login screen
+    store.dispatch(logOut())
+    store.dispatch(closeAppQlik())
   }
   return Promise.reject(error);
 });

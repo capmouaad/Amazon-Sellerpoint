@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
 import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes';
-import { setQlikConnection, setQlikInstance } from '../actions/qlik'
+import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 
 import SvgIcon from '../components/Helpers/SvgIcon'
@@ -74,17 +74,16 @@ class Header extends React.Component {
       console.log('backend responce to GET LogOff', logOffRes)
 
       // reset qlik connection redux
-      this.props.setQlikConnection(false)
-      this.props.setQlikInstance(null)
+      this.props.closeAppQlik()
       this.props.setStatusProgress({
         finaceDataProgress: 0,
         reportDataProgress: 0,
         adDataProgress: 0
-    })
-    this.props.setNavbarDashboard({
-        dashboards: [],
-        settings: []
-    })
+      })
+      this.props.setNavbarDashboard({
+          dashboards: [],
+          settings: []
+      })
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
@@ -205,9 +204,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   openMenu: () => dispatch({ type: OPEN_MENU }),
   closeMenu: () => dispatch({ type: CLOSE_MENU }),
-  closeQlik: () => dispatch({ type: CLOSE_APP_QLIK }),
-  setQlikConnection: (data) => dispatch(setQlikConnection(data)),
-  setQlikInstance: (data) => dispatch(setQlikInstance(data)),
+  closeAppQlik: () => dispatch(closeAppQlik()),
   resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
   setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
   setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }), 

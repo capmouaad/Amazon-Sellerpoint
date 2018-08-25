@@ -14,3 +14,7 @@ export const setQlikInstance = (data) => ({
   type: types.SET_QLIK_INSTANCE,
   payload: data
 })
+
+export const closeAppQlik = () => ({
+  type: types.CLOSE_APP_QLIK
+})

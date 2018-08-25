@@ -45,20 +45,24 @@ const filters = [
     // }
 ]
 
+const initialState = {
+    isTabOpened: true,
+    sellerIDOption: [],
+    marketOption: [],
+    sellerSKUOptions: [],
+    sellerIDSelectedOption: null,
+    marketSelectedOption: null,
+    sellerSKUSelectedOptions: null,
+    currentSelections:[]
+}
+
 export default class DashFilters extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            ...initialState,
             pickerStartDate: '',
-            pickerEndDate: '',
-            isTabOpened: true,
-            sellerIDOption: [],
-            marketOption: [],
-            sellerSKUOptions: [],
-            sellerIDSelectedOption: null,
-            marketSelectedOption: null,
-            sellerSKUSelectedOptions: null,
-            currentSelections:[]
+            pickerEndDate: ''
         }
         this.bindData = this.bindData.bind(this);
     }
@@ -90,6 +94,7 @@ export default class DashFilters extends Component {
             });
         }
     }
+
     bindCurrentSelections = async () => {
         let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
         
@@ -215,10 +220,21 @@ export default class DashFilters extends Component {
             }))
         }
 
-
-        //window.qlik.app.field('SellerSKU').select(data, true, true);
         let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
         app.field(key).selectValues(data, false);
+    }
+
+    deleteFilter = async ({ item, qName }) => {
+        const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+
+        let data = item.qSelectedFieldSelectionInfo
+        data = data
+                .filter((val) => val.qName !== qName)
+                .map((val) => ({
+                    qText: val.qName
+                }))
+
+        app.field(item.qField).selectValues(data, false);
     }
 
     componentDidMount() {
@@ -229,12 +245,15 @@ export default class DashFilters extends Component {
         const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
         const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
         this.handleDateSelection(startDate, endDate);
-        setTimeout(() => {
+        setTimeout( async () => {
+            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             this.renderSellerID()
             this.renderMarketDropDown()
             this.binddropdown();
             this.bindCurrentSelections();
-        }, 4000);
+            qApp.field('DataFieldLabel').selectValues(['Week'], true, true)
+            qApp.field('DataFieldLabel').lock()
+        }, 3000);
 
     }
 
@@ -242,11 +261,15 @@ export default class DashFilters extends Component {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             qApp.clearAll()
+
+            this.setState({
+                ...initialState
+            })
         }
     }
 
     render() {
-        const { pickerStartDate, pickerEndDate, selectedOption, options, isTabOpened, currentSelections } = this.state
+        const { pickerStartDate, pickerEndDate, isTabOpened, currentSelections } = this.state
         const ranges = {
             'Last 7 days': [moment().subtract(6, 'days'), moment().subtract(1, 'days')],
             'Last 30 days': [moment().subtract(29, 'days'), moment().subtract(1, 'days')],
@@ -257,7 +280,7 @@ export default class DashFilters extends Component {
             'Rolling 12 months': [moment().subtract(11, 'months'), moment().subtract(1, 'days')],
             'Last year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
         }
-        console.log('?????????', currentSelections)
+
         return (
             <div className="dash-filters">
                 <div className="container container--full">
@@ -332,18 +355,18 @@ export default class DashFilters extends Component {
                            {
                                currentSelections.map((sel) => {
                                    if (sel.qField === 'Date') {
-                                       return (
-                                        <span className='selected-el'>{`${pickerStartDate} - ${pickerEndDate}`}
-                                              <i className="fa fa-times" style={{ marginLeft: 10 }}></i>
-                                        </span>
-                                       )
+                                       return null
                                    } else {
-                                    return (
-                                        <span className='selected-el'>
-                                            {sel.qSelected}
-                                            <i className="fa fa-times" style={{ marginLeft: 10 }}></i>
+                                    return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
+                                        <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
+                                            {value.qName}
+                                            <i
+                                                className="fa fa-times"
+                                                style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
+                                                onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
+                                            ></i>
                                         </span>
-                                    )
+                                    ))
                                    }
                                })
                            }
