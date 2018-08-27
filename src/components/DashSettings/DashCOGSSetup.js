@@ -48,8 +48,8 @@ export default class DashCOGSSetup extends Component {
                     if (res.data.IsSuccess) {                      
                         showToastMessage(res.data.ErrorMessage, "Success");
                         //close the popup window after updation
-                        //this.onCloseModal();
-                        //this.getAllCOGS();
+                        this.onCloseModal();
+                        this.getAllCOGS();
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage
