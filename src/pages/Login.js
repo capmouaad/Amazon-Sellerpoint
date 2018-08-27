@@ -165,7 +165,7 @@ class Login extends Component {
                         >
                             <h2>Sign In</h2>
                             <p>Sign In to start using our powerful</p>
-                            <p>Business Intelligence tools</p>
+                            <p className="mb-15">Business Intelligence tools</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
@@ -174,9 +174,8 @@ class Login extends Component {
 
                                 <FormInput
                                     name="email"
-                                    label="Email"
-                                    
-                                    placeholder="jennifer@saleswarehouse.com"
+                                    label="Email"                                    
+                                    placeholder=""
                                     value={email}
                                     validations="isEmail"
                                     validationErrors={{
@@ -191,8 +190,7 @@ class Login extends Component {
                                     <FormInput
                                         name="password"
                                         type="password"
-                                        label="Password"
-                                        
+                                        label="Password"                                        
                                         placeholder=""
                                         value={password}
                                         onChangeHandler={this.handleChange}
@@ -206,7 +204,7 @@ class Login extends Component {
                                 <div className="login-remember ui-group">
                                     <CheckBox
                                         name="remember"
-                                        text="Remember me?"
+                                        text="Remember me"
                                         clickHandler={this.rememberToggler}
                                         isActive={rememberMe}
                                     />
@@ -214,7 +212,7 @@ class Login extends Component {
                                
                                 <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
                                 <div className="signup__form-cta">
-                                    <button type="submit" className="btn btn-signup btn--block">Login</button>
+                                    <button type="submit" className="btn btn-signup btn--block">Sign In</button>
                                 </div>
                                 <Link to='/signup' className="memeber"> Not a member? Sign up </Link>
                             </div>

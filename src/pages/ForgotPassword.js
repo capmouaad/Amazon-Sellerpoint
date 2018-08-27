@@ -99,7 +99,7 @@ class ForgotPassword extends Component {
                         >
                             <h2>Reset Password</h2>
                             <p>We will send you an e-mail with instructions</p>
-                            <p>on how to reset your password</p>
+                            <p className="mb-15">on how to reset your password.</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
@@ -107,9 +107,8 @@ class ForgotPassword extends Component {
                                 }
                                 <FormInput
                                     name="email"
-                                    label="Email"
-                                    
-                                    placeholder="jennifer@saleswarehouse.com"
+                                    label="Email"                                    
+                                    placeholder=""
                                     value={email}
                                     validations="isEmail"
                                     validationErrors={{
