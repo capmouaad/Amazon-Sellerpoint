@@ -44,7 +44,7 @@ class ImportProgress extends Component {
             } else {
                 clearInterval(this.timerGetImportStatus);
             }
-        }, 5000);
+        }, 10000);
     }
 
     componentWillUnmount() {
