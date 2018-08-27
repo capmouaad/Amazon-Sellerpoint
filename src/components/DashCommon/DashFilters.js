@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import QdtComponent from '../Qlik/QdtComponent';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-// import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import Select from 'react-select';
@@ -56,6 +55,12 @@ const initialState = {
     currentSelections:[]
 }
 
+const FIELD_NAME = {
+    SellerID: 'SellerID',
+    MarketPlaceName: 'MarketPlaceName',
+    SellerSKU: 'SellerSKU'
+}
+
 export default class DashFilters extends Component {
     constructor(props) {
         super(props)
@@ -96,15 +101,13 @@ export default class DashFilters extends Component {
     }
 
     bindCurrentSelections = async () => {
-        let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-        
-        app.getList('CurrentSelections', (reply) => {
-            this.setState({ currentSelections: reply.qSelectionObject.qSelections })
-        })
-
-        // app.getList("CurrentSelections", function(reply){console.log(reply.qSelectionObject.qSelections); 
-        //     reply.qSelectionObject.qSelections.map((item) => {item.qSelectedFieldSelectionInfo.map((sel)=>{console.log(sel.qName)})}
-        // )});
+        if (window.GlobalQdtComponents) {
+            let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+            
+            await app.getList('CurrentSelections', (reply) => {
+                this.setState({ currentSelections: reply.qSelectionObject.qSelections })
+            })
+        }
     }
 
     // Render SellerId options
@@ -117,7 +120,7 @@ export default class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        "SellerID"
+                        FIELD_NAME.SellerID
                     ]
                 },
                 "qInitialDataFetch": [
@@ -140,7 +143,7 @@ export default class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        "MarketPlaceName"
+                        FIELD_NAME.MarketPlaceName
                     ]
                 },
                 "qInitialDataFetch": [
@@ -161,7 +164,7 @@ export default class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        "SellerSKU"
+                        FIELD_NAME.SellerSKU
                     ]
                 },
                 "qInitialDataFetch": [
@@ -185,11 +188,11 @@ export default class DashFilters extends Component {
             })
         }
 
-        if (reply.qListObject.qDimensionInfo.qFallbackTitle === 'MarketPlaceName') {
+        if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.MarketPlaceName) {
             this.setState({
                 marketOption: data
             })
-        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === 'SellerSKU') {
+        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerSKU) {
             this.setState({ sellerSKUOptions: data });
         } else {
             this.setState({
@@ -225,16 +228,41 @@ export default class DashFilters extends Component {
     }
 
     deleteFilter = async ({ item, qName }) => {
-        const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+        try {
+            const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
-        let data = item.qSelectedFieldSelectionInfo
-        data = data
-                .filter((val) => val.qName !== qName)
-                .map((val) => ({
-                    qText: val.qName
-                }))
+            let data = item.qSelectedFieldSelectionInfo
+            data = data
+                    .filter((val) => val.qName !== qName)
+                    .map((val) => ({
+                        qText: val.qName
+                    }))
 
-        app.field(item.qField).selectValues(data, false);
+            await app.field(item.qField).selectValues(data, false);
+
+            const { marketSelectedOption, sellerIDSelectedOption, sellerSKUSelectedOptions } = this.state
+            switch (item.qField) {
+                case FIELD_NAME.MarketPlaceName:
+                    this.setState({
+                        marketSelectedOption: marketSelectedOption.filter((item) => item.value !== qName)
+                    })
+                    break
+                case FIELD_NAME.SellerID:
+                    this.setState({
+                        sellerIDSelectedOption: sellerIDSelectedOption.filter((item) => item.value !== qName)
+                    })
+                    break
+                case FIELD_NAME.SellerSKU:
+                    this.setState({
+                        sellerSKUSelectedOptions: sellerSKUSelectedOptions.filter((item) => item.value !== qName)
+                    })
+                    break
+                default:
+                    break
+            }
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     componentDidMount() {

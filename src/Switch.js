@@ -20,18 +20,11 @@ class RenderSwitch extends React.Component {
     }
   }
 
-  render(){
-    const PropsRoute = ({ component: Component, ...rest }) => (
-      <Route {...rest} render={props => (
-        <Component {...props}/>
-        // pass props to component
-      )}/>
-    )
-
+  render () {
     return(
       <Switch>
         {routes.map(route => (
-          <PropsRoute
+          <Route
             key={route.path}
             exact={route.isExact}
             path={process.env.PUBLIC_URL + route.path}

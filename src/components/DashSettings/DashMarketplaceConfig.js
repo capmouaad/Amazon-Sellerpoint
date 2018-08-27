@@ -10,12 +10,12 @@ import { APP_CONFIG } from '../../constants'
 
 const SignupNavEl = (props) => {
 
-  const classControl = "signup-nav__el" + (props.step === props.number ? " is-current" : "") + (props.step > props.number ? " is-done-step" : "")
+  const classControl = "signup-nav__el" + (props.step === props.number ? " is-current-market" : " is-feature") + (props.step > props.number ? " is-done-step-market" : "")
 
   return (
     <div className={classControl}>
-      <div className="signup-nav__number"><span style={{ color: '#333', fontWeight: 'bold' }}>{props.number}</span></div>
-      <div className="signup-nav__name" dangerouslySetInnerHTML={{ __html: props.name }} />
+      <div className="signup-nav__number"><span>{props.number}</span></div>
+      <div className="signup-nav__name_config" dangerouslySetInnerHTML={{ __html: props.name }} />
     </div>
   )
 }
@@ -26,7 +26,9 @@ class AddMarketSwitch extends Component {
     if (addMarketStep === 1) {
       switch (signupAuthStep) {
         case 1:
-          return <MWSActionRegion />
+          return (<div className='market-msw-region'>
+            <MWSActionRegion />
+          </div>)
         case 2:
           return (
             <div className='wrapper-market-step'>

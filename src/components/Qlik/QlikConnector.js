@@ -139,7 +139,7 @@ class QlikConnector extends React.Component {
 
     // TODO fails with multiple requests
 
-    if ( !window.GlobalQdtComponents ){
+    if ( !window.GlobalQdtComponents || !this.props.QlikConnected ){
       const qdtComponents = new QdtComponents(options.config, options.connections);
       window.GlobalQdtComponents = qdtComponents
       // console.log(qdtComponents)

@@ -10,6 +10,8 @@ import DashCOGSSetup from '../components/DashSettings/DashCOGSSetup'
 import DashSKUASINGrouping from '../components/DashSettings/DashSKUASINGrouping'
 import DashNotifications from '../components/DashSettings/DashNotifications'
 
+import ImportProgress from '../components/DashCommon/ImportProgress';
+
 class DashboardConfiguration extends Component {
   static propTypes = {
     setHeaderClass: PropTypes.func.isRequired
@@ -44,10 +46,11 @@ class DashboardConfiguration extends Component {
       )
     }
     return (
-      <React.Fragment>       
+      <React.Fragment>
+        <ImportProgress />
         <DashboardNavTabs
           routes={settings}
-          modifierClass="dash-nav--without-progress"
+          modifierClass=""
         />
          {settings.map(route => (
             <Route

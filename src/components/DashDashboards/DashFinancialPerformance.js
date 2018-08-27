@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
-
-import QlikConnector from '../Qlik/QlikConnector';
-import DashFilters from '../DashCommon/DashFilters';
 import DashSection from '../DashCommon/DashSection';
 
 export default class DashFinancialPerformance extends Component {
-    render() {
+    render () {
         return (
             <React.Fragment>
-                <QlikConnector />
-                <DashFilters />
-
                 <div className="dash-container">
                     <div className="container container--full">
                         <DashSection

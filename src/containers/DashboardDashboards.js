@@ -12,6 +12,9 @@ import DashBusinessResults from '../components/DashDashboards/DashBusinessResult
 import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
 import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
 
+import DashFilters from '../components/DashCommon/DashFilters'
+import QlikConnector from '../components/Qlik/QlikConnector'
+
 class DashboardDashboards extends Component {
   static propTypes = {
     setHeaderClass: PropTypes.func.isRequired
@@ -49,13 +52,14 @@ class DashboardDashboards extends Component {
       <React.Fragment>
         <ImportProgress />
         <DashboardNavTabs routes={dashboards} />
-
+        <QlikConnector />
+        <DashFilters />
         <div className="dash">
           {dashboards.map(route => (
             <Route
               key={route.path}
               exact={route.isExact}
-              path={process.env.PUBLIC_URL + route.path}
+              path={route.path}
               component={this.renderRouteComponent(route)}
             />
           ))}
