@@ -43,7 +43,6 @@ class ConnectMarketplaces extends Component {
   }
 
   connectMarketplace = (advState, sellerId) => {
-    const { LWA } = this.props;
     this.props.setSignupFields({ // update redux store
       ...this.props.signupFields,
       seller_id: sellerId,

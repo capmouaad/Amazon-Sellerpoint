@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
-import { OPEN_MENU, CLOSE_MENU, CLOSE_APP_QLIK, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes';
+import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes';
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 
