@@ -6,10 +6,10 @@ import svg4everybody from 'svg4everybody';
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
-
+import GoogleTagManager from './components/Helpers/GoogleTagManager'
 class App extends Component {
 
-  componentDidMount(){
+  componentDidMount() {
     require('viewport-units-buggyfill').init({
       force: false,
       refreshDebounceWait: 150
@@ -22,10 +22,11 @@ class App extends Component {
     return (
       <BrowserRouter basename={'/SellerPoint'}>
         <div className="page">
-          <Header routes={routes.filter(route => route.forNavBar)}/>
-            <div className="page__content">
-              <RenderSwitch />
-            </div>
+          <GoogleTagManager gtmId='GTM-TNJ6FS7' />
+          <Header routes={routes.filter(route => route.forNavBar)} />
+          <div className="page__content">
+            <RenderSwitch />
+          </div>
           <Footer />
         </div>
       </BrowserRouter>
