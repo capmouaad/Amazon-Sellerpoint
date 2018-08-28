@@ -8,9 +8,11 @@ class GoogleTagManager extends React.Component {
         const scriptId = this.props.scriptId || 'react-google-tag-manager-gtm';
 
         if (!window[dataLayerName]) {
+            const script = document.createElement("script")
             const gtmScriptNode = document.getElementById(scriptId);
-
-            eval(gtmScriptNode.textContent);
+            const scriptText = document.createTextNode(gtmScriptNode.textContent);
+            script.appendChild(scriptText)
+            document.head.appendChild(script)
         }
     }
 
@@ -20,6 +22,7 @@ class GoogleTagManager extends React.Component {
             dataLayerName: this.props.dataLayerName || 'dataLayer',
             additionalEvents: this.props.additionalEvents || {},
             previewVariables: this.props.previewVariables || false,
+            scheme: 'https:',
         });
 
         return (
