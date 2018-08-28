@@ -17,7 +17,7 @@ const IBar = (props) => {
                 >
                     {
                         progress > 5 &&
-                        <span>{isCompleated ? "Complete" : Math.floor(progress) + " %"}</span>
+                        <span>{isCompleated ? "Complete" : Math.ceil(progress) + " %"}</span>
                     }
                 </div>
             </div>
