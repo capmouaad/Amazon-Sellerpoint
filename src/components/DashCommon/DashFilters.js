@@ -224,7 +224,7 @@ export default class DashFilters extends Component {
         }
 
         let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-        app.field(key).selectValues(data, false);
+        app && app.field(key).selectValues(data, false);
     }
 
     deleteFilter = async ({ item, qName }) => {
@@ -279,8 +279,10 @@ export default class DashFilters extends Component {
             this.renderMarketDropDown()
             this.binddropdown();
             this.bindCurrentSelections();
-            qApp.field('DataFieldLabel').selectValues(['Week'], true, true)
-            qApp.field('DataFieldLabel').lock()
+            if (qApp) {
+                qApp.field('DataFieldLabel').selectValues(['Week'], true, true)
+                qApp.field('DataFieldLabel').lock()
+            }
         }, 3000);
 
     }
@@ -328,49 +330,44 @@ export default class DashFilters extends Component {
                                 />
                             )
                         })}
-                        <div>
-                            <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                                hideSelectedOptions
-                                onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerID'})}}
-                                options={this.state.sellerIDOption}
-                                isClearable={false}
-                                value={this.state.sellerIDSelectedOption}
-                            />
-                        </div>
-                         <div>
-                            <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                                hideSelectedOptions
-                                onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'MarketPlaceName'})}}
-                                options={this.state.marketOption}
-                                isClearable={false}
-                                value={this.state.marketSelectedOption}
-                            />
-                        </div>
-                        <div>
-                            <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                                hideSelectedOptions
-                                onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerSKU'})}}
-                                options={this.state.sellerSKUOptions}
-                                isClearable={false}
-                                value={this.state.sellerSKUSelectedOptions}
-                            />
-                        </div>
-                        <div>
-                            <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
-                                <div className="input-group">
-                                    <span className="input-group-btn date-range-picker-calender-btn">
-                                        <button className="default date-range-toggle">
-                                            <i className="fa fa-calendar" />
-                                        </button>
-                                    </span>
-                                    <input
-                                        type="text"
-                                        className="form-control date-picker"
-                                        value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
-                                    />
-                                </div>
-                            </DateRangePicker>
-                        </div>
+                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
+                            hideSelectedOptions
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerID'})}}
+                            options={this.state.sellerIDOption}
+                            isClearable={false}
+                            controlShouldRenderValue={false}
+                            value={this.state.sellerIDSelectedOption}
+                        />
+                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
+                            hideSelectedOptions
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'MarketPlaceName'})}}
+                            options={this.state.marketOption}
+                            isClearable={false}
+                            controlShouldRenderValue={false}
+                            value={this.state.marketSelectedOption}
+                        />
+                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
+                            hideSelectedOptions
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerSKU'})}}
+                            options={this.state.sellerSKUOptions}
+                            isClearable={false}
+                            controlShouldRenderValue={false}
+                            value={this.state.sellerSKUSelectedOptions}
+                        />
+                        <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
+                            <div className="input-group">
+                                <span className="input-group-btn date-range-picker-calender-btn">
+                                    <button className="default date-range-toggle">
+                                        <i className="fa fa-calendar" />
+                                    </button>
+                                </span>
+                                <input
+                                    type="text"
+                                    className="form-control date-picker"
+                                    value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
+                                />
+                            </div>
+                        </DateRangePicker>
                     </div>
                     <div className={"dash-section" + (isTabOpened ? "" : " is-closed")}>
                         <div className="dash-section__heading">
@@ -382,7 +379,7 @@ export default class DashFilters extends Component {
                         <div className="dash-filters__selection">
                            {
                                currentSelections.map((sel) => {
-                                   if (sel.qField === 'Date') {
+                                   if (sel.qField === 'Date' || sel.qField === 'DataFieldLabel') {
                                        return null
                                    } else {
                                     return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
