@@ -24,10 +24,10 @@ class QlikConnector extends React.Component {
   // first request API
   requestQlikData = () => {
 
-    if ( window.GlobalQdtComponents || this.props.QlikConnected ) {
-      this.connectQlik() // skip API responce and image reguest
-      return
-    }
+    // if ( window.GlobalQdtComponents || this.props.QlikConnected ) {
+    //   this.connectQlik() // skip API responce and image reguest
+    //   return
+    // }
 
     this.props.setQlikConnection(false)
 
