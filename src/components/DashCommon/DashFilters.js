@@ -85,7 +85,7 @@ class DashFilters extends Component {
                 },
                 "qInitialDataFetch": [
                     {
-                        "qHeight": 20,
+                        "qHeight": 2000,
                         "qWidth": 1
                     }
                 ]
@@ -108,7 +108,7 @@ class DashFilters extends Component {
                 },
                 "qInitialDataFetch": [
                     {
-                        "qHeight": 20,
+                        "qHeight": 2000,
                         "qWidth": 1
                     }
                 ]
@@ -131,7 +131,7 @@ class DashFilters extends Component {
                 },
                 "qInitialDataFetch": [
                     {
-                        "qHeight": 20,
+                        "qHeight": 2000,
                         "qWidth": 1
                     }
                 ]
@@ -152,7 +152,7 @@ class DashFilters extends Component {
                 },
                 "qInitialDataFetch": [
                     {
-                        "qHeight": 20,
+                        "qHeight": 2000,
                         "qWidth": 1
                     }
                 ]
@@ -167,7 +167,7 @@ class DashFilters extends Component {
         console.log(reply.qListObject.qDataPages);
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix
-                .filter(item => item.qState !== "S")
+                .filter(item => (item[0].qState !== "S"))
                 .map((item) => {
                     return {
                         value: item[0].qElemNumber,
