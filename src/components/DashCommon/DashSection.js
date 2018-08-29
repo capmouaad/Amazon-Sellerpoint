@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import QdtComponent from '../Qlik/QdtComponent';
 import TooltipSimple from '../Helpers/ToolTipSimple';
 import ToolTipTabbed from '../Helpers/ToolTipTabbed';
+import { resetQlikFilter } from '../../actions/dashFilter'
 
 const HIDE_OPTION = {
     Hide: 'Hide',
     Show: 'Show'
 }
 
-export default class DashSection extends Component {
+class DashSection extends Component {
 
     constructor(props) {
         super(props);
@@ -47,7 +49,8 @@ export default class DashSection extends Component {
     }
 
     onResetQlik = async () => {
-        this.state.qApp && this.state.qApp.clearAll()
+        this.state.qApp && await this.state.qApp.clearAll()
+        this.props.resetQlikFilter()
     }
 
     onHideChildSellerSku = async (e) => {
@@ -120,3 +123,10 @@ console.log("render : "+ vShowChildSellerSKU);
         )
     }
 }
+
+export default connect(
+    (state) => ({}),
+    (dispatch) => ({
+        resetQlikFilter: () => dispatch(resetQlikFilter())
+    })
+)(DashSection)

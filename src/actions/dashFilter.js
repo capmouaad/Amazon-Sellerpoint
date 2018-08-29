@@ -55,6 +55,10 @@ export const setPickerEndDate = (data) => ({
   payload: data
 })
 
+export const resetQlikFilter = () => ({
+  type: types.RESET_QLIK_FILTER
+})
+
 export const resetStateDashFilter = () => ({
   type: types.RESET_STATE_DASH_FILTER
 })

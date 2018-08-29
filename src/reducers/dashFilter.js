@@ -80,6 +80,19 @@ const dashFilter = (state = initialState, action) => {
         ...state,
         pickerEndDate: action.payload
       }
+
+    case types.RESET_QLIK_FILTER:
+      return {
+        ...state,
+        SellerIDOptions: [],
+        MarketPlaceNameOptions: [],
+        SellerSKUOptions: [],
+        SellerIDSelectedOptions: null,
+        MarketPlaceNameSelectedOptions: null,
+        SellerSKUSelectedOptions: null,
+        currentSelections:[]
+      }
+
     case types.RESET_STATE_DASH_FILTER:
       return initialState
     

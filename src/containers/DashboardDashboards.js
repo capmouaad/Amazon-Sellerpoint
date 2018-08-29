@@ -52,7 +52,7 @@ class DashboardDashboards extends Component {
       <React.Fragment>
         <ImportProgress />
         <DashboardNavTabs routes={dashboards} />
-        <QlikConnector />
+        {/* <QlikConnector /> */}
         <DashFilters />
         <div className="dash">
           {dashboards.map(route => (

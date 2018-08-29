@@ -5,7 +5,7 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import Select from 'react-select';
 import { connect } from 'react-redux'
-import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate } from '../../actions/dashFilter'
+import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
 
 const filters = [
     // {
@@ -113,7 +113,7 @@ class DashFilters extends Component {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
 
-            qApp.createList({
+            await qApp.createList({
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
@@ -136,7 +136,7 @@ class DashFilters extends Component {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
 
-            qApp.createList({
+            await qApp.createList({
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
@@ -159,7 +159,7 @@ class DashFilters extends Component {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
 
-            qApp.createList({
+            await qApp.createList({
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
@@ -180,7 +180,7 @@ class DashFilters extends Component {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
 
-            qApp.createList({
+            await qApp.createList({
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
@@ -221,26 +221,33 @@ class DashFilters extends Component {
     }
 
     handleChange = async ({ optionSelected, key }) => {
-        const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
-        if ( key === FIELD_NAME.SellerSKU) {
-            setSellerSKUSelectedOptions(optionSelected)
-        } else if (key === FIELD_NAME.MarketPlaceName) {
-            setMarketPlaceNameSelectedOptions(optionSelected)
-        } else if (key === FIELD_NAME.SellerID) {
-            setSellerIdSelectedOptions(optionSelected)
-        } else {
-            setDataGroupBySelectedOptions(optionSelected)
-        }
+        try {
+            const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
 
-        let data = [];
-        if (optionSelected.length > 0) {
-            data = optionSelected.map((item) => ({
-                qText: item.value
-            }))
-        }
+            let data = [];
+            if (optionSelected && optionSelected.length > 0) {
+                data = optionSelected.map((item) => ({
+                    qText: item.value
+                }))
+            } else if (optionSelected) {
+                data = [optionSelected]
+            }
 
-        let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-        app && app.field(key).selectValues(data, false);
+            let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+            app && await app.field(key).selectValues(data, false);
+
+            if ( key === FIELD_NAME.SellerSKU) {
+                setSellerSKUSelectedOptions(optionSelected)
+            } else if (key === FIELD_NAME.MarketPlaceName) {
+                setMarketPlaceNameSelectedOptions(optionSelected)
+            } else if (key === FIELD_NAME.SellerID) {
+                setSellerIdSelectedOptions(optionSelected)
+            } else {
+                setDataGroupBySelectedOptions(optionSelected)
+            }
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     deleteFilter = async ({ item, qName }) => {
@@ -286,7 +293,7 @@ class DashFilters extends Component {
     }
 
     initialSelection = async () => {
-        const { pickerStartDate, pickerEndDate } = this.props
+        const { DataGroupBySelectedOptions, pickerStartDate, pickerEndDate } = this.props
         if (!pickerStartDate && !pickerEndDate) {
             const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
             const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
@@ -302,13 +309,15 @@ class DashFilters extends Component {
             if (qApp) {
                 await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], true, true)
                 await qApp.field(FIELD_NAME.DataGroupBy).lock()
-                this.handleChange({
-                    optionSelected: {
-                        value: 'Week',
-                        label: 'Week'
-                    },
-                    key: FIELD_NAME.DataGroupBy
-                })
+                if (!DataGroupBySelectedOptions) {
+                    this.handleChange({
+                        optionSelected: {
+                            value: 'Week',
+                            label: 'Week'
+                        },
+                        key: FIELD_NAME.DataGroupBy
+                    })
+                }
             }
         }, 3000);
 
@@ -317,11 +326,9 @@ class DashFilters extends Component {
     onResetQlik = async () => {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
-            qApp.clearAll()
 
-            this.setState({
-                ...initialState
-            })
+            await qApp.clearAll()
+            this.props.resetQlikFilter()
         }
     }
 
@@ -410,6 +417,7 @@ class DashFilters extends Component {
                                     </button>
                                 </span>
                                 <input
+                                    readOnly
                                     type="text"
                                     className="form-control date-picker"
                                     value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
@@ -476,7 +484,8 @@ const mapDispatchToProps = (dispatch) => ({
     setSellerSKUSelectedOptions: (data) => dispatch(setSellerSKUSelectedOptions(data)),
     setCurrentSelections: (data) => dispatch(setCurrentSelections(data)),
     setPickerStartDate: (data) => dispatch(setPickerStartDate(data)),
-    setPickerEndDate: (data) => dispatch(setPickerEndDate(data))
+    setPickerEndDate: (data) => dispatch(setPickerEndDate(data)),
+    resetQlikFilter: () => dispatch(resetQlikFilter())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashFilters)
