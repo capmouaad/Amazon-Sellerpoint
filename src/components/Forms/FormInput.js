@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MaskedInput from 'react-text-mask'
 import { withFormsy } from 'formsy-react';
-import Image from '../../components/Helpers/Image';
+import SvgIcon from '../../components/Helpers/SvgIcon';
 
 class FormInput extends Component {
   static propTypes = {
@@ -20,20 +20,20 @@ class FormInput extends Component {
     this.props.setValue(event.currentTarget.value);
   }
 
-  getIcon=()=>{
+  getIcon = () => {
     const { icon } = this.props
 
-    if ( icon ){
+    if (icon) {
       return (
         <div className="input-box">
-        <Image image={icon}></Image>
-        { this.getInput() }
+          <SvgIcon name={icon} />
+          {this.getInput()}
         </div>
       )
     }
-    else{
-      return (       
-         this.getInput() 
+    else {
+      return (
+        this.getInput()
       )
     }
   }
@@ -43,7 +43,7 @@ class FormInput extends Component {
     const { name, placeholder, mask } = this.props
     const type = this.props.type ? this.props.type : "text"
 
-    if ( mask ){
+    if (mask) {
       return (
         <MaskedInput
           name={name}
@@ -56,20 +56,20 @@ class FormInput extends Component {
         />
       )
     } else {
-      return(
+      return (
         <input
           name={name}
           type={type}
           placeholder={placeholder}
           onChange={this.changeValue}
           value={this.props.getValue() || ''}
-          // required={isRequired() ? true : false}
+        // required={isRequired() ? true : false}
         />
       )
     }
   }
 
-  render(){
+  render() {
     const { name, label, isRequired } = this.props
 
     // An error message is returned only if the component is invalid
@@ -80,14 +80,14 @@ class FormInput extends Component {
       <React.Fragment>
         <div className={parentClass + (label ? " ui-group--labeled" : "")}>
           <label htmlFor={name}>
-            {isRequired() ? '' : ""}
+            {isRequired() ? (<span>*</span>) : ""}
             {label}
           </label>
-         
-          { this.getIcon() }
-        
+
+          {this.getIcon()}
+
         </div>
-        { errorMessage &&
+        {errorMessage &&
           <span className="ui-input-validation">{errorMessage}</span>
         }
       </React.Fragment>
