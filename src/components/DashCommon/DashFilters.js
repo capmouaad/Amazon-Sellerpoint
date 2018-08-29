@@ -1,50 +1,10 @@
 import React, { Component } from 'react';
-import QdtComponent from '../Qlik/QdtComponent';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import Select from 'react-select';
 import { connect } from 'react-redux'
 import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
-
-const filters = [
-    // {
-    //     name: "DataGroupedBy",
-    //     qdt: {
-    //         type: 'QdtViz',
-    //         props: {
-    //             id: 'uFJU', height: '40px', width: '200px'
-    //         },
-    //     }
-    // },
-    // {
-    //     name: "SellerId",
-    //     qdt: {
-    //         type: 'QdtViz',
-    //         props: {
-    //             id: 'WzFqaf', height: '40px', width: '200px'
-    //         },
-    //     }
-    // },
-    // {
-    //     name: "MarketPlace",
-    //     qdt: {
-    //         type: 'QdtViz',
-    //         props: {
-    //             id: 'UfRGFA', height: '40px', width: '200px'
-    //         },
-    //     }
-    // },
-    // {
-    //     name: "SellerSKU",
-    //     qdt: {
-    //         type: 'QdtViz',
-    //         props: {
-    //             id: 'jYJJpT', height: '40px', width: '200px'
-    //         },
-    //     }
-    // }
-]
 
 const initialState = {
     isTabOpened: true
@@ -100,8 +60,10 @@ class DashFilters extends Component {
         const { setCurrentSelections } = this.props
         if (window.GlobalQdtComponents) {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-            
+
             await app.getList('CurrentSelections', (reply) => {
+                console.log('Current selections');
+                console.log(reply.qSelectionObject.qSelections);
                 setCurrentSelections(reply.qSelectionObject.qSelections)
             })
         }
@@ -203,7 +165,7 @@ class DashFilters extends Component {
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix.map((item) => {
                 return {
-                    value: item[0].qText,
+                    value: item[0].qElemNumber,
                     label: item[0].qText
                 }
             })
@@ -225,18 +187,16 @@ class DashFilters extends Component {
             const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
 
             let data = [];
-            if (optionSelected && optionSelected.length > 0) {
-                data = optionSelected.map((item) => ({
-                    qText: item.value
-                }))
+            if (optionSelected && Array.isArray(optionSelected) && optionSelected.length > 0) {
+                data = optionSelected.map((item) => (item.value))
             } else if (optionSelected) {
-                data = [optionSelected]
+                data.push(optionSelected.value);
             }
 
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-            app && await app.field(key).selectValues(data, false);
+            app && await app.field(key).select(data, false,true);
 
-            if ( key === FIELD_NAME.SellerSKU) {
+            if (key === FIELD_NAME.SellerSKU) {
                 setSellerSKUSelectedOptions(optionSelected)
             } else if (key === FIELD_NAME.MarketPlaceName) {
                 setMarketPlaceNameSelectedOptions(optionSelected)
@@ -256,14 +216,14 @@ class DashFilters extends Component {
 
             let data = item.qSelectedFieldSelectionInfo
             data = data
-                    .filter((val) => val.qName !== qName)
-                    .map((val) => ({
-                        qText: val.qName
-                    }))
+                .filter((val) => val.qName !== qName)
+                .map((val) => ({
+                    qText: val.qName
+                }))
 
             await app.field(item.qField).selectValues(data, false);
 
-            const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions  } = this.props
+            const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
             switch (item.qField) {
                 case FIELD_NAME.MarketPlaceName:
                     setMarketPlaceNameSelectedOptions(
@@ -299,7 +259,7 @@ class DashFilters extends Component {
             const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
             this.handleDateSelection(startDate, endDate);
         }
-        setTimeout( async () => {
+        setTimeout(async () => {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             this.renderDataGroupBy()
             this.renderSellerID()
@@ -369,25 +329,16 @@ class DashFilters extends Component {
                         </button>
                     </div>
                     <div className="dash-filters__wrapper">
-                        {filters.map((filter, i) => {
-                            return (
-                                <QdtComponent
-                                    key={i}
-                                    type={filter.qdt.type}
-                                    props={filter.qdt.props}
-                                />
-                            )
-                        })}
-                        <Select className="qlik-select" isMulti={false} closeMenuOnSelect={false}
+                        <Select className="qlik-select" isMulti={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy})}}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy }) }}
                             options={DataGroupByOptions}
                             isClearable={false}
                             value={DataGroupBySelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerID})}}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerID }) }}
                             options={SellerIDOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -395,7 +346,7 @@ class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName})}}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName }) }}
                             options={MarketPlaceNameOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -403,7 +354,7 @@ class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU})}}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU }) }}
                             options={SellerSKUOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -433,24 +384,24 @@ class DashFilters extends Component {
                             <h2 className="dash-filters__selected-title">Selected Filters</h2>
                         </div>
                         <div className="dash-filters__selection">
-                           {
-                               currentSelections.map((sel) => {
-                                   if (sel.qField === 'Date' || sel.qField === 'DataFieldLabel') {
-                                       return null
-                                   } else {
-                                    return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
-                                        <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
-                                            {value.qName}
-                                            <i
-                                                className="fa fa-times"
-                                                style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
-                                            ></i>
-                                        </span>
-                                    ))
-                                   }
-                               })
-                           }
+                            {
+                                currentSelections.map((sel) => {
+                                    if (sel.qField === 'Date' || sel.qField === 'DataFieldLabel') {
+                                        return null
+                                    } else {
+                                        return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
+                                            <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
+                                                {value.qName}
+                                                <i
+                                                    className="fa fa-times"
+                                                    style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
+                                                    onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
+                                                ></i>
+                                            </span>
+                                        ))
+                                    }
+                                })
+                            }
                         </div>
                     </div>
                 </div>
@@ -468,7 +419,7 @@ const mapStateToProps = (state) => ({
     SellerIDSelectedOptions: state.dashFilter.SellerIDSelectedOptions,
     MarketPlaceNameSelectedOptions: state.dashFilter.MarketPlaceNameSelectedOptions,
     SellerSKUSelectedOptions: state.dashFilter.SellerSKUSelectedOptions,
-    currentSelections:state.dashFilter.currentSelections,
+    currentSelections: state.dashFilter.currentSelections,
     pickerStartDate: state.dashFilter.pickerStartDate,
     pickerEndDate: state.dashFilter.pickerEndDate
 })
