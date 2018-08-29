@@ -101,7 +101,7 @@ class QlikConnector extends React.Component {
     script.src = `${QlikData.QUrl}/resources/assets/external/requirejs/require.js`;
     script.onload = setTimeout(function () {
       this.connectQlik();
-    }.bind(this), 1000)
+    }.bind(this), 2000)
     document.getElementsByTagName("head")[0].appendChild(script);
   }
 
