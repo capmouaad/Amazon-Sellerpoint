@@ -6,7 +6,6 @@ import svg4everybody from 'svg4everybody';
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import GoogleTagManager from './components/Helpers/GoogleTagManager'
 class App extends Component {
 
   componentDidMount() {
@@ -20,9 +19,8 @@ class App extends Component {
 
   render() {
     return (
-      <BrowserRouter basename={'/SellerPoint'}>
+      <BrowserRouter basename={'/SellerPoint'} >
         <div className="page">
-          <GoogleTagManager gtmId='GTM-TNJ6FS7' />
           <Header routes={routes.filter(route => route.forNavBar)} />
           <div className="page__content">
             <RenderSwitch />
