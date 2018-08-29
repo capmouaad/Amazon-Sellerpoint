@@ -44,7 +44,7 @@ export default class DashSKUASINGrouping extends Component {
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["Name"] }),
             filterAll: true,
-            style: { 'white-space': 'unset' }
+            style: { whiteSpace: 'unset' }
         },
         {
             Header: "Marketplace Name",
@@ -105,7 +105,8 @@ export default class DashSKUASINGrouping extends Component {
             groupedSKUPopupOpen: false,
             selSKUs_data: [],
             open: true,
-            loading: true
+            loading: true,
+            popupLoading: false
         };
 
         this.existingGroupColumns = {
@@ -182,11 +183,12 @@ export default class DashSKUASINGrouping extends Component {
     createNewSKUGroup = () => {
         if (this.skuIds.length > 1 && this.parentGroupId > 0) {
             this.setState({
-                loading: true
+                popupLoading: true
             });
             api
                 .post(`CreateGroupSKUs`, { newGroupSKUId: this.parentGroupId, skuIds: this.skuIds })
                 .then((res) => {
+                    this.setState({ popupLoading: false });
                     if (res.data.IsSuccess) {
                         showToastMessage(res.data.ErrorMessage, "Success");
                         this.skuIds = [];
@@ -197,13 +199,10 @@ export default class DashSKUASINGrouping extends Component {
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,
-                            loading: false
+                            popupLoading: false
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");
                     }
-                    this.setState({
-                        loading: false
-                    })
                 })
                 .catch(function (error) {
                     showToastMessage("!Unknown Issue", "Error");
@@ -216,13 +215,12 @@ export default class DashSKUASINGrouping extends Component {
     updateExistingSKUGroup = () => {
         if (this.skuIds.length > 0 && this.parentGroupId > 0) {
             this.setState({
-                loading: true
+                popupLoading: true
             });
             api
                 .post(`UpdateGroupSKUsChild`, { groupSKUId: this.parentGroupId, skuIds: this.skuIds })
                 .then((res) => {
-                    this.setState({ loading: false })
-
+                    this.setState({ popupLoading: false })
                     if (res.data.IsSuccess) {
                         showToastMessage(res.data.ErrorMessage, "Success");
                         this.skuIds = [];
@@ -232,7 +230,7 @@ export default class DashSKUASINGrouping extends Component {
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,
-                            loading: false
+                            popupLoading: false
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");
                     }
@@ -274,7 +272,7 @@ export default class DashSKUASINGrouping extends Component {
 
     ungroupSKU(SKUId) {
         this.setState({
-            loading: true
+            popupLoading: true
         });
 
         api
@@ -291,7 +289,7 @@ export default class DashSKUASINGrouping extends Component {
                     showToastMessage(res.data.ErrorMessage, "Error");
                 }
                 this.setState({
-                    loading: false
+                    popupLoading: false
                 });
             })
             .catch(function (error) {
@@ -303,7 +301,7 @@ export default class DashSKUASINGrouping extends Component {
 
         if (this.state.childSKUs.length > 0) {
             this.setState({
-                loading: true
+                popupLoading: true
             });
             api
                 .get(`UngroupAllChildSKU?parentSkuId=${this.parentSKUId}`)
@@ -319,9 +317,8 @@ export default class DashSKUASINGrouping extends Component {
                         })
                         showToastMessage(res.data.ErrorMessage, "Error");
                     }
-
                     this.setState({
-                        loading: false
+                        popupLoading: false
                     });
                 })
                 .catch(function (error) {
@@ -335,6 +332,7 @@ export default class DashSKUASINGrouping extends Component {
     }
 
     getUngroupedSKUs() {
+        this.setState({ loading: true });
         api
             .get(`GetUngroupedSKUs`)
             .then((res) => {
@@ -452,13 +450,12 @@ export default class DashSKUASINGrouping extends Component {
     }
 
     render() {
-        const { data, grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen, loading } = this.state;
+        const { data, grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen, loading, popupLoading } = this.state;
 
         return (
             <React.Fragment>
                 <Toaster />
-                <div className={"dash-container " + (loading ? "" : "loading-over")}>
-                    <FormLoader />
+                <div className="dash-container">
                     <div className="container container--full">
                         <div className="panel panel-dark">
                             <div className="panel-heading">
@@ -497,20 +494,21 @@ export default class DashSKUASINGrouping extends Component {
                                             </div>                                                                   </div>
 
                                     </div>
-
-                                    <ReactTable
-                                        data={data}
-                                        noDataText="No ungrouped skus found."
-                                        filterable
-                                        defaultFilterMethod={(filter, row) =>
-                                            String(row[filter.id]) === filter.value}
-                                        columns={this.ungroupTableColumns}
-                                        defaultPageSize={10}
-                                        className="-striped -highlight"
-                                        nextText=">>"
-                                        previousText="<<"
-                                        pageSizeOptions={this.pageSizeOptions}
-                                    />
+                                    <div className={"row loader-inside " + (loading ? "" : "loading-over")}>
+                                        <FormLoader />
+                                        <ReactTable
+                                            data={data}
+                                            noDataText="No ungrouped skus found."
+                                            filterable
+                                            defaultFilterMethod={(filter, row) =>
+                                                String(row[filter.id]) === filter.value}
+                                            columns={this.ungroupTableColumns}
+                                            defaultPageSize={10}
+                                            className="-striped -highlight"
+                                            nextText=">>"
+                                            previousText="<<"
+                                            pageSizeOptions={this.pageSizeOptions}
+                                        /></div>
                                 </div>
 
                                 <h3 className="h3">Grouped SKUs</h3>
@@ -519,7 +517,8 @@ export default class DashSKUASINGrouping extends Component {
                                     <p className="font-bold">Note: Click into a grouped listing to view the products contained in the group.</p>
                                 </div>
 
-                                <div id="divTableGroupDataHolder" className="tab-content  cust-cogs">
+                                <div id="divTableGroupDataHolder" className={"tab-content  cust-cogs loader-inside " + (loading ? "" : "loading-over")}>
+                                    <FormLoader />
                                     <ReactTable id="TableGroupDataHolder"
                                         data={grouped_data}
                                         noDataText="No grouped skus found."
@@ -568,7 +567,8 @@ export default class DashSKUASINGrouping extends Component {
                                                 </ul>
                                             </div>
 
-                                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
+                                            <div id="divTableChildGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
+                                                <FormLoader />
                                                 <div className="mar-b-15">
                                                     <div className="row">
                                                         <div className="col-lg-12 text-right content_col">
@@ -623,7 +623,8 @@ export default class DashSKUASINGrouping extends Component {
 
                                             </div>
 
-                                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
+                                            <div id="divTableChildGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
+                                                <FormLoader />
                                                 <ReactTable
                                                     data={selSKUs_data}
                                                     noDataText="No child skus found."
@@ -671,7 +672,8 @@ export default class DashSKUASINGrouping extends Component {
                                                 </ul>
                                                 <p className="font-bold">Note: All grouped listings will inherit the Landed Cost of the primary listing.</p>
                                             </div>
-                                            <div id="divTableExistingGroupBySKUIdsDataHolder" className="tab-content  cust-cogs">
+                                            <div id="divTableExistingGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
+                                                <FormLoader />
                                                 <ReactTable id="TableGroupDataHolder"
                                                     data={grouped_data}
                                                     noDataText="No grouped skus found."
