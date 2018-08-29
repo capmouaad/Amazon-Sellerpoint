@@ -20,7 +20,8 @@ export default class DashCOGSSetup extends Component {
             open: false,
             loading: true,
             expanded: true,
-            filename: ''
+            filename: '',
+            popupLoading:false
         };
         this.getAllCOGS();
         this.renderLandedCost = this.renderLandedCost.bind(this);
@@ -40,12 +41,12 @@ export default class DashCOGSSetup extends Component {
         if (files.length > 0) {
             var data = new FormData();
             data.append("file", files[0]);
-            this.setState({ filename: files[0].name, loading: true });
+            this.setState({ filename: files[0].name, popupLoading: true });
             api
                 .post(`UploadCogsData`, data)
                 .then((res) => {
                     console.log('backend responce to GET UploadCogsData', res)
-                    this.setState({ loading: false });
+                    this.setState({ popupLoading: false });
                     if (res.data.IsSuccess) {
                         showToastMessage(res.data.ErrorMessage, "Success");
                         //close the popup window after updation
@@ -61,36 +62,29 @@ export default class DashCOGSSetup extends Component {
                 .catch(function (error) {
                     console.log(error);
                     showToastMessage("!Unknown Issue", "Error");
-                    this.setState({ loading: false });
+                    this.setState({ popupLoading: false });
                 });
         }
     }
 
     onDownloadFile = () => {
-        this.setState({
-            loading: true
-        })
+        this.setState({ popupLoading: true });
         api
             .get(`DownloadCogsTemplate`)
             .then((res) => {
                 console.log('backend responce to GET onDownloadFile', res)
-                if (res.data.IsSuccess) {
-                    this.setState({
-                        loading: false
-                    })
+                this.setState({ popupLoading: false });
+                if (res.data.IsSuccess) {                  
                     window.location.href = BACKEND_URL + "/Download?file=" + res.data.FileName;
                 } else {
                     this.setState({
-                        apiError: res.data.ErrorMessage,
-                        loading: false
+                        apiError: res.data.ErrorMessage                       
                     })
                 }
             })
             .catch(function (error) {
                 console.log(error);
-                this.setState({
-                    loading: false
-                })
+                this.setState({ popupLoading: false });
             });
     }
 
@@ -169,29 +163,25 @@ export default class DashCOGSSetup extends Component {
     }
 
     render() {
-        const { data, open, filename, loading } = this.state;
+        const { data, open, filename, loading, popupLoading } = this.state;
         return (
             <React.Fragment>
                 <Toaster />
                 <div className="dash-container">
                     <div className="container container--full">
-                        <div className="panel panel-dark">
+                        <div className={"panel panel-dark loader-inside " + (loading ? "" : "loading-over")}>
+                        <FormLoader />
                             <div className="panel-heading">
                                 <h3 className="panel-title">Products List</h3>
                             </div>
-
-                            <div className="panel-body">
-                               
+                            <div className="panel-body">                               
                                 <div className="row">
                                     <div className="custom-pagelist-left">
-
                                         <div className="dash-new-marketplace btn-group">
                                             <a className="btn btn-new-marketplace" onClick={this.onOpenModal}>Bulk CSV Edit</a>
-
                                         </div>  </div></div>
 
-                                <div className={"row loader-inside " + (loading ? "" : "loading-over")}>
-                                <FormLoader />
+                                <div className="row">                               
                                     <ReactTable
                                         key="1"
                                         data={data}
@@ -289,8 +279,9 @@ export default class DashCOGSSetup extends Component {
                         </div> </div>
                 </div>
 
-                <Modal open={open} onClose={this.onCloseModal}>
-                    <div className="modal-dialog modal-md">
+                <Modal open={open} onClose={this.onCloseModal}> 
+                    <div className={" modal-dialog modal-md loader-inside " + (popupLoading ? "" : "loading-over")}>
+                    <FormLoader />
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Bulk CSV Edit</h4>

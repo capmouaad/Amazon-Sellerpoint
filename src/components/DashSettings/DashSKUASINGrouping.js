@@ -457,7 +457,8 @@ export default class DashSKUASINGrouping extends Component {
                 <Toaster />
                 <div className="dash-container">
                     <div className="container container--full">
-                        <div className="panel panel-dark">
+                        <div className={"panel panel-dark loader-inside " + (loading ? "" : "loading-over")}>
+                            <FormLoader />
                             <div className="panel-heading">
                                 <h3 className="panel-title">SKU/ASIN Grouping</h3>
                             </div>
@@ -494,8 +495,7 @@ export default class DashSKUASINGrouping extends Component {
                                             </div>                                                                   </div>
 
                                     </div>
-                                    <div className={"row loader-inside " + (loading ? "" : "loading-over")}>
-                                        <FormLoader />
+                                    <div className="row">
                                         <ReactTable
                                             data={data}
                                             noDataText="No ungrouped skus found."
@@ -517,8 +517,7 @@ export default class DashSKUASINGrouping extends Component {
                                     <p className="font-bold">Note: Click into a grouped listing to view the products contained in the group.</p>
                                 </div>
 
-                                <div id="divTableGroupDataHolder" className={"tab-content  cust-cogs loader-inside " + (loading ? "" : "loading-over")}>
-                                    <FormLoader />
+                                <div id="divTableGroupDataHolder" className="tab-content  cust-cogs">
                                     <ReactTable id="TableGroupDataHolder"
                                         data={grouped_data}
                                         noDataText="No grouped skus found."
@@ -546,7 +545,8 @@ export default class DashSKUASINGrouping extends Component {
                     </div>
 
                     <Modal open={childPopupOpen} onClose={this.onCloseModal}>
-                        <div className="modal-dialog modal-md">
+                        <div className={" modal-dialog modal-md loader-inside " + (popupLoading ? "" : "loading-over")}>
+                            <FormLoader />
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h4 className="modal-title" id="myModalLabel">Child SKUs</h4>
@@ -567,8 +567,7 @@ export default class DashSKUASINGrouping extends Component {
                                                 </ul>
                                             </div>
 
-                                            <div id="divTableChildGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
-                                                <FormLoader />
+                                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
                                                 <div className="mar-b-15">
                                                     <div className="row">
                                                         <div className="col-lg-12 text-right content_col">
@@ -599,7 +598,8 @@ export default class DashSKUASINGrouping extends Component {
                     </Modal>
 
                     <Modal open={groupSelectedPopupOpen} onClose={this.onCloseModal}>
-                        <div className="modal-dialog modal-md">
+                        <div className={" modal-dialog modal-md loader-inside " + (popupLoading ? "" : "loading-over")}>
+                            <FormLoader />
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h4 className="modal-title" id="myModalLabel">Group Selected SKUs</h4>
@@ -623,8 +623,8 @@ export default class DashSKUASINGrouping extends Component {
 
                                             </div>
 
-                                            <div id="divTableChildGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
-                                                <FormLoader />
+                                            <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
+
                                                 <ReactTable
                                                     data={selSKUs_data}
                                                     noDataText="No child skus found."
@@ -652,7 +652,8 @@ export default class DashSKUASINGrouping extends Component {
                     </Modal>
 
                     <Modal open={groupedSKUPopupOpen} onClose={this.onCloseModal}>
-                        <div className="modal-dialog modal-md">
+                        <div className={" modal-dialog modal-md loader-inside " + (popupLoading ? "" : "loading-over")}>
+                            <FormLoader />
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h4 className="modal-title" id="myModalLabel">EXISTING GROUP</h4>
@@ -672,8 +673,7 @@ export default class DashSKUASINGrouping extends Component {
                                                 </ul>
                                                 <p className="font-bold">Note: All grouped listings will inherit the Landed Cost of the primary listing.</p>
                                             </div>
-                                            <div id="divTableExistingGroupBySKUIdsDataHolder" className={"tab-content  cust-cogs loader-inside " + (popupLoading ? "" : "loading-over")}>
-                                                <FormLoader />
+                                            <div id="divTableExistingGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
                                                 <ReactTable id="TableGroupDataHolder"
                                                     data={grouped_data}
                                                     noDataText="No grouped skus found."
