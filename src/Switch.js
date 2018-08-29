@@ -2,22 +2,20 @@ import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { routes } from './routes';
 import { connect } from 'react-redux';
-// import PropTypes from 'prop-types';
 import ScrollTo from './services/ScrollTo';
+import ReactGA from 'react-ga';
 
 class RenderSwitch extends React.Component {
-  // static propTypes = {
-  //
-  // };
 
+  componentDidMount(){
+    ReactGA.initialize('UA-114018340-1');
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }
   componentDidUpdate(prevProps) {
-    // const curPathSplit = this.props.location.pathname.split('/');
-    // const prevPathSplit = prevProps.location.pathname.split('/');
-
-    // transition when switching between the routes
     if (this.props.location.pathname !== prevProps.location.pathname) {
       ScrollTo(0, 300);
     }
+    ReactGA.pageview(window.location.pathname + window.location.search);
   }
 
   render () {

@@ -8,7 +8,6 @@ import Formsy from 'formsy-react';
 import FormLoader from '../components/Forms/FormLoader';
 import FormInput from '../components/Forms/FormInput';
 import api from '../services/Api';
-import { APP_CONFIG } from '../constants'
 
 class ForgotPassword extends Component {
     static propTypes = {

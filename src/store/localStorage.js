@@ -7,7 +7,7 @@ export const loadState = () => {
       localStorage.setItem("storageVersion", version);
     }
 
-    const serializedState = localStorage.getItem('sallerpointState');
+    const serializedState = localStorage.getItem('sellerpointState');
     if (serializedState) {
       return JSON.parse(serializedState);
     }
@@ -20,7 +20,7 @@ export const loadState = () => {
 export const saveState = (state) => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('sallerpointState', serializedState);
+    localStorage.setItem('sellerpointState', serializedState);
   } catch (err) {
     console.log('We received an error while saving the store');
   }

@@ -24,10 +24,10 @@ class QlikConnector extends React.Component {
   // first request API
   requestQlikData = () => {
 
-    if ( window.GlobalQdtComponents || this.props.QlikConnected ) {
-      this.connectQlik() // skip API responce and image reguest
-      return
-    }
+    // if ( window.GlobalQdtComponents || this.props.QlikConnected ) {
+    //   this.connectQlik() // skip API responce and image reguest
+    //   return
+    // }
 
     this.props.setQlikConnection(false)
 
@@ -83,8 +83,8 @@ class QlikConnector extends React.Component {
     const { QlikData } = this.state
     const imgForSessionUrl = `${QlikData.QUrl}/resources/img/core/dark_noise_16x16.png?qlikTicket=${QlikData.QTicket}`
 
-    var newImg = new Image;
-    newImg.onload = this.ContinueLoading;
+    var newImg = new Image();
+    newImg.onload = this.ContinueLoading();
     newImg.src = imgForSessionUrl;
   }
 
@@ -136,7 +136,6 @@ class QlikConnector extends React.Component {
     return null
   }
 }
-
 
 const mapStateToProps = (state) => ({
   QlikConnected: state.qlik.connected,

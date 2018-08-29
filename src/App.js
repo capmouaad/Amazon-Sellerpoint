@@ -6,10 +6,9 @@ import svg4everybody from 'svg4everybody';
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
-
 class App extends Component {
 
-  componentDidMount(){
+  componentDidMount() {
     require('viewport-units-buggyfill').init({
       force: false,
       refreshDebounceWait: 150
@@ -20,12 +19,12 @@ class App extends Component {
 
   render() {
     return (
-      <BrowserRouter basename={'/SellerPoint'}>
+      <BrowserRouter basename={'/SellerPoint'} >
         <div className="page">
-          <Header routes={routes.filter(route => route.forNavBar)}/>
-            <div className="page__content">
-              <RenderSwitch />
-            </div>
+          <Header routes={routes.filter(route => route.forNavBar)} />
+          <div className="page__content">
+            <RenderSwitch />
+          </div>
           <Footer />
         </div>
       </BrowserRouter>

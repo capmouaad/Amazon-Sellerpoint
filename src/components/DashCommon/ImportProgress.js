@@ -16,8 +16,8 @@ const IBar = (props) => {
                     style={{ "width": `${progress}%` }}
                 >
                     {
-                        progress > 5 &&
-                        <span>{isCompleated ? "Complete" : Math.floor(progress) + " %"}</span>
+                        progress > 1 &&
+                        <span>{isCompleated ? "Complete" : Math.ceil(progress) + " %"}</span>
                     }
                 </div>
             </div>
