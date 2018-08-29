@@ -38,13 +38,13 @@ class ImportProgress extends Component {
     componentDidMount() {
         this.checkStatusProgressBar()
 
-        this.timerGetImportStatus = setInterval(() => {
-            if (!this.state.DataImportComplete) {
-                this.getImportStatus();
-            } else {
-                clearInterval(this.timerGetImportStatus);
-            }
-        }, 10000);
+        // this.timerGetImportStatus = setInterval(() => {
+        //     if (!this.state.DataImportComplete) {
+        //         this.getImportStatus();
+        //     } else {
+        //         clearInterval(this.timerGetImportStatus);
+        //     }
+        // }, 10000);
     }
 
     componentWillUnmount() {

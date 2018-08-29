@@ -163,6 +163,8 @@ class DashFilters extends Component {
     bindData = (reply, app) => {
         const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions } = this.props
         let data = []
+        console.log('bindData')
+        console.log(reply.qListObject.qDataPages);
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix
                 .filter(item => item.qState !== "S")
@@ -187,7 +189,10 @@ class DashFilters extends Component {
     handleChange = async ({ optionSelected, key }) => {
         try {
             const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
+            // let difference = this.state.selected.filter(x => !value.includes(x)); // calculates diff
+            // console.log('Removed: ', difference);                         // prints array of removed
 
+            //this.setState({ selected: value });
             let data = [];
             if (optionSelected && Array.isArray(optionSelected) && optionSelected.length > 0) {
                 data = optionSelected.map((item) => (item.value))
@@ -214,8 +219,9 @@ class DashFilters extends Component {
 
     deleteFilter = async ({ item, qName }) => {
         try {
+            // const { SellerSKUSelectedOptions} = this.props
             const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-            debugger;
+
             if (isNaN(Number(qName)))
                 await app.field(item.qField).selectValues([{ qText: qName }], true, true);
             else
@@ -229,26 +235,26 @@ class DashFilters extends Component {
 
             // await app.field(item.qField).selectValues(data, false);
 
-            // const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
-            // switch (item.qField) {
-            //     case FIELD_NAME.MarketPlaceName:
-            //         setMarketPlaceNameSelectedOptions(
-            //             MarketPlaceNameSelectedOptions.filter((item) => item.value !== qName)
-            //         )
-            //         break
-            //     case FIELD_NAME.SellerID:
-            //         setSellerIdSelectedOptions(
-            //             SellerIDSelectedOptions.filter((item) => item.value !== qName)
-            //         )
-            //         break
-            //     case FIELD_NAME.SellerSKU:
-            //         setSellerSKUSelectedOptions(
-            //             SellerSKUSelectedOptions.filter((item) => item.value !== qName)
-            //         )
-            //         break
-            //     default:
-            //         break
-            // }
+            const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
+            switch (item.qField) {
+                case FIELD_NAME.MarketPlaceName:
+                    setMarketPlaceNameSelectedOptions(
+                        MarketPlaceNameSelectedOptions.filter((item) => item.label !== qName)
+                    )
+                    break
+                case FIELD_NAME.SellerID:
+                    setSellerIdSelectedOptions(
+                        SellerIDSelectedOptions.filter((item) => item.label !== qName)
+                    )
+                    break
+                case FIELD_NAME.SellerSKU:
+                    setSellerSKUSelectedOptions(
+                        SellerSKUSelectedOptions.filter((item) => item.label !== qName)
+                    )
+                    break
+                default:
+                    break
+            }
         } catch (e) {
             console.error(e)
         }
@@ -391,21 +397,17 @@ class DashFilters extends Component {
                         </div>
                         <div className="dash-filters__selection">
                             {
-                                currentSelections.map((sel) => {
-                                    if (sel.qField === 'Date' || sel.qField === 'DataFieldLabel') {
-                                        return null
-                                    } else {
-                                        return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
-                                            <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
-                                                {value.qName}
-                                                <i
-                                                    className="fa fa-times"
-                                                    style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                    onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
-                                                ></i>
-                                            </span>
-                                        ))
-                                    }
+                                currentSelections.filter(sel =>  sel.qField !== 'Date' && sel.qField !== 'DataFieldLabel' ).map((sel) => {
+                                    return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
+                                        <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
+                                            {value.qName}
+                                            <i
+                                                className="fa fa-times"
+                                                style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
+                                                onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
+                                            ></i>
+                                        </span>
+                                    ))
                                 })
                             }
                         </div>
