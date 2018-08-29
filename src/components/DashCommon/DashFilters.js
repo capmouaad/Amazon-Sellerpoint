@@ -4,6 +4,8 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import Select from 'react-select';
+import { connect } from 'react-redux'
+import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate } from '../../actions/dashFilter'
 
 const filters = [
     // {
@@ -45,16 +47,7 @@ const filters = [
 ]
 
 const initialState = {
-    isTabOpened: true,
-    DataGroupByOption: [],
-    sellerIDOption: [],
-    marketOption: [],
-    sellerSKUOptions: [],
-    DataGroupBySelectedOption: null,
-    sellerIDSelectedOption: null,
-    marketSelectedOption: null,
-    sellerSKUSelectedOptions: null,
-    currentSelections:[]
+    isTabOpened: true
 }
 
 const FIELD_NAME = {
@@ -64,7 +57,7 @@ const FIELD_NAME = {
     SellerSKU: 'SellerSKU'
 }
 
-export default class DashFilters extends Component {
+class DashFilters extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -90,10 +83,10 @@ export default class DashFilters extends Component {
     }
 
     handleDateSelection = async (startDate, endDate) => {
-        this.setState({
-            pickerStartDate: startDate,
-            pickerEndDate: endDate
-        })
+        const { setPickerStartDate, setPickerEndDate } = this.props
+
+        setPickerStartDate(startDate)
+        setPickerEndDate(endDate)
 
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
@@ -104,11 +97,12 @@ export default class DashFilters extends Component {
     }
 
     bindCurrentSelections = async () => {
+        const { setCurrentSelections } = this.props
         if (window.GlobalQdtComponents) {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
             
             await app.getList('CurrentSelections', (reply) => {
-                this.setState({ currentSelections: reply.qSelectionObject.qSelections })
+                setCurrentSelections(reply.qSelectionObject.qSelections)
             })
         }
     }
@@ -204,8 +198,8 @@ export default class DashFilters extends Component {
     }
 
     bindData = (reply, app) => {
-        console.log('replyyyyyy', reply)
-        let data = [];
+        const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions } = this.props
+        let data = []
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix.map((item) => {
                 return {
@@ -216,39 +210,26 @@ export default class DashFilters extends Component {
         }
 
         if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.MarketPlaceName) {
-            this.setState({
-                marketOption: data
-            })
+            setMarketPlaceNameOptions(data)
         } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerSKU) {
-            this.setState({ sellerSKUOptions: data });
+            setSellerSKUOptions(data)
         } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerID) {
-            this.setState({
-                sellerIDOption: data
-            })
+            setSellerIdOptions(data)
         } else {
-            this.setState({
-                DataGroupByOption: data
-            })
+            setDataGroupByOptions(data)
         }
     }
 
     handleChange = async ({ optionSelected, key }) => {
+        const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
         if ( key === FIELD_NAME.SellerSKU) {
-            this.setState({
-                sellerSKUSelectedOptions: optionSelected
-            })
+            setSellerSKUSelectedOptions(optionSelected)
         } else if (key === FIELD_NAME.MarketPlaceName) {
-            this.setState({
-                marketSelectedOption: optionSelected
-            })
+            setMarketPlaceNameSelectedOptions(optionSelected)
         } else if (key === FIELD_NAME.SellerID) {
-            this.setState({
-                sellerIDSelectedOption: optionSelected
-            })
+            setSellerIdSelectedOptions(optionSelected)
         } else {
-            this.setState({
-                DataGroupBySelectedOption: optionSelected
-            })
+            setDataGroupBySelectedOptions(optionSelected)
         }
 
         let data = [];
@@ -275,22 +256,22 @@ export default class DashFilters extends Component {
 
             await app.field(item.qField).selectValues(data, false);
 
-            const { marketSelectedOption, sellerIDSelectedOption, sellerSKUSelectedOptions } = this.state
+            const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions  } = this.props
             switch (item.qField) {
                 case FIELD_NAME.MarketPlaceName:
-                    this.setState({
-                        marketSelectedOption: marketSelectedOption.filter((item) => item.value !== qName)
-                    })
+                    setMarketPlaceNameSelectedOptions(
+                        MarketPlaceNameSelectedOptions.filter((item) => item.value !== qName)
+                    )
                     break
                 case FIELD_NAME.SellerID:
-                    this.setState({
-                        sellerIDSelectedOption: sellerIDSelectedOption.filter((item) => item.value !== qName)
-                    })
+                    setSellerIdSelectedOptions(
+                        SellerIDSelectedOptions.filter((item) => item.value !== qName)
+                    )
                     break
                 case FIELD_NAME.SellerSKU:
-                    this.setState({
-                        sellerSKUSelectedOptions: sellerSKUSelectedOptions.filter((item) => item.value !== qName)
-                    })
+                    setSellerSKUSelectedOptions(
+                        SellerSKUSelectedOptions.filter((item) => item.value !== qName)
+                    )
                     break
                 default:
                     break
@@ -305,9 +286,12 @@ export default class DashFilters extends Component {
     }
 
     initialSelection = async () => {
-        const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
-        const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
-        this.handleDateSelection(startDate, endDate);
+        const { pickerStartDate, pickerEndDate } = this.props
+        if (!pickerStartDate && !pickerEndDate) {
+            const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
+            const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
+            this.handleDateSelection(startDate, endDate);
+        }
         setTimeout( async () => {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             this.renderDataGroupBy()
@@ -342,7 +326,7 @@ export default class DashFilters extends Component {
     }
 
     render() {
-        const { pickerStartDate, pickerEndDate, isTabOpened, currentSelections } = this.state
+        const { isTabOpened } = this.state
         const ranges = {
             'Last 7 days': [moment().subtract(6, 'days'), moment().subtract(1, 'days')],
             'Last 30 days': [moment().subtract(29, 'days'), moment().subtract(1, 'days')],
@@ -353,6 +337,20 @@ export default class DashFilters extends Component {
             'Rolling 12 months': [moment().subtract(11, 'months'), moment().subtract(1, 'days')],
             'Last year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
         }
+
+        const {
+            DataGroupByOptions,
+            SellerIDOptions,
+            MarketPlaceNameOptions,
+            SellerSKUOptions,
+            DataGroupBySelectedOptions,
+            SellerIDSelectedOptions,
+            MarketPlaceNameSelectedOptions,
+            SellerSKUSelectedOptions,
+            currentSelections,
+            pickerStartDate,
+            pickerEndDate
+        } = this.props
 
         return (
             <div className="dash-filters">
@@ -376,33 +374,33 @@ export default class DashFilters extends Component {
                         <Select className="qlik-select" isMulti={false} closeMenuOnSelect={false}
                             hideSelectedOptions
                             onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy})}}
-                            options={this.state.DataGroupByOption}
+                            options={DataGroupByOptions}
                             isClearable={false}
-                            value={this.state.DataGroupBySelectedOption}
+                            value={DataGroupBySelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
                             onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerID})}}
-                            options={this.state.sellerIDOption}
+                            options={SellerIDOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
-                            value={this.state.sellerIDSelectedOption}
+                            value={SellerIDSelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
                             onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName})}}
-                            options={this.state.marketOption}
+                            options={MarketPlaceNameOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
-                            value={this.state.marketSelectedOption}
+                            value={MarketPlaceNameSelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
                             onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU})}}
-                            options={this.state.sellerSKUOptions}
+                            options={SellerSKUOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
-                            value={this.state.sellerSKUSelectedOptions}
+                            value={SellerSKUSelectedOptions}
                         />
                         <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
                             <div className="input-group">
@@ -452,3 +450,33 @@ export default class DashFilters extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    DataGroupByOptions: state.dashFilter.DataGroupByOptions,
+    SellerIDOptions: state.dashFilter.SellerIDOptions,
+    MarketPlaceNameOptions: state.dashFilter.MarketPlaceNameOptions,
+    SellerSKUOptions: state.dashFilter.SellerSKUOptions,
+    DataGroupBySelectedOptions: state.dashFilter.DataGroupBySelectedOptions,
+    SellerIDSelectedOptions: state.dashFilter.SellerIDSelectedOptions,
+    MarketPlaceNameSelectedOptions: state.dashFilter.MarketPlaceNameSelectedOptions,
+    SellerSKUSelectedOptions: state.dashFilter.SellerSKUSelectedOptions,
+    currentSelections:state.dashFilter.currentSelections,
+    pickerStartDate: state.dashFilter.pickerStartDate,
+    pickerEndDate: state.dashFilter.pickerEndDate
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setDataGroupByOptions: (data) => dispatch(setDataGroupByOptions(data)),
+    setSellerIdOptions: (data) => dispatch(setSellerIdOptions(data)),
+    setMarketPlaceNameOptions: (data) => dispatch(setMarketPlaceNameOptions(data)),
+    setSellerSKUOptions: (data) => dispatch(setSellerSKUOptions(data)),
+    setDataGroupBySelectedOptions: (data) => dispatch(setDataGroupBySelectedOptions(data)),
+    setSellerIdSelectedOptions: (data) => dispatch(setSellerIdSelectedOptions(data)),
+    setMarketPlaceNameSelectedOptions: (data) => dispatch(setMarketPlaceNameSelectedOptions(data)),
+    setSellerSKUSelectedOptions: (data) => dispatch(setSellerSKUSelectedOptions(data)),
+    setCurrentSelections: (data) => dispatch(setCurrentSelections(data)),
+    setPickerStartDate: (data) => dispatch(setPickerStartDate(data)),
+    setPickerEndDate: (data) => dispatch(setPickerEndDate(data))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashFilters)

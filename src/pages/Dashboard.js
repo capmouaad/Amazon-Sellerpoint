@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import api from '../services/Api';
 import { connect } from 'react-redux';
 import { SET_NAVBAR_DASHBOARD } from '../store/ActionTypes'
@@ -49,11 +49,22 @@ const DASHBOARD_TAB_MAP = {
     }
 }
 
-class DashboardSwitch extends React.Component {
+class Dashboard extends Component {
     constructor(props) {
         super(props)
         this.state = {
             apiError: null
+        }
+    }
+
+    componentDidMount() {
+        this.checkNavDashboard()
+    }
+
+    checkNavDashboard = () => {
+        const { navDashboard } = this.props
+        if (navDashboard.dashboards.length === 0 || navDashboard.settings.length === 0) {
+            this.getTabs()
         }
     }
 
@@ -68,7 +79,7 @@ class DashboardSwitch extends React.Component {
 
                     const filterNavDash = dashboardTabs.map((tabString) => ({
                         ...DASHBOARD_TAB_MAP[tabString],
-                        path: `${match.url}/${DASHBOARD_TAB_MAP[tabString].path}`
+                        path: `${match.url}/dashboards/${DASHBOARD_TAB_MAP[tabString].path}`
                     }))
 
                     const filterNavSettings = configurationTabs.map((tabString) => ({
@@ -94,64 +105,13 @@ class DashboardSwitch extends React.Component {
             });
     }
 
-    renderAction = () => {
-        const { match } = this.props;
-        const actionParam = match.params.action;
-
-        switch (actionParam) {
-            case 'dashboards':
-                return (
-                    <DashboardDashboards match={match} />
-                )
-            case 'plannings':
-                return (
-                    <DashboardPlannings match={match} />
-                )
-            case 'configuration':
-                return (
-                    <DashboardConfiguration match={match}/>
-                )
-            default:
-                return <DashboardWelcome />
-        }
-    }
-
-    checkNavDashboard = () => {
-        const { navDashboard } = this.props
-        if (navDashboard.dashboards.length === 0 || navDashboard.settings.length === 0) {
-            this.getTabs()
-        }
-    }
-
-    componentDidMount() {
-        this.checkNavDashboard()
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-                {this.renderAction()}
-            </React.Fragment>
-        );
-    }
-}
-
-    const mapStateToProps = (state) => ({
-        navDashboard: state.header.navDashboard
-    })
-  
-    const mapDispatchToProps = (dispatch) => ({
-        setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }) 
-    });
-  
-const DashboardSwitchModel = connect(mapStateToProps, mapDispatchToProps)(DashboardSwitch);
-
-class Dashboard extends Component {
     render() {
         const { match } = this.props
         return (
-            <React.Fragment>
-                <Route path={`${match.url}/:action`} component={DashboardSwitchModel} />
+            <Switch>
+                <Route path={`${match.url}/dashboards`} component={DashboardDashboards} />
+                <Route path={`${match.url}/plannings`} component={DashboardPlannings} />
+                <Route path={`${match.url}/configuration`} component={DashboardConfiguration} />
                 <Route
                     exact
                     path={match.url}
@@ -162,9 +122,17 @@ class Dashboard extends Component {
                         <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
                         null
                 )} />
-            </React.Fragment>
+            </Switch>
         )
     }
 }
 
-export default Dashboard
+const mapStateToProps = (state) => ({
+    navDashboard: state.header.navDashboard
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }) 
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

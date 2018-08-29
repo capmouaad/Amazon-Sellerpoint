@@ -7,6 +7,7 @@ import api from '../services/Api';
 import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes';
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
+import { resetStateDashFilter } from '../actions/dashFilter'
 
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
@@ -84,6 +85,8 @@ class Header extends React.Component {
           dashboards: [],
           settings: []
       })
+
+      this.props.resetStateDashFilter()
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
@@ -207,7 +210,8 @@ const mapDispatchToProps = (dispatch) => ({
   closeAppQlik: () => dispatch(closeAppQlik()),
   resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
   setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-  setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }), 
+  setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
+  resetStateDashFilter: () => dispatch(resetStateDashFilter()),
   logOut: () => dispatch(logOut())
 });
 
