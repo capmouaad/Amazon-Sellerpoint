@@ -57,6 +57,7 @@ class DashFilters extends Component {
     }
 
     bindCurrentSelections = async () => {
+
         const { setCurrentSelections } = this.props
         if (window.GlobalQdtComponents) {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
@@ -163,14 +164,15 @@ class DashFilters extends Component {
         const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions } = this.props
         let data = []
         if (reply.qListObject.qDataPages.length > 0) {
-            data = reply.qListObject.qDataPages[0].qMatrix.map((item) => {
-                return {
-                    value: item[0].qElemNumber,
-                    label: item[0].qText
-                }
-            })
+            data = reply.qListObject.qDataPages[0].qMatrix
+                .filter(item => item.qState !== "S")
+                .map((item) => {
+                    return {
+                        value: item[0].qElemNumber,
+                        label: item[0].qText
+                    }
+                })
         }
-
         if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.MarketPlaceName) {
             setMarketPlaceNameOptions(data)
         } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerSKU) {
@@ -194,7 +196,7 @@ class DashFilters extends Component {
             }
 
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-            app && await app.field(key).select(data, false,true);
+            app && await app.field(key).select(data, false, true);
 
             if (key === FIELD_NAME.SellerSKU) {
                 setSellerSKUSelectedOptions(optionSelected)
@@ -213,36 +215,40 @@ class DashFilters extends Component {
     deleteFilter = async ({ item, qName }) => {
         try {
             const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+            debugger;
+            if (isNaN(Number(qName)))
+                await app.field(item.qField).selectValues([{ qText: qName }], true, true);
+            else
+                await app.field(item.qField).selectValues([Number(qName)], true, true);
+            // let data = item.qSelectedFieldSelectionInfo
+            // data = data
+            //     .filter((val) => val.qName !== qName)
+            //     .map((val) => ({
+            //         qText: val.qName
+            //     }))
 
-            let data = item.qSelectedFieldSelectionInfo
-            data = data
-                .filter((val) => val.qName !== qName)
-                .map((val) => ({
-                    qText: val.qName
-                }))
+            // await app.field(item.qField).selectValues(data, false);
 
-            await app.field(item.qField).selectValues(data, false);
-
-            const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
-            switch (item.qField) {
-                case FIELD_NAME.MarketPlaceName:
-                    setMarketPlaceNameSelectedOptions(
-                        MarketPlaceNameSelectedOptions.filter((item) => item.value !== qName)
-                    )
-                    break
-                case FIELD_NAME.SellerID:
-                    setSellerIdSelectedOptions(
-                        SellerIDSelectedOptions.filter((item) => item.value !== qName)
-                    )
-                    break
-                case FIELD_NAME.SellerSKU:
-                    setSellerSKUSelectedOptions(
-                        SellerSKUSelectedOptions.filter((item) => item.value !== qName)
-                    )
-                    break
-                default:
-                    break
-            }
+            // const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
+            // switch (item.qField) {
+            //     case FIELD_NAME.MarketPlaceName:
+            //         setMarketPlaceNameSelectedOptions(
+            //             MarketPlaceNameSelectedOptions.filter((item) => item.value !== qName)
+            //         )
+            //         break
+            //     case FIELD_NAME.SellerID:
+            //         setSellerIdSelectedOptions(
+            //             SellerIDSelectedOptions.filter((item) => item.value !== qName)
+            //         )
+            //         break
+            //     case FIELD_NAME.SellerSKU:
+            //         setSellerSKUSelectedOptions(
+            //             SellerSKUSelectedOptions.filter((item) => item.value !== qName)
+            //         )
+            //         break
+            //     default:
+            //         break
+            // }
         } catch (e) {
             console.error(e)
         }

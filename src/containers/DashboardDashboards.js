@@ -11,9 +11,7 @@ import DashFinancialPerformance from '../components/DashDashboards/DashFinancial
 import DashBusinessResults from '../components/DashDashboards/DashBusinessResults'
 import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
 import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
-
 import DashFilters from '../components/DashCommon/DashFilters'
-import QlikConnector from '../components/Qlik/QlikConnector'
 
 class DashboardDashboards extends Component {
   static propTypes = {
