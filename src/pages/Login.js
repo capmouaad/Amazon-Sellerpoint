@@ -171,26 +171,28 @@ class Login extends Component {
                                 {apiError &&
                                     <span className="ui-input-validation">{apiError}</span>
                                 }
-
-                                <FormInput
-                                    name="email"
-                                    label="Email"                                    
-                                    placeholder=""
-                                    value={email}
-                                    validations="isEmail"
-                                    validationErrors={{
-                                        isEmail: "This is not a valid email",
-                                        isDefaultRequiredValue: 'Please enter email'
-                                    }}
-                                    onChangeHandler={this.handleChange}
-                                    required
-                                />
-
-                                <div className="password">
+                                <div className="email asterisk-removed">
+                                    <FormInput
+                                        name="email"
+                                        label="Email"
+                                        placeholder=""
+                                        icon="email"
+                                        value={email}
+                                        validations="isEmail"
+                                        validationErrors={{
+                                            isEmail: "This is not a valid email",
+                                            isDefaultRequiredValue: 'Please enter email'
+                                        }}
+                                        onChangeHandler={this.handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="password asterisk-removed">
                                     <FormInput
                                         name="password"
                                         type="password"
-                                        label="Password"                                        
+                                        icon="lock"
+                                        label="Password"
                                         placeholder=""
                                         value={password}
                                         onChangeHandler={this.handleChange}
@@ -209,7 +211,7 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-                               
+
                                 <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Sign In</button>

@@ -104,20 +104,22 @@ class ForgotPassword extends Component {
                                 {apiError &&
                                     <span className="ui-input-validation">{apiError}</span>
                                 }
-                                <FormInput
-                                    name="email"
-                                    label="Email"                                    
-                                    placeholder=""
-                                    value={email}
-                                    validations="isEmail"
-                                    validationErrors={{
-                                        isEmail: "This is not a valid email",
-                                        isDefaultRequiredValue: 'Please enter email'
-                                    }}
-                                    onChangeHandler={this.handleChange}
-                                    required
-                                />
-
+                                <div className="email asterisk-removed">
+                                    <FormInput
+                                        name="email"
+                                        label="Email"
+                                        placeholder=""
+                                        icon="email"
+                                        value={email}
+                                        validations="isEmail"
+                                        validationErrors={{
+                                            isEmail: "This is not a valid email",
+                                            isDefaultRequiredValue: 'Please enter email'
+                                        }}
+                                        onChangeHandler={this.handleChange}
+                                        required
+                                    />
+                                </div>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
                                 </div>
