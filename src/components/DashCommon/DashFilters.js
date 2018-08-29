@@ -6,15 +6,15 @@ import moment from 'moment';
 import Select from 'react-select';
 
 const filters = [
-    {
-        name: "DataGroupedBy",
-        qdt: {
-            type: 'QdtViz',
-            props: {
-                id: 'uFJU', height: '40px', width: '200px'
-            },
-        }
-    },
+    // {
+    //     name: "DataGroupedBy",
+    //     qdt: {
+    //         type: 'QdtViz',
+    //         props: {
+    //             id: 'uFJU', height: '40px', width: '200px'
+    //         },
+    //     }
+    // },
     // {
     //     name: "SellerId",
     //     qdt: {
@@ -46,9 +46,11 @@ const filters = [
 
 const initialState = {
     isTabOpened: true,
+    DataGroupByOption: [],
     sellerIDOption: [],
     marketOption: [],
     sellerSKUOptions: [],
+    DataGroupBySelectedOption: null,
     sellerIDSelectedOption: null,
     marketSelectedOption: null,
     sellerSKUSelectedOptions: null,
@@ -56,6 +58,7 @@ const initialState = {
 }
 
 const FIELD_NAME = {
+    DataGroupBy: 'DataFieldLabel',
     SellerID: 'SellerID',
     MarketPlaceName: 'MarketPlaceName',
     SellerSKU: 'SellerSKU'
@@ -107,6 +110,29 @@ export default class DashFilters extends Component {
             await app.getList('CurrentSelections', (reply) => {
                 this.setState({ currentSelections: reply.qSelectionObject.qSelections })
             })
+        }
+    }
+
+    // Render Data Group By
+
+    renderDataGroupBy = async () => {
+        if (window.GlobalQdtComponents) {
+            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+
+            qApp.createList({
+                "qFrequencyMode": "V",
+                "qDef": {
+                    "qFieldDefs": [
+                        FIELD_NAME.DataGroupBy
+                    ]
+                },
+                "qInitialDataFetch": [
+                    {
+                        "qHeight": 20,
+                        "qWidth": 1
+                    }
+                ]
+            }, this.bindData);
         }
     }
 
@@ -178,6 +204,7 @@ export default class DashFilters extends Component {
     }
 
     bindData = (reply, app) => {
+        console.log('replyyyyyy', reply)
         let data = [];
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix.map((item) => {
@@ -194,25 +221,33 @@ export default class DashFilters extends Component {
             })
         } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerSKU) {
             this.setState({ sellerSKUOptions: data });
-        } else {
+        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerID) {
             this.setState({
                 sellerIDOption: data
+            })
+        } else {
+            this.setState({
+                DataGroupByOption: data
             })
         }
     }
 
     handleChange = async ({ optionSelected, key }) => {
-        if ( key === 'SellerSKU') {
+        if ( key === FIELD_NAME.SellerSKU) {
             this.setState({
                 sellerSKUSelectedOptions: optionSelected
             })
-        } else if (key === 'MarketPlaceName') {
+        } else if (key === FIELD_NAME.MarketPlaceName) {
             this.setState({
                 marketSelectedOption: optionSelected
             })
-        } else {
+        } else if (key === FIELD_NAME.SellerID) {
             this.setState({
                 sellerIDSelectedOption: optionSelected
+            })
+        } else {
+            this.setState({
+                DataGroupBySelectedOption: optionSelected
             })
         }
 
@@ -275,13 +310,21 @@ export default class DashFilters extends Component {
         this.handleDateSelection(startDate, endDate);
         setTimeout( async () => {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
+            this.renderDataGroupBy()
             this.renderSellerID()
             this.renderMarketDropDown()
             this.binddropdown();
             this.bindCurrentSelections();
             if (qApp) {
-                qApp.field('DataFieldLabel').selectValues(['Week'], true, true)
-                qApp.field('DataFieldLabel').lock()
+                await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], true, true)
+                await qApp.field(FIELD_NAME.DataGroupBy).lock()
+                this.handleChange({
+                    optionSelected: {
+                        value: 'Week',
+                        label: 'Week'
+                    },
+                    key: FIELD_NAME.DataGroupBy
+                })
             }
         }, 3000);
 
@@ -330,9 +373,16 @@ export default class DashFilters extends Component {
                                 />
                             )
                         })}
+                        <Select className="qlik-select" isMulti={false} closeMenuOnSelect={false}
+                            hideSelectedOptions
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy})}}
+                            options={this.state.DataGroupByOption}
+                            isClearable={false}
+                            value={this.state.DataGroupBySelectedOption}
+                        />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerID'})}}
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerID})}}
                             options={this.state.sellerIDOption}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -340,7 +390,7 @@ export default class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'MarketPlaceName'})}}
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName})}}
                             options={this.state.marketOption}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -348,7 +398,7 @@ export default class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions
-                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: 'SellerSKU'})}}
+                            onChange={(optionSelected) => {this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU})}}
                             options={this.state.sellerSKUOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
