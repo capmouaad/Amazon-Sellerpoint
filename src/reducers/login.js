@@ -1,4 +1,5 @@
 import * as types from '../store/ActionTypes';
+import api from '../services/Api'
 
 export const initialState = {
     authToken: null,
@@ -22,15 +23,18 @@ const login = (state = initialState, action) => {
             }
 
         case types.LOG_OUT:
-            return {
-                initialState
-            }
+            return initialState
         
         case types.SET_DATA_IMPORT_COMPLETE:
             return {
                 ...state,
                 DataImportComplete: action.payload
             }
+
+        // attach the authtoken back to api header after rehydration
+        case 'persist/REHYDRATE':
+            api.defaults.headers['authToken'] = action.payload ? action.payload.login.authToken : null
+            return state
 
         default:
             return state;

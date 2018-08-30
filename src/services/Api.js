@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../store/store';
+import { store } from '../store/store';
 import { logOut } from '../actions/login'
 import { resetStateDashFilter } from '../actions/dashFilter'
 import { closeAppQlik } from '../actions/qlik'
@@ -11,7 +11,7 @@ const BACKEND_URL = "https://qa.kinimetrix.com/api/SellerPoint/";
 const api = axios.create({
   baseURL: BACKEND_URL,
   headers: {
-    'authToken': store.getState().login.authToken,
+    // 'authToken': store.getState().login.authToken,
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest'

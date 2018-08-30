@@ -6,6 +6,7 @@ import svg4everybody from 'svg4everybody';
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
+
 class App extends Component {
 
   componentDidMount() {

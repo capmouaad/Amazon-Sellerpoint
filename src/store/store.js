@@ -1,19 +1,27 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist'
 import reducers from '../reducers/index';
-import { loadState, saveState } from './localStorage';
+import localforage from 'localforage'
 
-const initialState = loadState();
+const persistConfig = {
+  key: 'root',
+  storage: localforage,
+  blacklist: ['app', 'fetching', 'error', 'blacklistPersist']
+}
 
 const createStoreWithMiddleware = compose(
   applyMiddleware()
 )(createStore);
 
-const store = createStoreWithMiddleware(reducers, initialState,
+const persistedReducer = persistReducer(persistConfig, reducers)
+
+const store = createStoreWithMiddleware(persistedReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-store.subscribe(() => {
-  saveState(store.getState());
-});
+const persistor = persistStore(store)
 
-export default store;
+export {
+  store,
+  persistor
+}

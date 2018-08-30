@@ -9,7 +9,7 @@ const initialState = {
   SellerIDSelectedOptions: null,
   MarketPlaceNameSelectedOptions: null,
   SellerSKUSelectedOptions: null,
-  currentSelections:[],
+  currentSelections: [],
   pickerStartDate: '',
   pickerEndDate: ''
 }
@@ -22,11 +22,13 @@ const dashFilter = (state = initialState, action) => {
         ...state,
         DataGroupByOptions: action.payload
       }
+
     case types.SET_SELLER_ID_OPTIONS:
       return {
         ...state,
         SellerIDOptions: action.payload
       }
+
     case types.SET_MARKET_PLACE_NAME_OPTIONS:
       return {
         ...state,

@@ -64,7 +64,6 @@ class LWACallback extends Component {
         shouldRedirect: true
       })
     } catch (e) {
-      console.log('>>>> backend response error to POST ConnectAdvertisingData')
       console.error(e)
     }
   }
