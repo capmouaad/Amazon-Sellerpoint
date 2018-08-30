@@ -8,7 +8,6 @@ import DashboardWelcome from '../containers/DashboardWelcome';
 import DashboardDashboards from '../containers/DashboardDashboards';
 import DashboardPlannings from '../containers/DashboardPlannings';
 import DashboardConfiguration from '../containers/DashboardConfiguration';
-import QlikConnector from '../components/Qlik/QlikConnector'
 
 const Configuration_TAB_MAP = {
     'COGS Setup': {
@@ -72,7 +71,7 @@ class Dashboard extends Component {
     getTabs = () => {
         const { match, setNavbarDashboard } = this.props
         api
-            .get(`GetTabs`, )
+            .get(`GetTabs`)
             .then((res) => {
                 if (res.data.IsSuccess) {
                     const configurationTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Configuration').Tabs || []
@@ -110,7 +109,6 @@ class Dashboard extends Component {
         const { match } = this.props
         return (
             <React.Fragment>
-                <QlikConnector />
                 <Switch>
                     <Route path={`${match.url}/dashboards`} component={DashboardDashboards} />
                     <Route path={`${match.url}/plannings`} component={DashboardPlannings} />
@@ -136,7 +134,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }) 
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
