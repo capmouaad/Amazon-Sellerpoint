@@ -4,6 +4,8 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import Select from 'react-select';
 import { connect } from 'react-redux'
+import chroma from 'chroma-js';
+
 import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
 
 const initialState = {
@@ -167,11 +169,13 @@ class DashFilters extends Component {
         console.log(reply.qListObject.qDataPages);
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix
-                .filter(item => (item[0].qState !== "S"))
+                //.filter(item => (item[0].qState === "O"))
                 .map((item) => {
                     return {
                         value: item[0].qElemNumber,
-                        label: item[0].qText
+                        label: item[0].qText,
+                        color: item[0].qState === "O"?'#36B37E':'#FF5630',
+                        disabled: item[0].qState === "O"?false:true
                     }
                 })
         }
@@ -331,6 +335,44 @@ class DashFilters extends Component {
             pickerEndDate
         } = this.props
 
+        const colourStyles = {
+            control: styles => ({ ...styles, backgroundColor: 'white' }),
+            option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+              const color = chroma(data.color);
+              return {
+                ...styles,
+                backgroundColor: isDisabled
+                  ? null
+                  : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
+                color: isDisabled
+                  ? '#ccc'
+                  : isSelected
+                    ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
+                    : data.color,
+                cursor: isDisabled ? 'not-allowed' : 'default',
+              };
+            },
+            multiValue: (styles, { data }) => {
+              const color = chroma(data.color);
+              return {
+                ...styles,
+                backgroundColor: color.alpha(0.1).css(),
+              };
+            },
+            multiValueLabel: (styles, { data }) => ({
+              ...styles,
+              color: data.color,
+            }),
+            multiValueRemove: (styles, { data }) => ({
+              ...styles,
+              color: data.color,
+              ':hover': {
+                backgroundColor: data.color,
+                color: 'white',
+              },
+            }),
+          };
+
         return (
             <div className="dash-filters">
                 <div className="container container--full">
@@ -342,35 +384,37 @@ class DashFilters extends Component {
                     </div>
                     <div className="dash-filters__wrapper">
                         <Select className="qlik-select" isMulti={false}
-                            hideSelectedOptions
                             onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy }) }}
                             options={DataGroupByOptions}
                             isClearable={false}
                             value={DataGroupBySelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions
+                            hideSelectedOptions={false}
                             onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerID }) }}
                             options={SellerIDOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
                             value={SellerIDSelectedOptions}
+                            styles={colourStyles}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions
+                            hideSelectedOptions={false}
                             onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName }) }}
                             options={MarketPlaceNameOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
                             value={MarketPlaceNameSelectedOptions}
+                            styles={colourStyles}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions
+                            hideSelectedOptions={false}
                             onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU }) }}
                             options={SellerSKUOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
                             value={SellerSKUSelectedOptions}
+                            styles={colourStyles}
                         />
                         <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
                             <div className="input-group">

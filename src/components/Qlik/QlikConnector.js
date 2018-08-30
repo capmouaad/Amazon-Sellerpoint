@@ -118,7 +118,7 @@ class QlikConnector extends React.Component {
       },
       connections: {
         vizApi: true,
-        // engineApi: true
+        //engineApi: true
       }
     }
 
