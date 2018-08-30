@@ -271,7 +271,7 @@ class DashFilters extends Component {
     }
 
     initialSelection = async () => {
-        const { DataGroupBySelectedOptions, pickerStartDate, pickerEndDate } = this.props
+        const { pickerStartDate, pickerEndDate } = this.props
         if (!pickerStartDate && !pickerEndDate) {
             const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
             const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
@@ -285,7 +285,7 @@ class DashFilters extends Component {
             this.binddropdown();
             this.bindCurrentSelections();
             if (qApp) {
-                await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], true, true)
+                await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true)
                 await qApp.field(FIELD_NAME.DataGroupBy).lock()
                 this.handleChange({
                     optionSelected: {
@@ -389,6 +389,7 @@ class DashFilters extends Component {
                             options={DataGroupByOptions}
                             isClearable={false}
                             value={DataGroupBySelectedOptions}
+                            placeholder="Data Grouped By"
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
@@ -398,6 +399,7 @@ class DashFilters extends Component {
                             controlShouldRenderValue={false}
                             value={SellerIDSelectedOptions}
                             styles={colourStyles}
+                            placeholder="SellerID"
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
@@ -407,6 +409,7 @@ class DashFilters extends Component {
                             controlShouldRenderValue={false}
                             value={MarketPlaceNameSelectedOptions}
                             styles={colourStyles}
+                            placeholder="Marketplace"
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
@@ -416,6 +419,7 @@ class DashFilters extends Component {
                             controlShouldRenderValue={false}
                             value={SellerSKUSelectedOptions}
                             styles={colourStyles}
+                            placeholder="Seller SKU"
                         />
                         <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
                             <div className="input-group">
