@@ -159,7 +159,7 @@ class DashFilters extends Component {
     }
 
     bindData = (reply, app) => {
-        const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions } = this.props
+        const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, DataGroupBySelectedOptions, setDataGroupBySelectedOptions } = this.props
         let data = []
         console.log('bindData')
         console.log(reply.qListObject.qDataPages);
@@ -183,7 +183,7 @@ class DashFilters extends Component {
             setSellerIdOptions(data)
         } else {
             setDataGroupByOptions(data)
-            setDataGroupBySelectedOptions(data[3])
+            !DataGroupBySelectedOptions && setDataGroupBySelectedOptions(data[3])
         }
     }
 
@@ -267,7 +267,6 @@ class DashFilters extends Component {
             this.handleDateSelection(startDate, endDate);
         }
         setTimeout(async () => {
-            const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
             this.renderDataGroupBy()
             this.renderSellerID()
             this.renderMarketDropDown()
