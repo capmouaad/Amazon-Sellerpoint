@@ -174,8 +174,8 @@ class DashFilters extends Component {
                     return {
                         value: item[0].qElemNumber,
                         label: item[0].qText,
-                        color: item[0].qState === "O"?'#36B37E':'#FF5630',
-                        disabled: item[0].qState === "O"?false:true
+                        color: item[0].qState === "O" ? '#36B37E' : '#FF5630',
+                        disabled: item[0].qState === "O" ? false : true
                     }
                 })
         }
@@ -190,7 +190,7 @@ class DashFilters extends Component {
         }
     }
 
-    handleChange = async ({ optionSelected, key }) => {
+    handleChange = async ({ optionSelected, key, doNotApplySelection }) => {
         try {
             const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
             // let difference = this.state.selected.filter(x => !value.includes(x)); // calculates diff
@@ -204,8 +204,10 @@ class DashFilters extends Component {
                 data.push(optionSelected.value);
             }
 
-            let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
-            app && await app.field(key).select(data, false, true);
+            if (!doNotApplySelection) {
+                let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
+                app && await app.field(key).select(data, false, true);
+            }
 
             if (key === FIELD_NAME.SellerSKU) {
                 setSellerSKUSelectedOptions(optionSelected)
@@ -285,15 +287,14 @@ class DashFilters extends Component {
             if (qApp) {
                 await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], true, true)
                 await qApp.field(FIELD_NAME.DataGroupBy).lock()
-                if (!DataGroupBySelectedOptions) {
-                    this.handleChange({
-                        optionSelected: {
-                            value: 'Week',
-                            label: 'Week'
-                        },
-                        key: FIELD_NAME.DataGroupBy
-                    })
-                }
+                this.handleChange({
+                    optionSelected: {
+                        value: 'Week',
+                        label: 'Week'
+                    },
+                    key: FIELD_NAME.DataGroupBy,
+                    doNotApplySelection: true
+                })
             }
         }, 3000);
 
@@ -338,40 +339,40 @@ class DashFilters extends Component {
         const colourStyles = {
             control: styles => ({ ...styles, backgroundColor: 'white' }),
             option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-              const color = chroma(data.color);
-              return {
-                ...styles,
-                backgroundColor: isDisabled
-                  ? null
-                  : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
-                color: isDisabled
-                  ? '#ccc'
-                  : isSelected
-                    ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
-                    : data.color,
-                cursor: isDisabled ? 'not-allowed' : 'default',
-              };
+                const color = chroma(data.color);
+                return {
+                    ...styles,
+                    backgroundColor: isDisabled
+                        ? null
+                        : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
+                    color: isDisabled
+                        ? '#ccc'
+                        : isSelected
+                            ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
+                            : data.color,
+                    cursor: isDisabled ? 'not-allowed' : 'default',
+                };
             },
             multiValue: (styles, { data }) => {
-              const color = chroma(data.color);
-              return {
-                ...styles,
-                backgroundColor: color.alpha(0.1).css(),
-              };
+                const color = chroma(data.color);
+                return {
+                    ...styles,
+                    backgroundColor: color.alpha(0.1).css(),
+                };
             },
             multiValueLabel: (styles, { data }) => ({
-              ...styles,
-              color: data.color,
+                ...styles,
+                color: data.color,
             }),
             multiValueRemove: (styles, { data }) => ({
-              ...styles,
-              color: data.color,
-              ':hover': {
-                backgroundColor: data.color,
-                color: 'white',
-              },
+                ...styles,
+                color: data.color,
+                ':hover': {
+                    backgroundColor: data.color,
+                    color: 'white',
+                },
             }),
-          };
+        };
 
         return (
             <div className="dash-filters">
@@ -441,7 +442,7 @@ class DashFilters extends Component {
                         </div>
                         <div className="dash-filters__selection">
                             {
-                                currentSelections.filter(sel =>  sel.qField !== 'Date' && sel.qField !== 'DataFieldLabel' ).map((sel) => {
+                                currentSelections.filter(sel => sel.qField !== 'Date' && sel.qField !== 'DataFieldLabel').map((sel) => {
                                     return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
                                         <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
                                             {value.qName}
