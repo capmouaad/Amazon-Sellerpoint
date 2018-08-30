@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import api from '../../services/Api';
 import QdtComponents from 'qdt-components';
 import { setQlikParams, setQlikConnection, setQlikInstance } from '../../actions/qlik'
+import { APP_CONFIG } from '../../constants'
 
 class QlikConnector extends React.Component {
 
@@ -24,7 +25,7 @@ class QlikConnector extends React.Component {
   // first request API
   requestQlikData = () => {
 
-    // if ( window.GlobalQdtComponents || this.props.QlikConnected ) {
+    // if (window.GlobalQdtComponents || this.props.QlikConnected) {
     //   this.connectQlik() // skip API responce and image reguest
     //   return
     // }
@@ -114,14 +115,23 @@ class QlikConnector extends React.Component {
       }
     }
     console.log('connectQlik');
-    setTimeout(function () {
-      // if (!window.GlobalQdtComponents || !this.props.QlikConnected) {
+
+    //if (!window.GlobalQdtComponents || !this.props.QlikConnected) {
+      // Add few secs delay till Require Js is loaded.
+      let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+      await wait(1000);
+
+      // Create Qdt Component instance.
       const qdtComponents = new QdtComponents(options.config, options.connections);
       window.GlobalQdtComponents = qdtComponents
-      // }
 
-      this.props.setQlikConnection(true)
-    }.bind(this), 1000)
+      // Apply default selection.
+      const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null;
+      await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
+      await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
+    //}
+    // Set QS connection complete flag.
+    this.props.setQlikConnection(true);
   }
 
   render() {

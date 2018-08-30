@@ -18,5 +18,11 @@ export const APP_CONFIG = {
       state: "203765410",
       destination: '/dash/configuration/marketplaceconfiguration'
     }
+  },
+  QS_FIELD_NAME : {
+    DataGroupBy: 'DataFieldLabel',
+    SellerID: 'SellerID',
+    MarketPlaceName: 'MarketPlaceName',
+    SellerSKU: 'SellerSKU'
   }
 }

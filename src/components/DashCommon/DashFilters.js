@@ -5,18 +5,12 @@ import moment from 'moment';
 import Select from 'react-select';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js';
+import { APP_CONFIG } from '../../constants'
 
 import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
 
 const initialState = {
     isTabOpened: true
-}
-
-const FIELD_NAME = {
-    DataGroupBy: 'DataFieldLabel',
-    SellerID: 'SellerID',
-    MarketPlaceName: 'MarketPlaceName',
-    SellerSKU: 'SellerSKU'
 }
 
 class DashFilters extends Component {
@@ -73,7 +67,6 @@ class DashFilters extends Component {
     }
 
     // Render Data Group By
-
     renderDataGroupBy = async () => {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
@@ -82,7 +75,7 @@ class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        FIELD_NAME.DataGroupBy
+                        APP_CONFIG.QS_FIELD_NAME.DataGroupBy
                     ]
                 },
                 "qInitialDataFetch": [
@@ -90,13 +83,17 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
+                ],
+                "qSortCriterias": [
+                    {
+                        "qSortByLoadOrder": 1
+                    }
                 ]
             }, this.bindData);
         }
     }
 
     // Render SellerId options
-
     renderSellerID = async () => {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
@@ -105,7 +102,7 @@ class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        FIELD_NAME.SellerID
+                        APP_CONFIG.QS_FIELD_NAME.SellerID
                     ]
                 },
                 "qInitialDataFetch": [
@@ -119,7 +116,6 @@ class DashFilters extends Component {
     }
 
     // Render Market options
-
     renderMarketDropDown = async () => {
         if (window.GlobalQdtComponents) {
             const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
@@ -128,7 +124,7 @@ class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        FIELD_NAME.MarketPlaceName
+                        APP_CONFIG.QS_FIELD_NAME.MarketPlaceName
                     ]
                 },
                 "qInitialDataFetch": [
@@ -149,7 +145,7 @@ class DashFilters extends Component {
                 "qFrequencyMode": "V",
                 "qDef": {
                     "qFieldDefs": [
-                        FIELD_NAME.SellerSKU
+                        APP_CONFIG.QS_FIELD_NAME.SellerSKU
                     ]
                 },
                 "qInitialDataFetch": [
@@ -163,7 +159,7 @@ class DashFilters extends Component {
     }
 
     bindData = (reply, app) => {
-        const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions } = this.props
+        const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions } = this.props
         let data = []
         console.log('bindData')
         console.log(reply.qListObject.qDataPages);
@@ -179,14 +175,15 @@ class DashFilters extends Component {
                     }
                 })
         }
-        if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.MarketPlaceName) {
+        if (reply.qListObject.qDimensionInfo.qFallbackTitle === APP_CONFIG.QS_FIELD_NAME.MarketPlaceName) {
             setMarketPlaceNameOptions(data)
-        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerSKU) {
+        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === APP_CONFIG.QS_FIELD_NAME.SellerSKU) {
             setSellerSKUOptions(data)
-        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === FIELD_NAME.SellerID) {
+        } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === APP_CONFIG.QS_FIELD_NAME.SellerID) {
             setSellerIdOptions(data)
         } else {
             setDataGroupByOptions(data)
+            setDataGroupBySelectedOptions(data[3])
         }
     }
 
@@ -209,11 +206,11 @@ class DashFilters extends Component {
                 app && await app.field(key).select(data, false, true);
             }
 
-            if (key === FIELD_NAME.SellerSKU) {
+            if (key === APP_CONFIG.QS_FIELD_NAME.SellerSKU) {
                 setSellerSKUSelectedOptions(optionSelected)
-            } else if (key === FIELD_NAME.MarketPlaceName) {
+            } else if (key === APP_CONFIG.QS_FIELD_NAME.MarketPlaceName) {
                 setMarketPlaceNameSelectedOptions(optionSelected)
-            } else if (key === FIELD_NAME.SellerID) {
+            } else if (key === APP_CONFIG.QS_FIELD_NAME.SellerID) {
                 setSellerIdSelectedOptions(optionSelected)
             } else {
                 setDataGroupBySelectedOptions(optionSelected)
@@ -232,28 +229,20 @@ class DashFilters extends Component {
                 await app.field(item.qField).selectValues([{ qText: qName }], true, true);
             else
                 await app.field(item.qField).selectValues([Number(qName)], true, true);
-            // let data = item.qSelectedFieldSelectionInfo
-            // data = data
-            //     .filter((val) => val.qName !== qName)
-            //     .map((val) => ({
-            //         qText: val.qName
-            //     }))
-
-            // await app.field(item.qField).selectValues(data, false);
 
             const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
             switch (item.qField) {
-                case FIELD_NAME.MarketPlaceName:
+                case APP_CONFIG.QS_FIELD_NAME.MarketPlaceName:
                     setMarketPlaceNameSelectedOptions(
                         MarketPlaceNameSelectedOptions.filter((item) => item.label !== qName)
                     )
                     break
-                case FIELD_NAME.SellerID:
+                case APP_CONFIG.QS_FIELD_NAME.SellerID:
                     setSellerIdSelectedOptions(
                         SellerIDSelectedOptions.filter((item) => item.label !== qName)
                     )
                     break
-                case FIELD_NAME.SellerSKU:
+                case APP_CONFIG.QS_FIELD_NAME.SellerSKU:
                     setSellerSKUSelectedOptions(
                         SellerSKUSelectedOptions.filter((item) => item.label !== qName)
                     )
@@ -284,20 +273,7 @@ class DashFilters extends Component {
             this.renderMarketDropDown()
             this.binddropdown();
             this.bindCurrentSelections();
-            if (qApp) {
-                await qApp.field(FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true)
-                await qApp.field(FIELD_NAME.DataGroupBy).lock()
-                this.handleChange({
-                    optionSelected: {
-                        value: 'Week',
-                        label: 'Week'
-                    },
-                    key: FIELD_NAME.DataGroupBy,
-                    doNotApplySelection: true
-                })
-            }
-        }, 3000);
-
+        }, 2500);
     }
 
     onResetQlik = async () => {
@@ -385,15 +361,15 @@ class DashFilters extends Component {
                     </div>
                     <div className="dash-filters__wrapper">
                         <Select className="qlik-select" isMulti={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.DataGroupBy }) }}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
                             options={DataGroupByOptions}
                             isClearable={false}
-                            value={DataGroupBySelectedOptions}
                             placeholder="Data Grouped By"
+                            value={DataGroupBySelectedOptions}
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerID }) }}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
                             options={SellerIDOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -403,7 +379,7 @@ class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.MarketPlaceName }) }}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
                             options={MarketPlaceNameOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
@@ -413,7 +389,7 @@ class DashFilters extends Component {
                         />
                         <Select className="qlik-select" isMulti closeMenuOnSelect={false}
                             hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: FIELD_NAME.SellerSKU }) }}
+                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
                             options={SellerSKUOptions}
                             isClearable={false}
                             controlShouldRenderValue={false}
