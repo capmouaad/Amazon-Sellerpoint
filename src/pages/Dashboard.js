@@ -106,7 +106,12 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { match } = this.props
+        const { match, authToken } = this.props
+        if ( !authToken ){
+            return (
+              <Redirect to={`${process.env.PUBLIC_URL}/login`} />
+            )
+          }
         return (
             <React.Fragment>
                 <Switch>
@@ -130,6 +135,7 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    authToken: state.login.authToken,
     navDashboard: state.header.navDashboard
 })
 

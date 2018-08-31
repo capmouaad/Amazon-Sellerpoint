@@ -31,12 +31,6 @@ open:true
 
 
   render(){
-    if ( !this.props.authToken ){
-      return (
-        <Redirect to={`${process.env.PUBLIC_URL}/login`} />
-      )
-    }
-
     return (
       <React.Fragment>
         <ImportProgress />        
@@ -47,8 +41,8 @@ open:true
                            
             <div className="_form_3 form-border"></div>   
         
-                                </div>
-                                </div>     
+            </div>
+          </div>     
       </React.Fragment>
     )
   }

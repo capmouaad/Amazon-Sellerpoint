@@ -39,12 +39,6 @@ class DashboardConfiguration extends Component {
   render(){
     const { navDashboard } = this.props // from the router
     const { settings } = navDashboard
-
-    if ( !this.props.authToken ){
-      return (
-        <Redirect to={`${process.env.PUBLIC_URL}/login`} />
-      )
-    }
     return (
       <React.Fragment>
         <ImportProgress />

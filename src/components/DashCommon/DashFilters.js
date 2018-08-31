@@ -13,6 +13,44 @@ const initialState = {
     isTabOpened: true
 }
 
+const colourStyles = {
+    control: styles => ({ ...styles, backgroundColor: 'white' }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+        const color = chroma('#2683FE');
+        return {
+            ...styles,
+            backgroundColor: isDisabled
+                ? '#DDDDDD'
+                : isSelected ? '#2683FE' : isFocused ? color.alpha(0.1).css() : null,
+            color: isDisabled
+                ? 'black'
+                : isSelected
+                    ? chroma.contrast(color, 'black') > 2 ? 'white' : 'black'
+                    : data.color,
+            cursor: isDisabled ? 'not-allowed' : 'default'
+        };
+    },
+    multiValue: (styles, { data }) => {
+        const color = chroma('#DEEBFF');
+        return {
+            ...styles,
+            backgroundColor: color.alpha(0.1).css(),
+        };
+    },
+    multiValueLabel: (styles, { data }) => ({
+        ...styles,
+        color: '#DEEBFF'
+    }),
+    multiValueRemove: (styles, { data }) => ({
+        ...styles,
+        color: data.color,
+        ':hover': {
+            backgroundColor: '#DEEBFF',
+            color: 'white',
+        },
+    }),
+};
+
 class DashFilters extends Component {
     constructor(props) {
         super(props)
@@ -59,9 +97,21 @@ class DashFilters extends Component {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
             await app.getList('CurrentSelections', (reply) => {
-                console.log('Current selections');
-                console.log(reply.qSelectionObject.qSelections);
-                setCurrentSelections(reply.qSelectionObject.qSelections)
+
+                // Flatten data from qlik so redux connect can compare object changes
+                let data = []
+                reply.qSelectionObject.qSelections.forEach((sel) => {
+                    if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
+                        sel.qSelectedFieldSelectionInfo.forEach((item) => {
+                            data.push({
+                                qField: sel.qField,
+                                qName: item.qName
+                            })
+                        })
+                    }
+                })
+
+                setCurrentSelections(data)
             })
         }
     }
@@ -160,21 +210,19 @@ class DashFilters extends Component {
 
     bindData = (reply, app) => {
         const { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, DataGroupBySelectedOptions, setDataGroupBySelectedOptions } = this.props
+
         let data = []
-        console.log('bindData')
-        console.log(reply.qListObject.qDataPages);
         if (reply.qListObject.qDataPages.length > 0) {
             data = reply.qListObject.qDataPages[0].qMatrix
-                //.filter(item => (item[0].qState === "O"))
                 .map((item) => {
                     return {
                         value: item[0].qElemNumber,
                         label: item[0].qText,
-                        color: item[0].qState === "O" ? '#36B37E' : '#FF5630',
-                        disabled: item[0].qState === "O" ? false : true
+                        isDisabled: item[0].qState !== 'O' && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
                     }
                 })
         }
+
         if (reply.qListObject.qDimensionInfo.qFallbackTitle === APP_CONFIG.QS_FIELD_NAME.MarketPlaceName) {
             setMarketPlaceNameOptions(data)
         } else if (reply.qListObject.qDimensionInfo.qFallbackTitle === APP_CONFIG.QS_FIELD_NAME.SellerSKU) {
@@ -234,17 +282,17 @@ class DashFilters extends Component {
             switch (item.qField) {
                 case APP_CONFIG.QS_FIELD_NAME.MarketPlaceName:
                     setMarketPlaceNameSelectedOptions(
-                        MarketPlaceNameSelectedOptions.filter((item) => item.label !== qName)
+                        MarketPlaceNameSelectedOptions.filter((val) => val.label !== qName)
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerID:
                     setSellerIdSelectedOptions(
-                        SellerIDSelectedOptions.filter((item) => item.label !== qName)
+                        SellerIDSelectedOptions.filter((val) => val.label !== qName)
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerSKU:
                     setSellerSKUSelectedOptions(
-                        SellerSKUSelectedOptions.filter((item) => item.label !== qName)
+                        SellerSKUSelectedOptions.filter((val) => val.label !== qName)
                     )
                     break
                 default:
@@ -310,44 +358,6 @@ class DashFilters extends Component {
             pickerStartDate,
             pickerEndDate
         } = this.props
-
-        const colourStyles = {
-            control: styles => ({ ...styles, backgroundColor: 'white' }),
-            option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-                const color = chroma(data.color);
-                return {
-                    ...styles,
-                    backgroundColor: isDisabled
-                        ? null
-                        : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
-                    color: isDisabled
-                        ? '#ccc'
-                        : isSelected
-                            ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
-                            : data.color,
-                    cursor: isDisabled ? 'not-allowed' : 'default',
-                };
-            },
-            multiValue: (styles, { data }) => {
-                const color = chroma(data.color);
-                return {
-                    ...styles,
-                    backgroundColor: color.alpha(0.1).css(),
-                };
-            },
-            multiValueLabel: (styles, { data }) => ({
-                ...styles,
-                color: data.color,
-            }),
-            multiValueRemove: (styles, { data }) => ({
-                ...styles,
-                color: data.color,
-                ':hover': {
-                    backgroundColor: data.color,
-                    color: 'white',
-                },
-            }),
-        };
 
         return (
             <div className="dash-filters">
@@ -421,17 +431,17 @@ class DashFilters extends Component {
                         </div>
                         <div className="dash-filters__selection">
                             {
-                                currentSelections.filter(sel => sel.qField !== 'Date' && sel.qField !== 'DataFieldLabel').map((sel) => {
-                                    return sel.qSelectedFieldSelectionInfo.map((value, idx) => (
+                                currentSelections.map((value, idx) => {
+                                    return (
                                         <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
                                             {value.qName}
                                             <i
                                                 className="fa fa-times"
                                                 style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                onClick={() => { this.deleteFilter({ item: sel, qName: value.qName }) }}
+                                                onClick={() => { this.deleteFilter({ item: value, qName: value.qName }) }}
                                             ></i>
                                         </span>
-                                    ))
+                                    )
                                 })
                             }
                         </div>
