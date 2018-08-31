@@ -4,6 +4,7 @@ import api from '../../services/Api';
 import QdtComponents from 'qdt-components';
 import { setQlikParams, setQlikConnection, setQlikInstance } from '../../actions/qlik'
 import { APP_CONFIG } from '../../constants'
+import moment from 'moment';
 
 class QlikConnector extends React.Component {
 
@@ -125,10 +126,18 @@ class QlikConnector extends React.Component {
       const qdtComponents = new QdtComponents(options.config, options.connections);
       window.GlobalQdtComponents = qdtComponents
 
-      // Apply default selection.
+      // Apply default DataGroup By selection.
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null;
       await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
       await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
+
+      // Apply default Date selection.
+      const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
+      const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
+       await qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(async function () {
+         await   qApp.field('Date').lock();
+        });
+
     //}
     // Set QS connection complete flag.
     this.props.setQlikConnection(true);

@@ -183,7 +183,7 @@ class DashFilters extends Component {
             setSellerIdOptions(data)
         } else {
             setDataGroupByOptions(data)
-            !DataGroupBySelectedOptions && setDataGroupBySelectedOptions(data[3])
+            !DataGroupBySelectedOptions && setDataGroupBySelectedOptions(data[1])
         }
     }
 
