@@ -49,8 +49,8 @@ export const routes = [
   {
     isExact: true,
     path: '/',
-    name: 'Login',
-    component: Login
+    name: 'Dashboard',
+    component: Dashboard
   },
   {
     isExact: true,

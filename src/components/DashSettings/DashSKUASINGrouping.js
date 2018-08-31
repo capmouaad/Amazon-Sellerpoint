@@ -95,6 +95,8 @@ export default class DashSKUASINGrouping extends Component {
 
     constructor() {
         super();
+        this.selectAllCheckBox = React.createRef();
+        this.unGroupTable = React.createRef();
 
         this.state = {
             data: [],
@@ -113,18 +115,17 @@ export default class DashSKUASINGrouping extends Component {
             id: "MerchantListingId",
             maxWidth: 25,
             Cell: this.renderRadioBtnMerchantListingId,
-            Filter: ({ filter, onChange }) => (
-                <div></div>
-            )
+            filterable: false,
+            sortable: false
         };
 
         this.ungroupTableColumns = {
+            Header: this.selectAllCheckedBoxEvent,
             id: "MerchantListingId",
             maxWidth: 40,
             Cell: this.renderMerchantListingId,
-            Filter: ({ filter, onChange }) => (
-                <div></div>
-            )
+            filterable: false,
+            sortable: false
         };
 
         let childSKUActionColumn = {
@@ -132,9 +133,8 @@ export default class DashSKUASINGrouping extends Component {
             id: "Action",
             headerClassName: "action",
             className: "action",
-            Filter: ({ filter, onChange }) => (
-                <div></div>
-            ),
+            filterable: false,
+            sortable: false,
             Cell: (cellInfo) => {
                 return <button type='button' class='btn btn-primary btn-bordered btn-small btnUnGroupSku' title='Ungroup SKU' onClick={() => { this.ungroupSKU(cellInfo.original.MerchantListingId); }}><i class='fa fa fa-object-ungroup'></i></button>
             }
@@ -375,6 +375,47 @@ export default class DashSKUASINGrouping extends Component {
             });
     }
 
+    selectAllCheckedBoxEvent = (e) => {
+        setTimeout(() => {
+            if (this.selectAllCheckBox != null) {
+                this.selectAllCheckBox.checked = false;
+                var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
+                let j = 0;
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    if (row.children[0].children[0].children[0].checked) {
+                        j = j + 1;
+                    }
+                    if (rows.length === j) {
+                        this.selectAllCheckBox.checked = true;
+                    }
+                }
+            }
+        }, 500);
+
+        return (
+            <input type="checkbox" className="floatLeft"
+                ref={c => this.selectAllCheckBox = c}
+                onChange={(e) => {
+                    var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i];
+                        var value = row.children[0].children[0].children[0].value;
+                        if (e.target.checked) {
+                            row.children[0].children[0].children[0].checked = true;
+                            if (this.skuIds.indexOf(value) === -1) {
+                                this.skuIds.push(value);
+                            }
+                        } else {
+                            row.children[0].children[0].children[0].checked = false;
+                            if (this.skuIds.indexOf(value) > -1) {
+                                this.skuIds.splice(this.skuIds.indexOf(value), 1)
+                            }
+                        }
+                    }
+                }}></input>);
+    }
+
     checkboxChangedEvent = (e) => {
         if (e.target.checked) {
             if (this.skuIds.indexOf(e.target.value) > -1) {
@@ -449,6 +490,17 @@ export default class DashSKUASINGrouping extends Component {
             });
     }
 
+
+    clearAllSelection = () => {
+        this.skuIds = [];
+        this.selectAllCheckBox.checked = false;
+        var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            row.children[0].children[0].children[0].checked = false;
+        }
+    }
+
     render() {
         const { data, grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen, loading, popupLoading } = this.state;
 
@@ -486,12 +538,13 @@ export default class DashSKUASINGrouping extends Component {
                                 </div>
                                 <h3 className="h3">Ungrouped SKUs</h3>
 
-                                <div id="divTableUngroupDataHolder" className="tab-content  cust-cogs cust-confiq">
+                                <div id="divTableUngroupDataHolder" className="tab-content  cust-cogs cust-confiq" ref={a => this.unGroupTable = a}>
                                     <div className="row clearfix">
                                         <div className="col-sm-6">
                                             <div className="dash-new-Marketplace btn-group">
                                                 <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
                                                 <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
+                                                <a className="btn btn-new-Marketplace existing-group" onClick={this.clearAllSelection}>Clear All Selection</a>
                                             </div>                                                                   </div>
 
                                     </div>
