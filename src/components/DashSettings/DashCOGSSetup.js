@@ -21,7 +21,7 @@ export default class DashCOGSSetup extends Component {
             loading: true,
             expanded: true,
             filename: '',
-            popupLoading:false
+            popupLoading: false
         };
         this.getAllCOGS();
         this.renderLandedCost = this.renderLandedCost.bind(this);
@@ -74,11 +74,11 @@ export default class DashCOGSSetup extends Component {
             .then((res) => {
                 console.log('backend responce to GET onDownloadFile', res)
                 this.setState({ popupLoading: false });
-                if (res.data.IsSuccess) {                  
+                if (res.data.IsSuccess) {
                     window.location.href = BACKEND_URL + "/Download?file=" + res.data.FileName;
                 } else {
                     this.setState({
-                        apiError: res.data.ErrorMessage                       
+                        apiError: res.data.ErrorMessage
                     })
                 }
             })
@@ -92,10 +92,7 @@ export default class DashCOGSSetup extends Component {
         api
             .get(`GetAllCOGS`)
             .then((res) => {
-                console.log(res);
-                this.setState({
-                    loading: false
-                });
+                this.setState({ loading: false });
                 if (res.data.IsSuccess) {
                     this.setState({
                         data: res.data.LstCOGSTable
@@ -111,25 +108,25 @@ export default class DashCOGSSetup extends Component {
             });
     }
 
-    renderLandedCost(cellInfo) {      
+    renderLandedCost(cellInfo) {
         return (<div className="inpt-landed-cost">{["$",
             <input type={"number"} min={0}
                 contentEditable
                 key={cellInfo.original.COGSId}
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
                 name={cellInfo.original.LandedCost}
-                defaultValue={cellInfo.original.LandedCost.toFixed(2)}                
+                defaultValue={cellInfo.original.LandedCost.toFixed(2)}
                 onChange={e => {
-                    e.target.name=e.target.value;
+                    e.target.name = e.target.value;
                     this.lstEditedCOGS = this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value > 0 ? e.target.value : e.target.defaultValue) });
                 }}
-                onClick={e =>{                  
-                    e.target.value=e.target.name;                                      
+                onClick={e => {
+                    e.target.value = e.target.name;
                 }}
                 onBlur={
-                    e =>{                       
-                        e.target.value= Number(e.target.value).toFixed(2)
+                    e => {
+                        e.target.value = Number(e.target.value).toFixed(2)
                     }
                 }
             />]}</div>
@@ -181,18 +178,18 @@ export default class DashCOGSSetup extends Component {
                 <div className="dash-container">
                     <div className="container container--full">
                         <div className={"panel panel-dark loader-inside " + (loading ? "" : "loading-over")}>
-                        <FormLoader />
+                            <FormLoader />
                             <div className="panel-heading">
                                 <h3 className="panel-title">Products List</h3>
                             </div>
-                            <div className="panel-body">                               
+                            <div className="panel-body">
                                 <div className="row">
                                     <div className="custom-pagelist-left">
                                         <div className="dash-new-marketplace btn-group">
                                             <a className="btn btn-new-marketplace" onClick={this.onOpenModal}>Bulk CSV Edit</a>
                                         </div>  </div></div>
 
-                                <div className="row">                               
+                                <div className="row">
                                     <ReactTable
                                         key="1"
                                         data={data}
@@ -290,9 +287,9 @@ export default class DashCOGSSetup extends Component {
                         </div> </div>
                 </div>
 
-                <Modal open={open} onClose={this.onCloseModal}> 
+                <Modal open={open} onClose={this.onCloseModal}>
                     <div className={" modal-dialog modal-md loader-inside " + (popupLoading ? "" : "loading-over")}>
-                    <FormLoader />
+                        <FormLoader />
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h4 className="modal-title" id="myModalLabel">Bulk CSV Edit</h4>

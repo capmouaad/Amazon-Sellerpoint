@@ -375,25 +375,26 @@ export default class DashSKUASINGrouping extends Component {
             });
     }
 
-    selectAllCheckedBoxEvent = (e) => {       
-        
+    selectAllCheckedBoxEvent = (e) => {
         setTimeout(() => {
-            this.selectAllCheckBox.checked = false;
-            var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
-            let j = 0;
-            for (let i = 0; i < rows.length; i++) {
-                let row = rows[i];
-                if (row.children[0].children[0].children[0].checked) {
-                    j = j + 1;
+            if (this.selectAllCheckBox != null) {
+                this.selectAllCheckBox.checked = false;
+                var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
+                let j = 0;
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    if (row.children[0].children[0].children[0].checked) {
+                        j = j + 1;
+                    }
+                    if (rows.length === j) {
+                        this.selectAllCheckBox.checked = true;
+                    }
                 }
-                if (rows.length === j) {
-                    this.selectAllCheckBox.checked = true;
-                }               
             }
         }, 500);
 
         return (
-            <input type="checkbox"
+            <input type="checkbox" className="floatLeft"
                 ref={c => this.selectAllCheckBox = c}
                 onChange={(e) => {
                     var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
@@ -410,7 +411,7 @@ export default class DashSKUASINGrouping extends Component {
                             if (this.skuIds.indexOf(value) > -1) {
                                 this.skuIds.splice(this.skuIds.indexOf(value), 1)
                             }
-                        }                       
+                        }
                     }
                 }}></input>);
     }
@@ -489,6 +490,17 @@ export default class DashSKUASINGrouping extends Component {
             });
     }
 
+
+    clearAllSelection = () => {
+        this.skuIds = [];
+        this.selectAllCheckBox.checked = false;
+        var rows = this.unGroupTable.children[1].children[0].children[0].children[2].children;
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            row.children[0].children[0].children[0].checked = false;
+        }
+    }
+
     render() {
         const { data, grouped_data, childPopupOpen, childSKUs, groupSelectedPopupOpen, selSKUs_data, groupedSKUPopupOpen, loading, popupLoading } = this.state;
 
@@ -532,6 +544,7 @@ export default class DashSKUASINGrouping extends Component {
                                             <div className="dash-new-Marketplace btn-group">
                                                 <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
                                                 <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
+                                                <a className="btn btn-new-Marketplace existing-group" onClick={this.clearAllSelection}>Clear All Selection</a>
                                             </div>                                                                   </div>
 
                                     </div>
