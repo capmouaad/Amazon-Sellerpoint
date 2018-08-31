@@ -5,7 +5,7 @@ import api from '../services/Api'
 import PropTypes from 'prop-types';
 import { setLwaAuth } from '../actions/lwa';
 import { APP_CONFIG } from '../constants'
-
+import Loader from '../components/Loader';
 class LWACallback extends Component {
   static propTypes = {
     setLwaAuth: PropTypes.func,
@@ -90,7 +90,7 @@ class LWACallback extends Component {
     return (
       <div className="lwa">
         <div className="container">
-          <span>Please wait ...</span>
+          <Loader backGroundProcessing message={'Please wait while we connect your advertising account.'} />
         </div>
       </div>
     );
