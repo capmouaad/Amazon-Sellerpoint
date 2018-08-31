@@ -88,10 +88,8 @@ class LWACallback extends Component {
     }
 
     return (
-      <div className="lwa">
-        <div className="container">
-          <Loader backGroundProcessing message={'Please wait while we connect your advertising account.'} />
-        </div>
+      <div className="container">
+        <Loader backGroundProcessing message={'Please wait while we connect your advertising account.'} />
       </div>
     );
   }
