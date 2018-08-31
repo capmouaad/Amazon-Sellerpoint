@@ -92,6 +92,7 @@ export default class DashCOGSSetup extends Component {
         api
             .get(`GetAllCOGS`)
             .then((res) => {
+                console.log(res);
                 this.setState({
                     loading: false
                 });
@@ -110,17 +111,27 @@ export default class DashCOGSSetup extends Component {
             });
     }
 
-    renderLandedCost(cellInfo) {
+    renderLandedCost(cellInfo) {      
         return (<div className="inpt-landed-cost">{["$",
             <input type={"number"} min={0}
                 contentEditable
                 key={cellInfo.original.COGSId}
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
-                defaultValue={cellInfo.original.LandedCost.toFixed(2)}
+                name={cellInfo.original.LandedCost}
+                defaultValue={cellInfo.original.LandedCost.toFixed(2)}                
                 onChange={e => {
+                    e.target.name=e.target.value;
                     this.lstEditedCOGS = this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value > 0 ? e.target.value : e.target.defaultValue) });
                 }}
+                onClick={e =>{                  
+                    e.target.value=e.target.name;                                      
+                }}
+                onBlur={
+                    e =>{                       
+                        e.target.value= Number(e.target.value).toFixed(2)
+                    }
+                }
             />]}</div>
         );
     }
