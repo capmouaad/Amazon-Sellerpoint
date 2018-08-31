@@ -76,6 +76,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.DataGroupBy
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByLoadOrder": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -84,11 +89,6 @@ class DashFilters extends Component {
                         "qWidth": 1
                     }
                 ],
-                "qSortCriterias": [
-                    {
-                        "qSortByLoadOrder": 1
-                    }
-                ]
             }, this.bindData);
         }
     }
