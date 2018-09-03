@@ -80,7 +80,7 @@ class FormInput extends Component {
       <React.Fragment>
         <div className={parentClass + (label ? " ui-group--labeled" : "")}>
           <label htmlFor={name}>
-            {isRequired() ? (<span>*</span>) : ""}
+            {isRequired() ? (<span className="asterisk">*</span>) : ""}
             {label}
           </label>
 
