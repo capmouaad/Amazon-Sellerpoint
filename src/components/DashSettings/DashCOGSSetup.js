@@ -95,8 +95,8 @@ export default class DashCOGSSetup extends Component {
                 this.setState({ loading: false });
                 if (res.data.IsSuccess) {
                     this.setState({
-                        data: res.data.LstCOGSTable
-                    });
+                        data: []
+                    },() => this.setState({  data: res.data.LstCOGSTable }));
                 } else {
                     this.setState({
                         apiError: res.data.ErrorMessage
