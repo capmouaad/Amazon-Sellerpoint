@@ -195,6 +195,7 @@ export default class DashCOGSSetup extends Component {
                                         data={data}
                                         noDataText="No products found."
                                         filterable
+                                        minRows={1}
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
                                         columns={[

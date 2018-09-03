@@ -551,6 +551,7 @@ export default class DashSKUASINGrouping extends Component {
                                     <div className="row">
                                         <ReactTable
                                             data={data}
+                                            minRows={1}
                                             noDataText="No ungrouped skus found."
                                             filterable
                                             defaultFilterMethod={(filter, row) =>
@@ -572,6 +573,7 @@ export default class DashSKUASINGrouping extends Component {
 
                                 <div id="divTableGroupDataHolder" className="tab-content  cust-cogs">
                                     <ReactTable id="TableGroupDataHolder"
+                                        minRows={1}
                                         data={grouped_data}
                                         noDataText="No grouped skus found."
                                         filterable
@@ -630,6 +632,7 @@ export default class DashSKUASINGrouping extends Component {
                                                 </div>
 
                                                 <ReactTable
+                                                    minRows={1}
                                                     data={childSKUs}
                                                     noDataText="No child skus found."
                                                     filterable
@@ -679,6 +682,7 @@ export default class DashSKUASINGrouping extends Component {
                                             <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
 
                                                 <ReactTable
+                                                    minRows={1}
                                                     data={selSKUs_data}
                                                     noDataText="No child skus found."
                                                     filterable
@@ -728,6 +732,7 @@ export default class DashSKUASINGrouping extends Component {
                                             </div>
                                             <div id="divTableExistingGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
                                                 <ReactTable id="TableGroupDataHolder"
+                                                    minRows={1}
                                                     data={grouped_data}
                                                     noDataText="No grouped skus found."
                                                     filterable
