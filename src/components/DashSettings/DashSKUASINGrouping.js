@@ -22,7 +22,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "status",
             accessor: d => d.Status,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Status"] }),
+                matchSorter(rows, filter.value, { keys: ["Status"], threshold: matchSorter.rankings.STARTS_WITH }),
             filterAll: true
         },
         {

@@ -96,7 +96,7 @@ export default class DashCOGSSetup extends Component {
                 if (res.data.IsSuccess) {
                     this.setState({
                         data: []
-                    },() => this.setState({  data: res.data.LstCOGSTable }));
+                    }, () => this.setState({ data: res.data.LstCOGSTable }));
                 } else {
                     this.setState({
                         apiError: res.data.ErrorMessage
@@ -205,7 +205,7 @@ export default class DashCOGSSetup extends Component {
                                                 className: "status",
                                                 accessor: d => d.Status,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["Status"], threshold: matchSorter.rankings.STARTS_WITH }),
                                                 filterAll: true
                                             },
                                             {
