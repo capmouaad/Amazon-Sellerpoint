@@ -63,19 +63,18 @@ class ForgotPassword extends Component {
 
             const { IsSuccess } = forgotPasswordRes.data;
             if (IsSuccess) {
-                this.setState({
-                    email: "",
-                });
+                this.formRef.reset()
             } else {
                 this.setState({
                     apiError: forgotPasswordRes.data.ErrorMessage
                 })
             }
+        } catch (e) {
+            console.log(e)
+        } finally {
             this.setState({
                 isFormSubmited: false // reset submit status
             })
-        } catch (e) {
-            console.log(e)
         }
     }
 
@@ -94,7 +93,7 @@ class ForgotPassword extends Component {
                             onValidSubmit={this.handleSubmit}
                             onValid={this.formValid}
                             onInvalid={this.formInvalid}
-                            ref={this.formRef}
+                            ref={(node) => { this.formRef = node }}
                         >
                             <h2>Reset Password</h2>
                             <p>We will send you an e-mail with instructions</p>
@@ -117,6 +116,7 @@ class ForgotPassword extends Component {
                                             isDefaultRequiredValue: 'Please enter email'
                                         }}
                                         onChangeHandler={this.handleChange}
+                                        ref={(node) => { this.emailInput = node }}
                                         required
                                     />
                                 </div>
