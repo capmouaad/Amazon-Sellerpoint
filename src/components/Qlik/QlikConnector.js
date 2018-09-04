@@ -118,25 +118,25 @@ class QlikConnector extends React.Component {
     console.log('connectQlik');
 
     //if (!window.GlobalQdtComponents || !this.props.QlikConnected) {
-      // Add few secs delay till Require Js is loaded.
-      let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-      await wait(1000);
+    // Add few secs delay till Require Js is loaded.
+    let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    await wait(1000);
 
-      // Create Qdt Component instance.
-      const qdtComponents = new QdtComponents(options.config, options.connections);
-      window.GlobalQdtComponents = qdtComponents
+    // Create Qdt Component instance.
+    const qdtComponents = new QdtComponents(options.config, options.connections);
+    window.GlobalQdtComponents = qdtComponents
 
-      // Apply default DataGroup By selection.
-      const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null;
-      await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
-      await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
+    // Apply default DataGroup By selection.
+    const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null;
+    await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
+    await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
 
-      // Apply default Date selection.
-      const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
-      const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
-       await qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(async function () {
-         await   qApp.field('Date').lock();
-        });
+    // Apply default Date selection.
+    const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
+    const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
+    await qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(async () => {
+      await   qApp.field('Date').lock();
+    });
 
     //}
     // Set QS connection complete flag.

@@ -107,11 +107,12 @@ class Dashboard extends Component {
 
     render() {
         const { match, authToken } = this.props
-        if ( !authToken ){
+        if ( !authToken ) {
             return (
-              <Redirect to={`${process.env.PUBLIC_URL}/login`} />
+                <Redirect to={`${process.env.PUBLIC_URL}/login`} />
             )
-          }
+        }
+
         return (
             <React.Fragment>
                 <Switch>

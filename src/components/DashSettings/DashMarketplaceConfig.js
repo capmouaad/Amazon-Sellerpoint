@@ -45,7 +45,7 @@ class AddMarketSwitch extends Component {
           return null
       }
     } else {
-      return <SignupStep3 onGoBackMarket={this.props.onGoBack} />
+      return <SignupStep3 advState={APP_CONFIG.LWA_Source.Configuration.state} onGoBackMarket={this.props.onGoBack} />
     }
   }
 

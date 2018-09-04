@@ -15,18 +15,40 @@ const initialState = {
 
 const colourStyles = {
     control: styles => ({ ...styles, backgroundColor: 'white' }),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    option: (styles, { data, isAlternative, isDisabled, isFocused, isPossible, isSelected }) => {
         const color = chroma('#2683FE');
+        let checkBackgroundColor
+        let checkColor
+        if (isDisabled) {
+            checkBackgroundColor = '#A8A8A8'
+            checkColor = 'white'
+        } else if (isPossible) {
+            checkBackgroundColor = 'white'
+            checkColor = 'black'
+        } else if (isAlternative) {
+            checkBackgroundColor = '#DDDDDD'
+            checkColor = 'black'
+        } else if (isSelected) {
+            checkBackgroundColor = '#2683FE'
+            checkColor = 'white'
+        } else {
+            // default color and bgcolor
+        }
+
+        if (isFocused) {
+            if (!isSelected) {
+                checkBackgroundColor = color.alpha(0.1).css()
+                checkColor = data.color
+            } else {
+                checkBackgroundColor = 'white'
+                checkColor = 'black'
+            }
+        }
+
         return {
             ...styles,
-            backgroundColor: isDisabled
-                ? '#DDDDDD'
-                : isSelected ? '#2683FE' : isFocused ? color.alpha(0.1).css() : null,
-            color: isDisabled
-                ? 'black'
-                : isSelected
-                    ? chroma.contrast(color, 'black') > 2 ? 'white' : 'black'
-                    : data.color,
+            backgroundColor: checkBackgroundColor,
+            color: checkColor,
             cursor: isDisabled ? 'not-allowed' : 'default'
         };
     },
@@ -218,7 +240,9 @@ class DashFilters extends Component {
                     return {
                         value: item[0].qElemNumber,
                         label: item[0].qText,
-                        isDisabled: item[0].qState !== 'O' && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
+                        isPossible : item[0].qState === 'O',
+                        isAlternative: item[0].qState === 'A',
+                        isDisabled: (item[0].qState === 'X' || item[0].qState ==='XS' || item[0].qState === 'XL') && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
                     }
                 })
         }
