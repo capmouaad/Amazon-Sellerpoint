@@ -544,9 +544,8 @@ export default class DashSKUASINGrouping extends Component {
                                             <div className="dash-new-Marketplace btn-group">
                                                 <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
                                                 <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
-                                                <a className="btn btn-new-Marketplace existing-group" onClick={this.clearAllSelection}>Clear All Selection</a>
+                                                <button className="btn-clear-filter" onClick={this.clearAllSelection}>Clear All Selection</button>
                                             </div>                                                                   </div>
-
                                     </div>
                                     <div className="row">
                                         <ReactTable

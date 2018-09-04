@@ -240,9 +240,9 @@ class DashFilters extends Component {
                     return {
                         value: item[0].qElemNumber,
                         label: item[0].qText,
-                        isPossible : item[0].qState === 'O',
+                        isPossible: item[0].qState === 'O',
                         isAlternative: item[0].qState === 'A',
-                        isDisabled: (item[0].qState === 'X' || item[0].qState ==='XS' || item[0].qState === 'XL') && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
+                        isDisabled: (item[0].qState === 'X' || item[0].qState === 'XS' || item[0].qState === 'XL') && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
                     }
                 })
         }
@@ -387,64 +387,78 @@ class DashFilters extends Component {
             <div className="dash-filters">
                 <div className="container container--full">
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="dash-filters__title">FILTERS</div>
-                        <button className='btn-clear-filter' onClick={this.onResetQlik}>
+                        <div className="dash-filters__title mar-b">FILTERS</div>
+                        <button className='btn-clear-filter mar-b' onClick={this.onResetQlik}>
                             clear filters
                         </button>
                     </div>
                     <div className="dash-filters__wrapper">
-                        <Select className="qlik-select" isMulti={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
-                            options={DataGroupByOptions}
-                            isClearable={false}
-                            placeholder="Data Grouped By"
-                            value={DataGroupBySelectedOptions}
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
-                            options={SellerIDOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={SellerIDSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="SellerID"
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
-                            options={MarketPlaceNameOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={MarketPlaceNameSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="Marketplace"
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
-                            options={SellerSKUOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={SellerSKUSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="Seller SKU"
-                        />
-                        <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
-                            <div className="input-group">
-                                <span className="input-group-btn date-range-picker-calender-btn">
-                                    <button className="default date-range-toggle">
-                                        <i className="fa fa-calendar" />
-                                    </button>
-                                </span>
-                                <input
-                                    readOnly
-                                    type="text"
-                                    className="form-control date-picker"
-                                    value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
-                                />
-                            </div>
-                        </DateRangePicker>
+                        <div className="data-grouped data-filter">
+                            <label>View data by </label>
+                            <Select className="qlik-select mar-r" isMulti={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
+                                options={DataGroupByOptions}
+                                isClearable={false}
+                                placeholder="Data Grouped By"
+                                value={DataGroupBySelectedOptions}
+                            /></div>
+                        <div className="date-range-picker data-filter">
+                            <label>Date range </label>
+                            <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
+                                <div className="input-group">
+                                    <span className="input-group-btn date-range-picker-calender-btn">
+                                        <button className="default date-range-toggle">
+                                            <i className="fa fa-calendar" />
+                                        </button>
+                                    </span>
+                                    <input
+                                        readOnly
+                                        type="text"
+                                        className="form-control date-picker"
+                                        value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
+                                    />
+                                </div>
+                            </DateRangePicker>
+                        </div>
+
+                        <div className="seller-id data-filter">
+                            <label>Seller ID </label>
+                            <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
+                                options={SellerIDOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={SellerIDSelectedOptions}
+                                styles={colourStyles}
+                                placeholder="SellerID"
+                            /></div>
+
+                        <div className="marketplace data-filter">
+                            <label>Marketplace </label>
+                            <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
+                                options={MarketPlaceNameOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={MarketPlaceNameSelectedOptions}
+                                styles={colourStyles}
+                                placeholder="Marketplace"
+                            /></div>
+                        <div className="seller-sku data-filter">
+                            <label>Seller SKU </label>
+                            <Select className="qlik-select mar-r-0" isMulti closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
+                                options={SellerSKUOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={SellerSKUSelectedOptions}
+                                styles={colourStyles}
+                                placeholder="Seller SKU"
+                            />
+                        </div>
                     </div>
                     <div className={"dash-section" + (isTabOpened ? "" : " is-closed")}>
                         <div className="dash-section__heading">
