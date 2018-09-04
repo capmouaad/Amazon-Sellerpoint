@@ -22,16 +22,18 @@ class MWSActionDomain extends Component {
     const options = this.state.marketplaceDomains
     let index
 
-    if (options.indexOf(id) === -1) {
-     options.push(id)
-    } else {
-     index = options.indexOf(id)
-     options.splice(index, 1)
+    if (options) {
+      if (options.indexOf(id) === -1) {
+        options.push(id)
+        } else {
+        index = options.indexOf(id)
+        options.splice(index, 1)
+        }
+  
+      this.setState({
+        marketplaceDomains: options
+      })
     }
-
-    this.setState({
-      marketplaceDomains: options
-    })
   }
 
   nextAction = () => {
@@ -144,7 +146,7 @@ class MWSActionDomain extends Component {
         }
         <p className="t-parapgraph"><strong>Add Marketplaces to your SellerPoint account: </strong></p>
         <div className="signup__checkboxes">
-          { options.map((cb, i) => {
+          { !!marketplaceDomains && options.map((cb, i) => {
             return(
               <CheckBox
                 name={cb.name}
