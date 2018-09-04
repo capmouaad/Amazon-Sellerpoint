@@ -103,7 +103,7 @@ class SignupStep3 extends Component {
           <div className="signup__form">
             <div className="signup__heading">Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns</div>
             <ConnectMarketplaces
-              advState={APP_CONFIG.LWA_Source.SignUpStep3.state}
+              advState={this.props.advState || APP_CONFIG.LWA_Source.SignUpStep3.state}
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
             />
