@@ -380,7 +380,8 @@ class DashFilters extends Component {
             SellerSKUSelectedOptions,
             currentSelections,
             pickerStartDate,
-            pickerEndDate
+            pickerEndDate,
+            QlikConnected
         } = this.props
 
         return (
@@ -396,11 +397,13 @@ class DashFilters extends Component {
                         <div className="data-grouped data-filter">
                             <label>View data by </label>
                             <Select className="qlik-select mar-r" isMulti={false}
+                                isDisabled={!QlikConnected}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
                                 options={DataGroupByOptions}
                                 isClearable={false}
                                 placeholder="Data Grouped By"
                                 value={DataGroupBySelectedOptions}
+                                styles={colourStyles}
                             /></div>
                         <div className="date-range-picker data-filter">
                             <label>Date range </label>
@@ -424,6 +427,7 @@ class DashFilters extends Component {
                         <div className="seller-id data-filter">
                             <label>Seller ID </label>
                             <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
                                 options={SellerIDOptions}
@@ -437,6 +441,7 @@ class DashFilters extends Component {
                         <div className="marketplace data-filter">
                             <label>Marketplace </label>
                             <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
                                 options={MarketPlaceNameOptions}
@@ -449,6 +454,7 @@ class DashFilters extends Component {
                         <div className="seller-sku data-filter">
                             <label>Seller SKU </label>
                             <Select className="qlik-select mar-r-0" isMulti closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
                                 options={SellerSKUOptions}
@@ -501,7 +507,8 @@ const mapStateToProps = (state) => ({
     SellerSKUSelectedOptions: state.dashFilter.SellerSKUSelectedOptions,
     currentSelections: state.dashFilter.currentSelections,
     pickerStartDate: state.dashFilter.pickerStartDate,
-    pickerEndDate: state.dashFilter.pickerEndDate
+    pickerEndDate: state.dashFilter.pickerEndDate,
+    QlikConnected: state.qlik.connected
 })
 
 const mapDispatchToProps = (dispatch) => ({

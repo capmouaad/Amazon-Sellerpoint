@@ -22,6 +22,9 @@ class MWSActionAuth extends Component {
     this.formRef = React.createRef();
   }
 
+  componentWillUnmount () {
+    this.formRef.reset()
+  }
 
   handleChange = (e) => {
     let fieldName = e.target.name;
@@ -80,7 +83,6 @@ class MWSActionAuth extends Component {
       .catch(function (error) {
         console.log(error);
       });
-
   }
 
   updateSignup = (marketplace_data) => {
@@ -115,7 +117,7 @@ class MWSActionAuth extends Component {
             onValidSubmit={this.validSubmit}
             onValid={this.formValid}
             onInvalid={this.formInvalid}
-            ref={this.formRef}
+            ref={(node) => { this.formRef = node }}
           >
             { apiError &&
               <span className="ui-input-validation">{apiError}</span>

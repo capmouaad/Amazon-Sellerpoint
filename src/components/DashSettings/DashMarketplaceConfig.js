@@ -26,9 +26,11 @@ class AddMarketSwitch extends Component {
     if (addMarketStep === 1) {
       switch (signupAuthStep) {
         case 1:
-          return (<div className='market-msw-region'>
-            <MWSActionRegion />
-          </div>)
+          return (
+            <div className='market-msw-region'>
+              <MWSActionRegion />
+            </div>
+          )
         case 2:
           return (
             <div className='wrapper-market-step'>

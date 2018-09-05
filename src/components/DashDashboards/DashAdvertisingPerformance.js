@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 
 import DashSection from '../DashCommon/DashSection';
+import ReloadTimeInGMT from '../ReloadTimeInGMT'
 
 export default class DashAdvertisingPerformance extends Component {
     render () {
         return (
             <React.Fragment>
-
+                <ReloadTimeInGMT />
                 <div className="dash-container">
                     <div className="container container--full">
                         <div className="dash-grid">
