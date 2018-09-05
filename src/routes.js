@@ -39,6 +39,11 @@ export const ForgotPassword = MyLoadable({
   modules: ['./pages/ForgotPassword'],
   webpack: () => [require.resolveWeak('./pages/ForgotPassword')]
 });
+export const Tester = MyLoadable({
+  loader: () => import("./pages/Tester"),
+  modules: ['./pages/Tester'],
+  webpack: () => [require.resolveWeak('./pages/Tester')]
+});
 export const NotFound = MyLoadable({
   loader: () => import("./pages/NotFound"),
   modules: ['./pages/NotFound'],
@@ -77,6 +82,11 @@ export const routes = [
     path: '/forgotpassword',
     name: 'ForgotPassword',
     component: ForgotPassword
+  },
+  {
+    path: '/Tester',
+    name: 'Tester',
+    component: Tester
   },
    {
     path: '',
