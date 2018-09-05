@@ -21,7 +21,8 @@ class ForgotPassword extends Component {
             isFormSubmited: false,
             apiError: null,
             email: "",
-            formIsValid: false
+            formIsValid: false,
+            showThankYouPage:false
         }
     }
 
@@ -63,7 +64,10 @@ class ForgotPassword extends Component {
 
             const { IsSuccess } = forgotPasswordRes.data;
             if (IsSuccess) {
-                this.formRef.reset()
+                this.formRef.reset()    
+                this.setState({
+                    showThankYouPage: true // show the thank you message
+                })            
             } else {
                 this.setState({
                     apiError: forgotPasswordRes.data.ErrorMessage
@@ -79,14 +83,14 @@ class ForgotPassword extends Component {
     }
 
     render() {
-        const { email, apiError, isFormSubmited } = this.state;
+        const { email, apiError, isFormSubmited, showThankYouPage } = this.state;
 
         return (
 
             <div className="signup login">
                 <div className="container">
                     <div className="login-container">
-
+{ !showThankYouPage ? (   
                         <Formsy
                             className="signup__form login-form"
                             onSubmit={this.submitForm}
@@ -127,8 +131,12 @@ class ForgotPassword extends Component {
                                 <Link to='/login' className="cancel-btn"> Cancel </Link>
 
                             </div>
-                        </Formsy>
-
+                        </Formsy>) : ( <Formsy className="signup__form login-form">
+                            <h2>Reset Password</h2>
+                            <p className="mb-15 line-h mar-t">Instructions to reset your password have been sent to the address provided.</p>
+                            <p className="mb-15">Please check your inbox and spam folder.</p>      
+                            <p className="mb-15 link-color"> <Link to='/login'> Click here </Link> to return to the login screen.</p>                     
+                        </Formsy>)  }
                     </div>
                 </div>
             </div>
