@@ -544,7 +544,7 @@ export default class DashSKUASINGrouping extends Component {
                                             <div className="dash-new-Marketplace btn-group">
                                                 <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
                                                 <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
-                                                <button className="btn-clear-filter mar-l" onClick={this.clearAllSelection}>Clear All Selection</button>
+                                                <button className="btn-clear-filter mar-l" onClick={this.clearAllSelection}>clear selections</button>
                                             </div>                                                                   </div>
                                     </div>
                                     <div className="row">
