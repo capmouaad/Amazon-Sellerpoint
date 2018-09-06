@@ -38,7 +38,7 @@ export default class Loader extends Component {
   }
 
   render() {
-    const { timedOut, error, pastDelay, backGroundProcessing, message } = this.props;
+    const { timedOut, error, pastDelay, backGroundProcessing } = this.props;
 
     if (!error && !timedOut && !pastDelay && !backGroundProcessing) {
       return null

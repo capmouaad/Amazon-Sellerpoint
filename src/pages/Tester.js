@@ -24,7 +24,7 @@ export default class Tester extends Component {
   }
 
   GetAsin = async (e) => {
-    const { marketplaceId, keyword,functionKey,functionURL,loading } = this.state;
+    const { marketplaceId, keyword,functionKey,functionURL } = this.state;
     this.setState({ loading: true });
 
     const resp = await axios.post(`${functionURL}/MatchingProducts/${marketplaceId}/${keyword}?code=${functionKey}`);
@@ -35,7 +35,7 @@ export default class Tester extends Component {
   }
 
   GetKeyWords = async (e) => {
-    const { asin, functionKey,functionURL,loading } = this.state;
+    const { asin, functionKey,functionURL } = this.state;
     this.setState({ loading: true });
     const resp = await axios.post(`${functionURL}/SuggestedKeyWords/${asin}?code=${functionKey}`);
     this.setState({ keywords: resp.data });
