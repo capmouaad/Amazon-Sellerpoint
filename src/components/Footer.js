@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-export default class Footer extends Component {
+export class Footer extends Component {
+
+  static propTypes = {       
+    stateClass: PropTypes.string   
+  };
+
   render(){
     return(
-      <footer className="footer">
+      <footer className= {"footer "+ this.props.stateClass}>
         <div className="container">
           <div className="footer__wrapper">
             <div className="footer__links">
@@ -19,6 +26,16 @@ export default class Footer extends Component {
   }
 }
 
+
+const mapStateToProps = (state) => ({
+  stateClass: state.header.stateClass
+});
+
+const mapDispatchToProps = (dispatch) => ({ 
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(Footer);
+
 export function tAndC() {
     window.open(window.location.origin + "/Account/TermsAndConditions");
 }
@@ -26,3 +43,4 @@ export function tAndC() {
 export function privacyPolicy() {
     window.open(window.location.origin + "/Account/PrivacyPolicy");
 }
+

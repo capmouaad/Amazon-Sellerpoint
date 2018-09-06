@@ -44,6 +44,11 @@ export const Tester = MyLoadable({
   modules: ['./pages/Tester'],
   webpack: () => [require.resolveWeak('./pages/Tester')]
 });
+export const KMLogin = MyLoadable({
+  loader: () => import("./pages/KMLogin"),
+  modules: ['./pages/KMLogin'],
+  webpack: () => [require.resolveWeak('./pages/KMLogin')]
+});
 export const NotFound = MyLoadable({
   loader: () => import("./pages/NotFound"),
   modules: ['./pages/NotFound'],
@@ -88,8 +93,13 @@ export const routes = [
     name: 'Tester',
     component: Tester
   },
-   {
+  {
+    path: '/km-login',
+    name: 'KMLogin',
+    component: KMLogin
+  },
+  {
     path: '',
     component: NotFound
-  }  
+  }
 ];
