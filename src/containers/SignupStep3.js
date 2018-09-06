@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { setSignupStep } from '../actions/signup';
+import { setAddMarketStep, setSignupStep } from '../actions/signup';
 import FormLoader from '../components/Forms/FormLoader';
 import ConnectMarketplaces from '../components/ConnectMarketplaces';
 import api from '../services/Api'
-import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
 import { APP_CONFIG } from '../constants'
 
 class SignupStep3 extends Component {
@@ -48,11 +47,15 @@ class SignupStep3 extends Component {
         this.setState({
           error: false
         })
+
         await this.compleateSignupOnBackend()
-        this.setState({
-          shouldRedirect: true
-        })
-        this.props.setSignupStep(1);
+
+        if (!this.props.onGoBackMarket) {
+          this.setState({
+            shouldRedirect: true
+          })
+          this.props.setSignupStep(1);
+        }
       }
     } catch (e) {
       console.error(e)
@@ -67,14 +70,13 @@ class SignupStep3 extends Component {
       }
     }
 
-    const ressignup = await api.post('SignUpComplete');
-
-
-
-    if (!ressignup.data.IsSuccess) {
-      throw new Error(ressignup.data.ErrorMessage)
+    if (!this.props.onGoBackMarket) {
+      const ressignup = await api.post('SignUpComplete')
+      if (!ressignup.data.IsSuccess) {
+        throw new Error(ressignup.data.ErrorMessage)
+      }
     } else {
-      this.props.onGoBackMarket && this.props.onGoBackMarket()
+      this.props.onGoBackMarket()
       this.props.setAddMarketStep(1)
     }
   }
@@ -126,16 +128,15 @@ class SignupStep3 extends Component {
   }
 }
 
-
 const mapStateToProps = (state) => ({
   signupId: state.signup.signupId,
   LWA: state.lwa,
   sellerId: state.signup.fields.seller_id
-});
+})
 
 const mapDispatchToProps = (dispatch) => ({
   setSignupStep: (data) => dispatch(setSignupStep(data)),
-  setAddMarketStep: (data) => dispatch({ type: SET_ADD_MARKET_STEP, payload: data })
-});
+  setAddMarketStep: (data) => dispatch(setAddMarketStep(data))
+})
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignupStep3);
+export default connect(mapStateToProps, mapDispatchToProps)(SignupStep3)

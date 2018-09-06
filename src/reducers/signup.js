@@ -52,11 +52,13 @@ const signup = (state = initialState, action) => {
       }
     case types.RESET_STATE_SIGNUP:
       return initialState
+
     case types.SET_ADD_MARKET_STEP:
       return {
         ...state,
         addMarketStep: action.payload
       }
+
     default:
       return state;
   }

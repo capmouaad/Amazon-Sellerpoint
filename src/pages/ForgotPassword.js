@@ -93,7 +93,6 @@ class ForgotPassword extends Component {
                         {!showThankYouPage ? (
                             <Formsy
                                 className="signup__form login-form"
-                                onSubmit={this.submitForm}
                                 onValidSubmit={this.handleSubmit}
                                 onValid={this.formValid}
                                 onInvalid={this.formInvalid}
