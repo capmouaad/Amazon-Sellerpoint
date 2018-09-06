@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
-import api from '../services/Api';
+import api, { MainSiteUrl } from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
@@ -124,7 +124,8 @@ class Login extends Component {
                 }
 
                 this.setState({
-                    authenticated: true
+                    authenticated: true,
+                    clientType: UserInfo.ClientType
                 })
             } else {
                 this.setState({
@@ -145,11 +146,17 @@ class Login extends Component {
 
     render() {
 
-        const { email, password, rememberMe, apiError, isFormSubmited, authenticated } = this.state;
+        const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
         if (authenticated) {
-            return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
+            if (clientType != 3) {
+                window.location = MainSiteUrl;
+            }
+            else {
+                return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
+            }
         }
+
         return (
             <div className="signup login">
                 <div className="container">
