@@ -5,14 +5,6 @@ import { setSignupFields, setSignupAuthStep } from '../actions/signup';
 
 class MWSActionRegion extends Component {
 
-  constructor(props){
-    super(props);
-
-    this.state = {
-      marketplaceRegion: props.signupFields.marketplace_region
-    }
-  }
-
   chooseOption = (id) => {
     this.props.setSignupFields({ // redux
       ...this.props.signupFields,
@@ -21,7 +13,6 @@ class MWSActionRegion extends Component {
   }
 
   nextAction = () => {
-
     // open MWS authorization page
     window.open("https://sellercentral.amazon.com/gp/mws/registration/register.html?signInPageDisplayed=1&devAuth=1&developerName=KiniMetrix&devMWSAccountId=586216165313");
 
@@ -32,7 +23,7 @@ class MWSActionRegion extends Component {
 
   render(){
 
-    const { marketplaceRegion } = this.state
+    const { marketplace_region: marketplaceRegion = 1 } = this.props.signupFields
 
     return(
       <React.Fragment>

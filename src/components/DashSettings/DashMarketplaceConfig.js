@@ -3,7 +3,8 @@ import ConnectMarketplaces from '../ConnectMarketplaces';
 import MWSActionRegion from '../MWSActionRegion';
 import MWSActionAuth from '../MWSActionAuth'
 import MWSActionDomain from '../MWSActionDomain'
-import { setSignupAuthStep } from '../../actions/signup'
+import { Prompt } from 'react-router-dom'
+import { setAddMarketStep, setSignupAuthStep } from '../../actions/signup'
 import { connect } from 'react-redux';
 import SignupStep3 from '../../containers/SignupStep3'
 import { APP_CONFIG } from '../../constants'
@@ -21,6 +22,10 @@ const SignupNavEl = (props) => {
 }
 
 class AddMarketSwitch extends Component {
+  componentDidMount() {
+    this.props.resetSignupAuthStep(1)
+  }
+
   renderAddMarketStep = () => {
     const { signupAuthStep, addMarketStep } = this.props
     if (addMarketStep === 1) {
@@ -40,14 +45,14 @@ class AddMarketSwitch extends Component {
         case 3:
           return (
             <div className='wrapper-market-step'>
-              <MWSActionDomain />
+              <MWSActionDomain isMarketSetup />
             </div>
           )
         default:
           return null
       }
     } else {
-      return <SignupStep3 advState={APP_CONFIG.LWA_Source.Configuration.state} onGoBackMarket={this.props.onGoBack} />
+      return <SignupStep3 isMarketSetup advState={APP_CONFIG.LWA_Source.Configuration.state} onGoBackMarket={this.goBackMarketPlace} />
     }
   }
 
@@ -74,6 +79,12 @@ class AddMarketSwitch extends Component {
     const { addMarketStep } = this.props
     return (
       <div>
+        <Prompt
+          when
+          message={location =>
+            `Are you sure you want to leave setup?`
+          }
+        />
         <div>
           <button onClick={this.goBackMarketPlace} className="btn btn-go-back-market">{`Back to Marketplace Configuration Home`}</button>
         </div>
@@ -101,15 +112,8 @@ class DashMarketplaceConfig extends Component {
     this.state = {
       isFormSubmited: false,
       apiError: null,
-      addMarketStep: 0
+      marketPlace: 0
     }
-  }
-
-  componentDidMount() {
-    this.setState({
-      addMarketStep: 0
-    })
-    this.props.setSignupAuthStep(1)
   }
 
   setApiError = (error) => {
@@ -124,18 +128,18 @@ class DashMarketplaceConfig extends Component {
 
   addNewMarketplace = () => {
     this.setState({
-      addMarketStep: 1
+      marketPlace: 1
     })
   }
 
   onGoBack = () => {
     this.setState({
-      addMarketStep: 0
+      marketPlace: 0
     })
   }
 
   renderMarketPlace = () => {
-    switch (this.state.addMarketStep) {
+    switch (this.state.marketPlace) {
       case 0:
         return (
           <div>
@@ -150,7 +154,9 @@ class DashMarketplaceConfig extends Component {
           </div>
         )
       case 1:
-        return <AddMarketSwitch signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
+        return (
+          <AddMarketSwitch signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
+        )
       default:
         return null
     }
@@ -158,15 +164,13 @@ class DashMarketplaceConfig extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        <div className="dash-container">
-          <div className="container container--full">
-            {
-              this.renderMarketPlace()
-            }
-          </div>
+      <div className="dash-container">
+        <div className="container container--full">
+          {
+            this.renderMarketPlace()
+          }
         </div>
-      </React.Fragment>
+      </div>
     )
   }
 }
@@ -178,7 +182,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setSignupAuthStep: (data) => dispatch(setSignupAuthStep(data))
+  setSignupAuthStep: (data) => dispatch(setSignupAuthStep(data)),
+  setAddMarketStep: (data) => dispatch(setAddMarketStep(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashMarketplaceConfig);

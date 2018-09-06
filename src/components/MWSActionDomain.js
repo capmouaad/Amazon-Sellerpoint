@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import CheckBox from './Forms/CheckBox';
 import FormLoader from './Forms/FormLoader';
 import api from '../services/Api';
-import { setSignupFields, setSignupStep, setSignupAuthStep } from '../actions/signup';
-import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
+import { setAddMarketStep, setSignupFields, setSignupStep, setSignupAuthStep } from '../actions/signup'
 
 class MWSActionDomain extends Component {
 
@@ -84,17 +83,21 @@ class MWSActionDomain extends Component {
               // connected_marketplaces: filteredMarketplaces
             })
 
-            this.props.setAddMarketStep(2)
-            this.props.setSignupStep(3);
-            this.props.setSignupAuthStep(1); // reset ?
+            if (this.props.isMarketSetup) {
+              this.props.setAddMarketStep(2)
+              this.props.setSignupAuthStep(1)
+            } else {
+              this.props.setSignupStep(3);
+              this.props.setSignupAuthStep(1); // reset ?
 
-            this.updateStepOnBackend()
-              .then(res => {
-                console.log(res)
-              })
-              .catch(err => {
+              this.updateStepOnBackend()
+                .then(res => {
+                  console.log(res)
+                })
+                .catch(err => {
 
-              });
+                });
+            }
 
           } else {
             this.setState({
@@ -176,7 +179,7 @@ const mapDispatchToProps = (dispatch) => ({
   setSignupFields: (data) => dispatch(setSignupFields(data)),
   setSignupAuthStep: (data) => dispatch(setSignupAuthStep(data)),
   setSignupStep: (data) => dispatch(setSignupStep(data)),
-  setAddMarketStep: (data) => dispatch({ type: SET_ADD_MARKET_STEP, payload: data })
+  setAddMarketStep: (data) => dispatch(setAddMarketStep(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MWSActionDomain);
