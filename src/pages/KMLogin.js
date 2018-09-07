@@ -192,7 +192,7 @@ class KMLogin extends Component {
                                         <FormInput
                                             name="email"
                                             label="Email"
-                                            placeholder=""
+                                            placeholder="Email"
                                             icon="envelope"
                                             iconClass="bak-grey"
                                             value={email}
@@ -212,7 +212,7 @@ class KMLogin extends Component {
                                             icon="padlock"
                                             iconClass="bak-grey"
                                             label="Password"
-                                            placeholder=""
+                                            placeholder="Password"
                                             value={password}
                                             onChangeHandler={this.handleChange}
                                             validationErrors={{
