@@ -5,7 +5,7 @@ import Formsy from 'formsy-react';
 import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
-import { Redirect, Link } from 'react-router-dom';
+import { withRouter, Redirect, Link } from 'react-router-dom';
 import Image from '../components/Helpers/Image';
 import { APP_CONFIG } from '../constants'
 import api, {MainSiteUrl} from '../services/Api';
@@ -151,8 +151,8 @@ class KMLogin extends Component {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
         if (authenticated) {         
-            if (clientType != 3) {
-                window.location = MainSiteUrl;
+            if (clientType !== 3) {
+                setTimeout(()=>{  window.location = MainSiteUrl;}, 1000);              
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
@@ -279,5 +279,5 @@ const mapDispatchToProps = (dispatch) => (
         setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
         setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
     });
-
-export default connect(mapStateToProps, mapDispatchToProps)(KMLogin);
+    
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));
