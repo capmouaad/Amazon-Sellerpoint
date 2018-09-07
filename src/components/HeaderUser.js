@@ -1,16 +1,10 @@
 import React, { Component } from 'react'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom'
 
 class HeaderUser extends Component {
-    myProfile = () => {
-        window.location.href = window.location.origin + "/User/Myprofile"
-    }
-    changePassword = () => {
-        window.location.href = window.location.origin + "/User/ChangePassword"
-    }
     render() {
-
         const { isMenuOpened } = this.props
 
         return (
@@ -29,10 +23,10 @@ class HeaderUser extends Component {
                     <div className="header__dropdown">
                         <div className="header__dropdown-menu">
                             <li>
-                                <a onClick={this.myProfile}>My Profile</a>
+                                <Link to="/User/Myprofile">My Profile</Link>
                             </li>
                             <li>
-                                <a onClick={this.changePassword}>Change Password</a>
+                                <Link to="/User/ChangePassword">Change Password</Link>
                             </li>
                             <li>
                                 <a onClick={this.props.logOutUser}>Log out</a>

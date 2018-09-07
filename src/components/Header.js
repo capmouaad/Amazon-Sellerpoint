@@ -9,6 +9,7 @@ import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 import { resetStateDashFilter } from '../actions/dashFilter'
 
+import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
 
@@ -44,7 +45,12 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      isMenuOpened: false
+      isMenuOpened: false,
+      modalIsOpen: false,
+      modalMessage: `
+By leaving this page, you will close out the process of adding a new marketplace.\n
+Are you sure you want to leave?
+  `
     }
   }
 
@@ -69,8 +75,21 @@ class Header extends React.Component {
     component.preload();
   };
 
-  logOutUser = async () => {
+  logOutUser = () => {
+    if (window.location.pathname.includes('addMarketPlace')) {
+      this.setState({
+        modalIsOpen: true
+      })
+    } else {
+      this.proceedLogOut()
+    }
+  }
+
+  proceedLogOut = async () => {
     try {
+      // close modal then continue
+      this.onCloseModal()
+
       const logOffRes = await api.get(`LogOff`)
       console.log('backend responce to GET LogOff', logOffRes)
 
@@ -108,9 +127,14 @@ class Header extends React.Component {
     })
   }
 
-  render() {
+  onCloseModal = () => {
+    this.setState({
+      modalIsOpen: false
+    })
+  }
 
-    // const { isMenuOpened } = this.state;
+  render() {
+    const { modalIsOpen, modalMessage } = this.state
     const { menuOpened } = this.props;
 
     return (
@@ -193,6 +217,12 @@ class Header extends React.Component {
             </div>
           </div>
         </div>
+        <UserConfirmationModal
+          modalIsOpen={modalIsOpen}
+          modalMessage={modalMessage}
+          onCloseModal={this.onCloseModal}
+          onUserConfirm={this.proceedLogOut}
+        />
       </div>
     )
   }
@@ -215,4 +245,4 @@ const mapDispatchToProps = (dispatch) => ({
   logOut: () => dispatch(logOut())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(onClickOutside(Header));
+export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(onClickOutside(Header))

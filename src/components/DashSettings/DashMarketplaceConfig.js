@@ -3,7 +3,7 @@ import ConnectMarketplaces from '../ConnectMarketplaces';
 import MWSActionRegion from '../MWSActionRegion';
 import MWSActionAuth from '../MWSActionAuth'
 import MWSActionDomain from '../MWSActionDomain'
-import { Prompt } from 'react-router-dom'
+import { Link, Prompt, Route } from 'react-router-dom'
 import { setAddMarketStep, setSignupAuthStep } from '../../actions/signup'
 import { connect } from 'react-redux';
 import SignupStep3 from '../../containers/SignupStep3'
@@ -82,7 +82,10 @@ class AddMarketSwitch extends Component {
         <Prompt
           when
           message={location =>
-            `Are you sure you want to leave setup?`
+            `
+By leaving this page, you will close out the process of adding a new marketplace.\n
+Are you sure you want to leave?
+            `
           }
         />
         <div>
@@ -126,49 +129,38 @@ class DashMarketplaceConfig extends Component {
     })
   }
 
-  addNewMarketplace = () => {
-    this.setState({
-      marketPlace: 1
-    })
-  }
-
   onGoBack = () => {
-    this.setState({
-      marketPlace: 0
-    })
-  }
-
-  renderMarketPlace = () => {
-    switch (this.state.marketPlace) {
-      case 0:
-        return (
-          <div>
-            <div className="dash-new-marketplace">
-              <a className="btn btn-new-marketplace" onClick={this.addNewMarketplace}>Add New Marketplace</a>
-            </div>
-            <ConnectMarketplaces
-              advState={APP_CONFIG.LWA_Source.Configuration.state}
-              onApiError={this.setApiError}
-              onFormSubmited={this.onFormSubmited}
-            />
-          </div>
-        )
-      case 1:
-        return (
-          <AddMarketSwitch signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
-        )
-      default:
-        return null
-    }
+    this.props.history.push('/dash/configuration/marketplaceconfiguration')
   }
 
   render() {
+    const { match } = this.props
     return (
       <div className="dash-container">
         <div className="container container--full">
-          {
-            this.renderMarketPlace()
-          }
+          <Route
+            exact
+            path={`${match.url}`}
+            render={props => (
+              <div>
+                <div className="dash-new-marketplace">
+                  <Link className="btn btn-new-marketplace" to="/dash/configuration/marketplaceconfiguration/addMarketPlace">Add New Marketplace</Link>
+                </div>
+                <ConnectMarketplaces
+                  advState={APP_CONFIG.LWA_Source.Configuration.state}
+                  onApiError={this.setApiError}
+                  onFormSubmited={this.onFormSubmited}
+                />
+              </div>
+            )}
+          />
+          <Route
+            exact
+            path={`${match.url}/addMarketPlace`}
+            render={props => (
+              <AddMarketSwitch {...props} signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
+            )}
+          />
         </div>
       </div>
     )
