@@ -435,6 +435,7 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={SellerIDSelectedOptions}
                                 styles={colourStyles}
+                                placeholder="SellerID"
                             /></div>
 
                         <div className="marketplace data-filter">
@@ -448,6 +449,7 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={MarketPlaceNameSelectedOptions}
                                 styles={colourStyles}
+                                placeholder="Marketplace"
                             /></div>
                         <div className="seller-sku data-filter">
                             <label>Seller SKU </label>
@@ -460,6 +462,7 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={SellerSKUSelectedOptions}
                                 styles={colourStyles}
+                                placeholder="Seller SKU"
                             />
                         </div>
                     </div>
