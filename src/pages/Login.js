@@ -149,8 +149,8 @@ class Login extends Component {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
         if (authenticated) {
-            if (clientType != 3) {
-                window.location = MainSiteUrl;
+            if (clientType !== 3) {
+                setTimeout(()=>{  window.location = MainSiteUrl;}, 1000);              
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
