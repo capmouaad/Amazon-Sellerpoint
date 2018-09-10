@@ -240,7 +240,7 @@ class KMLogin extends Component {
                         </div>
 
                     </div>
-                    <div className="col-md-12">
+                    <div className="col-md-12 info-text">
                         <div className="content text-center">
                             <h4 className="text-uppercase text-white">Are you looking for The Kini Group corporate site? <a href="https://thekinigroup.com/" target="_blank" className="text-yellow">Click Here</a></h4>
                         </div>

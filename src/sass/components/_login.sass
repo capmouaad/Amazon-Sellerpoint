@@ -16,6 +16,25 @@
 +r($tablet)
   .login-remember
     max-width: 100%
+  .kmlogin-bg     
+    .login-footer 
+      .navbar
+        padding: 20px 48px 10px;
+        .col-lg-6
+          line-height: 28px;         
+          display: block!important;
+          text-align: center!important; 
+          width: 100% !important; 
+          button.btn.btn-bordered-dark
+            float: none;
+            margin: 12px 0 0 10px!important;            
+          img 
+            width: 183px;   
+            display: inline-block;
+            margin-top: 0;
+            height: 32px;
+            position: relative;
+            top: 10px; 
 
 +r($mobile)
   .login-container
@@ -25,7 +44,38 @@
   .login
     > .container
       min-height: calc(100vh - 90px - 70px - 80px)
-
+  .kmlogin-bg
+    .info-text
+      padding: 0 15px !important;
+    .login-container
+      margin-left: 60px
+    .login-footer 
+      .navbar
+        .col-lg-6
+          width: 100% !important;
+  .kmlogin-bg 
+    .login-container  
+      margin-left: 0;    
+      max-width: 360px !important;
+      width: 100%!important;
+      margin: 0 auto!important;
+    .login-footer 
+      .navbar
+        padding: 20px 48px 10px;
+        .col-lg-6
+          line-height: 28px;         
+          display: block!important;
+          text-align: center;
+          .button.btn.btn-bordered-dark
+            float: none;
+            margin: 20px 0 0 10px;           
+          img 
+            width: 183px;   
+            display: inline-block;  
+            margin-top: 0;
+            height: 32px;
+            position: relative;
+            top: 10px;
 
 .login-form 
   .ui-group--labeled
@@ -175,7 +225,7 @@
       float: left;
       width: 100%;
 
-.login-form
+.login-form 
   a.cancel-btn  
     font-size: 14px;
     text-decoration: underline;
@@ -312,7 +362,7 @@
     .col-lg-6
       width: 50%;   
       float: left;  
-    .col-lg-6.buttn-group
+    .col-lg-6.buttn-group      
       text-align: right;  
       button.btn.btn-bordered-dark  
         margin-left: 4px;
@@ -328,6 +378,7 @@
   .header-logo
     text-align: center;
     padding: 20px;
+    margin-bottom: 18px;
     img
       max-width: 100%;
       height: auto;
