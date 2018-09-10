@@ -5,6 +5,7 @@ import QdtComponents from 'qdt-components';
 import { setQlikParams, setQlikConnection, setQlikInstance } from '../../actions/qlik'
 import { APP_CONFIG } from '../../constants'
 import moment from 'moment';
+import Modal from 'react-responsive-modal'
 
 class QlikConnector extends React.Component {
 
@@ -14,7 +15,9 @@ class QlikConnector extends React.Component {
     this.state = {
       isConnected: props.QlikConnected,
       QlikData: props.QlikParams,
-      apiError: null
+      apiError: null,
+      isModal: false,
+      qlikError: null
     }
     this.connectQlik = this.connectQlik.bind(this);
   }
@@ -128,6 +131,17 @@ class QlikConnector extends React.Component {
 
     // Apply default DataGroup By selection.
     const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null;
+
+    qApp.on('error', (error) => {
+      console.log('qlik.setOnError' + ((error !== undefined && error.message !== undefined) ? ': ' + error.message : ''))
+      if ((error !== undefined && error.message !== undefined) && (error.message === 'Not connected' || error.message === 'Socket closed' || error.message === 'Connection lost. Make sure that Qlik Sense is running properly. If your session has timed out due to inactivity, refresh to continue working.' || error.message === 'No available Qlik Sense engine was found. Refresh your browser or contact your system administrator.')) {
+         this.setState({
+           isModal: true,
+           qlikError: error.message
+         })
+      }
+    })
+    
     await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
     await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
 
@@ -143,8 +157,34 @@ class QlikConnector extends React.Component {
     this.props.setQlikConnection(true);
   }
 
+  onCloseModal = () => {
+    this.setState({
+      isModal: false
+    })
+  }
+
   render() {
-    return null
+    const { isModal, qlikError }  = this.state
+    return (
+      <Modal center showCloseIcon={false} open={isModal} onClose={this.onCloseModal}>
+        <div className="modal-dialog modal-md loader-inside loading-over">
+          <div className="modal-content modal-user-config">
+            <div className="modal-header modal-header-user-config">
+                <h4 className="modal-title" id="myModalLabel">{`Warning!`}</h4>
+            </div>
+            <div className="modal-body">
+              <p>{qlikError}</p>
+
+              <div className="button-row">
+                <button className="button-wrapper yes-button" onClick={this.onCloseModal}>
+                  Ok
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    )
   }
 }
 
