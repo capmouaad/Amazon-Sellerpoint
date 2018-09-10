@@ -46,6 +46,8 @@
     border-width: 1px;
     font-size: 13px !important;
     color : #383838
+    width: 100%; 
+    padding-right: 3px;
 
 .dash-filters__wrapper
   font-size: 13px;
@@ -56,14 +58,25 @@
 
 .data-filter
   display: inline-block;
+  width: 20%;
+  box-sizing: border-box;
+  padding: 0 4px;
+  margin: 0!important;
   label
     display: inline-block;
-    padding-right: 10px;
+    padding-right: 0;
+    float: left;
+    width: 85px;
+    padding-top: 12px;
+  label + div 
+    width: calc(100% - 85px);  
   .qlik-select
-    display: inline-block;
-    min-width: 140px;
+    width: calc(100% - 85px);
+    float: right; 
+    min-width: inherit!important;
+    margin: 0!important;    
     .css-1492t68
-      color:  #383838;
+      color:  #383838;      
 
 .seller-id
   margin-left: 12px;
@@ -102,4 +115,85 @@
 
 .data-grouped
   .qlik-select  
-    min-width: 154px; 
+    min-width: 154px;
+
+.seller-id.data-filter 
+  .qlik-select  
+    width: calc(100% - 66px); 
+
+.date-range-picker.data-filter 
+  width: 22%;
+
+.seller-id.data-filter 
+  width: 18%;
+  label
+    width: 66px;
+.data-filter 
+  label  
+    text-align: right;
+    padding-right: 6px;  
+ 
+@media ( max-width:1300px ) 
+  .dash-filters__wrapper
+    flex-wrap: wrap;
+    .data-filter
+      width: 50%;
+      margin: 0 0 10px 0!important; 
+    .date-range-picker.data-filter
+      width: 26%;  
+    .seller-id.data-filter
+      width: 24%!important; 
+
+@media ( max-width:1024px ) 
+  .dash-filters__wrapper
+    flex-wrap: wrap;
+    .data-filter
+      width: 50%; 
+      margin: 0 0 10px 0!important; 
+      label
+        text-align: left; 
+      label + div 
+        width: calc(100% - 85px);
+ 
+    .date-range-picker.data-filter
+      width: 50%;  
+    .seller-id.data-filter
+      width: 50%!important; 
+    .seller-id.data-filter 
+      .qlik-select
+        width: calc(100% - 85px);
+       
+
++r($tablet)
+  .dash-filters__wrapper
+    flex-wrap: wrap;
+    .data-filter
+      width: 100%;
+      margin: 0 0 10px 0!important; 
+      label  
+        width: 100px; 
+        text-align: left; 
+      label + div
+        width: calc(100% - 100px)!important;
+    .date-range-picker.data-filter
+      width: 100%;  
+    .seller-id.data-filter
+      width: 100%!important;         
+ 
++r($mobile)
+  .dash-filters__wrapper
+    flex-wrap: wrap;
+    .data-filter
+      width: 100%;
+      margin: 0 0 10px 0!important; 
+      label  
+        width: 100px; 
+        text-align: left; 
+      label + div
+        width: calc(100% - 100px)!important;
+    .date-range-picker.data-filter
+      width: 100%;  
+    .seller-id.data-filter
+      width: 100%!important; 
+
+ 
