@@ -350,7 +350,7 @@
 .login-footer
   .navbar
     border-top: 2px solid #c5d6de;
-    padding: 20px 20px 10px;
+    padding: 17px 12px 0px;
     background-color: #f8f8f8;
     border-color: #e7e7e7;
     bottom: 0;
@@ -367,11 +367,16 @@
       button.btn.btn-bordered-dark  
         margin-left: 4px;
         border: 1px solid #091d3a;
-        background-color: transparent;
+        border-radius: 5px;
+        background: transparent !important;
         color: #091d3a!important;
         font-size: 13px!important;
         padding: 7px 12px;
- 
+        outline: none;
+        font-weight: 400;
+      button.btn.btn-bordered-dark:hover  
+        background: #fbc52d !important;
+        
 
 .kmlogin-bg    
   HEIGHT: 100VH;
@@ -404,6 +409,14 @@
     .buttn-group
       float: right!important;
       display: block!important;
+    .navbar-fixed-bottom
+      position: fixed;
+      right: 0;
+      left: 0;
+      z-index: 1030;
+      bottom: 0;
+      margin-bottom: 0;
+      border-width: 1px 0 0;
     .navbar 
       .col-lg-6 
         flex-direction: row;
@@ -418,5 +431,10 @@
             width: 205px;
             display: inline-block;
             height: auto;
- 
+
+@media screen and (max-height: 760px) 
+  .kmlogin-bg 
+    .login-footer
+      .navbar-fixed-bottom
+        position: relative;
     

@@ -170,7 +170,7 @@ class KMLogin extends Component {
                     <div className="header-logo">
                         <Image image="login-logo.png" />
                     </div>
-                    <div className="container">
+                    <div className="">
                         <div className="login-container">
                             <Formsy
                                 className="signup__form login-form"
@@ -253,8 +253,8 @@ class KMLogin extends Component {
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
 			</div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>
