@@ -163,7 +163,7 @@ class KMLogin extends Component {
 
         if (authenticated) {         
             if (clientType !== 3) {
-                setTimeout(()=>{  window.location = MainSiteUrl;}, 1000);              
+                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);         
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
