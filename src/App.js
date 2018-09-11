@@ -23,6 +23,18 @@ class App extends Component {
     });
 
     svg4everybody();
+    this.mountHotJar(window, document);
+  }
+
+  mountHotJar = (h, o, a, r) => {
+    // Hotjar Tracking Code for www.kinimetrix.com
+    h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+    h._hjSettings = { hjid: 921921, hjsv: 6 };
+    a = o.getElementsByTagName('head')[0];
+    r = o.createElement('script');
+    r.async = 1;
+    r.src = 'https://static.hotjar.com/c/hotjar-' + h._hjSettings.hjid + '.js?sv=' + h._hjSettings.hjsv;
+    a.appendChild(r);
   }
 
   onOpenModal = () => {
