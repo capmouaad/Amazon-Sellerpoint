@@ -23,10 +23,14 @@ class App extends Component {
     });
 
     svg4everybody();
+  }
+
+  componentWillMount(){
     this.mountHotJar(window, document);
   }
 
   mountHotJar = (h, o, a, r) => {
+    console.log('hot jar mounted')
     // Hotjar Tracking Code for www.kinimetrix.com
     h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
     h._hjSettings = { hjid: 921921, hjsv: 6 };
