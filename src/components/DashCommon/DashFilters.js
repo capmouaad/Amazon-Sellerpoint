@@ -182,7 +182,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
@@ -204,7 +205,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
@@ -218,6 +220,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.SellerSKU
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByState": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -225,7 +232,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
