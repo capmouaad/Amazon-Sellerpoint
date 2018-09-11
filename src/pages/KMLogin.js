@@ -8,7 +8,7 @@ import FormLoader from '../components/Forms/FormLoader';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 import Image from '../components/Helpers/Image';
 import { APP_CONFIG } from '../constants'
-import api, {MainSiteUrl} from '../services/Api';
+import api, { MainSiteUrl } from '../services/Api';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
@@ -25,7 +25,6 @@ class KMLogin extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             email: "",
             password: "",
@@ -36,8 +35,7 @@ class KMLogin extends Component {
             isFormSubmited: false,
             clientType: 0
         }
-
-        document.title="KiniMetrix";
+        document.title = "KiniMetrix";
     }
 
     componentDidMount() {
@@ -131,7 +129,7 @@ class KMLogin extends Component {
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
-                }              
+                }
                 this.setState({
                     authenticated: true,
                     clientType: UserInfo.ClientType
@@ -152,9 +150,9 @@ class KMLogin extends Component {
     render() {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
-        if (authenticated) {         
+        if (authenticated) {
             if (clientType !== 3) {
-                setTimeout(()=>{  window.location = MainSiteUrl;}, 1000);              
+                setTimeout(() => { window.location = MainSiteUrl; }, 1000);
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
@@ -255,8 +253,8 @@ class KMLogin extends Component {
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
 			</div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button onClick={()=>{window.location=window.location.origin + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button onClick={()=>{window.location=window.location.origin + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={() => { window.open(window.location.origin + "/Account/TermsAndConditions", "_traget"); }} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={() => { window.open(window.location.origin + "/Account/PrivacyPolicy", "_traget"); }} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>
@@ -281,5 +279,5 @@ const mapDispatchToProps = (dispatch) => (
         setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
         setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
     });
-    
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));
