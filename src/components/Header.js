@@ -90,35 +90,38 @@ Are you sure you want to leave?
       // close modal then continue
       this.onCloseModal()
 
-      const logOffRes = await api.get(`LogOff`)
-      console.log('backend responce to GET LogOff', logOffRes)
-
-      // reset qlik connection redux
-      this.props.closeAppQlik()
-      this.props.setStatusProgress({
-        finaceDataProgress: 0,
-        reportDataProgress: 0,
-        adDataProgress: 0
-      })
-      this.props.setNavbarDashboard({
-          dashboards: [],
-          settings: []
-      })
-
-      this.props.resetStateDashFilter()
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
         await qApp.close()
       // clear qlik window object
       window.GlobalQdtComponents = null
-      // destroy session
-      this.props.resetSignUp()
-      this.props.logOut()
+      // reset qlik connection redux
+      this.props.closeAppQlik()
+
+      const logOffRes = await api.get(`LogOff`)
+      console.log('backend responce to GET LogOff', logOffRes)
+
       //window.location.reload()
     } catch (e) {
       console.error(e)
     }
+
+    this.props.setStatusProgress({
+      finaceDataProgress: 0,
+      reportDataProgress: 0,
+      adDataProgress: 0
+    })
+    this.props.setNavbarDashboard({
+        dashboards: [],
+        settings: []
+    })
+
+    this.props.resetStateDashFilter()
+
+    // destroy session
+    this.props.resetSignUp()
+    this.props.logOut()
   }
 
   toggleUsermenu = () => {

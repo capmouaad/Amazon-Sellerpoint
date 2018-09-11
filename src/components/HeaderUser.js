@@ -1,15 +1,58 @@
 import React, { Component } from 'react'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom'
+import UserConfirmationModal from './UserConfirmationModal'
 
 class HeaderUser extends Component {
-    render() {
+    state = {
+        isMenuOpened: false,
+        modalIsOpen: false,
+        modalMessage: `
+By leaving this page, you will close out the process of adding a new marketplace.\n
+Are you sure you want to leave?
+    `,
+        navigateUrl: null
+    }
+
+    myProfile = () => {
+        if (window.location.pathname.includes('addMarketPlace')) {
+            this.setState({
+                modalIsOpen: true,
+                navigateUrl: `/User/Myprofile`
+            })
+        } else {
+            window.location.href = window.location.origin + "/User/Myprofile"
+        }
+    }
+
+    changePassword = () => {
+        if (window.location.pathname.includes('addMarketPlace')) {
+            this.setState({
+                modalIsOpen: true,
+                navigateUrl: `/User/ChangePassword`
+            })
+        } else {
+            window.location.href = window.location.origin + "/User/ChangePassword"
+        }
+    }
+
+    onUserConfirm = () => {
+        this.onCloseModal()
+        window.location.href = window.location.origin + this.state.navigateUrl
+    }
+
+    onCloseModal = () => {
+        this.setState({
+            modalIsOpen: false
+        })
+    }
+
+    render () {
         const { isMenuOpened } = this.props
+        const { modalIsOpen, modalMessage } = this.state
 
         return (
-            <div
-                className={"header__user" + (isMenuOpened ? " is-active" : "")} onClick={this.props.toggleUsermenu}      >
+            <div className={"header__user" + (isMenuOpened ? " is-active" : "")} onClick={this.props.toggleUsermenu}>
                 <div className="header__user-avatar">
                     {this.props.userInfo && <img src={this.props.userInfo.ProfilePhoto} alt="My Profile" />}
                 </div>
@@ -23,10 +66,10 @@ class HeaderUser extends Component {
                     <div className="header__dropdown">
                         <div className="header__dropdown-menu">
                             <li>
-                                <Link to="/User/Myprofile">My Profile</Link>
+                                <a onClick={this.myProfile}>My Profile</a>
                             </li>
                             <li>
-                                <Link to="/User/ChangePassword">Change Password</Link>
+                                <a onClick={this.changePassword}>Change Password</a>
                             </li>
                             <li>
                                 <a onClick={this.props.logOutUser}>Log out</a>
@@ -34,6 +77,12 @@ class HeaderUser extends Component {
                         </div>
                     </div>
                 </div>
+                <UserConfirmationModal
+                    modalIsOpen={modalIsOpen}
+                    modalMessage={modalMessage}
+                    onCloseModal={this.onCloseModal}
+                    onUserConfirm={this.onUserConfirm}
+                />
             </div>
         )
     }

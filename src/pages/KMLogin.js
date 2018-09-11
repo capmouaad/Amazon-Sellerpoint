@@ -8,15 +8,24 @@ import FormLoader from '../components/Forms/FormLoader';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 import Image from '../components/Helpers/Image';
 import { APP_CONFIG } from '../constants'
-import api, { MainSiteUrl } from '../services/Api';
+import api, {MainSiteUrl} from '../services/Api';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
+import { CanvasBG, CanvasBG1 }  from  '../components/CanvasBG.js'
+
+const options = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    Loc: {
+        x: window.innerWidth / 6,
+        y: window.innerHeight / 6
+    }
+}
 
 class KMLogin extends Component {
-
     static propTypes = {
         setHeaderClass: PropTypes.func.isRequired,
         logIn: PropTypes.func.isRequired,
@@ -25,6 +34,7 @@ class KMLogin extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             email: "",
             password: "",
@@ -35,11 +45,12 @@ class KMLogin extends Component {
             isFormSubmited: false,
             clientType: 0
         }
-        document.title = "KiniMetrix";
     }
 
     componentDidMount() {
-        this.props.setHeaderClass('no-header');
+        this.props.setHeaderClass('no-header')
+        CanvasBG(options)
+        CanvasBG1(options)
     }
 
     formInvalid = () => {
@@ -129,7 +140,7 @@ class KMLogin extends Component {
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
-                }
+                }              
                 this.setState({
                     authenticated: true,
                     clientType: UserInfo.ClientType
@@ -150,9 +161,9 @@ class KMLogin extends Component {
     render() {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
-        if (authenticated) {
+        if (authenticated) {         
             if (clientType !== 3) {
-                setTimeout(() => { window.location = MainSiteUrl; }, 1000);
+                setTimeout(()=>{  window.location = MainSiteUrl;}, 1000);              
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
@@ -161,85 +172,83 @@ class KMLogin extends Component {
         return (
             <div className="kmlogin-bg">
                 <div id="canvas-wrapper">
-                    {/* <canvas id="demo-canvas"></canvas> */}
-                </div>
-                <div id="canvas-wrapper1">
-                    {/* <canvas id="demo-canvas1"></canvas> */}
-                </div>
+                    <canvas id="demo-canvas"></canvas>
+                 </div>
+                 <div id="canvas-wrapper1">
+                    <canvas id="demo-canvas1"></canvas>
+                 </div>
                 <section className="login clearfix">
                     <div className="header-logo">
                         <Image image="login-logo.png" />
                     </div>
-                    <div className="">
-                        <div className="login-container">
-                            <Formsy
-                                className="signup__form login-form"
-                                onSubmit={this.submitForm}
-                                onValidSubmit={this.handleSubmit}
-                                onValid={this.formValid}
-                                onInvalid={this.formInvalid}
-                                ref={this.formRef}
-                            >
-                                <h2>Sign In</h2>
-                                <p>Sign In to start using our powerful Business</p>
-                                <p className="mb-15">Intelligence tools for your organization.</p>
-                                <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
-                                    <FormLoader />
-                                    {apiError &&
-                                        <span className="ui-input-validation">{apiError}</span>
-                                    }
-                                    <div className="email asterisk-removed">
-                                        <FormInput
-                                            name="email"
-                                            label="Email"
-                                            placeholder="Email"
-                                            icon="envelope"
-                                            iconClass="bak-grey"
-                                            value={email}
-                                            validations="isEmail"
-                                            validationErrors={{
-                                                isEmail: "This is not a valid email",
-                                                isDefaultRequiredValue: 'Please enter email'
-                                            }}
-                                            onChangeHandler={this.handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="password asterisk-removed">
-                                        <FormInput
-                                            name="password"
-                                            type="password"
-                                            icon="padlock"
-                                            iconClass="bak-grey"
-                                            label="Password"
-                                            placeholder="Password"
-                                            value={password}
-                                            onChangeHandler={this.handleChange}
-                                            validationErrors={{
-                                                isDefaultRequiredValue: 'Please enter password'
-                                            }}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="login-remember ui-group">
-                                        <CheckBox
-                                            name="remember"
-                                            text="Remember me"
-                                            clickHandler={this.rememberToggler}
-                                            isActive={rememberMe}
-                                        />
-                                    </div>
-
-                                    <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
-                                    <div className="signup__form-cta">
-                                        <button type="submit" className="btn btn-signup btn--block">Sign In</button>
-                                    </div>
+                    <div className="login-container">
+                        <Formsy
+                            className="signup__form login-form"
+                            onSubmit={this.submitForm}
+                            onValidSubmit={this.handleSubmit}
+                            onValid={this.formValid}
+                            onInvalid={this.formInvalid}
+                            ref={this.formRef}
+                        >
+                            <h2>Sign In</h2>
+                            <p>Sign In to start using our powerful Business</p>
+                            <p className="mb-15">Intelligence tools for your organization.</p>
+                            <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
+                                <FormLoader />
+                                {apiError &&
+                                    <span className="ui-input-validation">{apiError}</span>
+                                }
+                                <div className="email asterisk-removed">
+                                    <FormInput
+                                        name="email"
+                                        label="Email"
+                                        placeholder="Email"
+                                        icon="envelope"
+                                        iconClass="bak-grey"
+                                        value={email}
+                                        validations="isEmail"
+                                        validationErrors={{
+                                            isEmail: "This is not a valid email",
+                                            isDefaultRequiredValue: 'Please enter email'
+                                        }}
+                                        onChangeHandler={this.handleChange}
+                                        required
+                                    />
                                 </div>
-                            </Formsy>
-                        </div>
+                                <div className="password asterisk-removed">
+                                    <FormInput
+                                        name="password"
+                                        type="password"
+                                        icon="padlock"
+                                        iconClass="bak-grey"
+                                        label="Password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChangeHandler={this.handleChange}
+                                        validationErrors={{
+                                            isDefaultRequiredValue: 'Please enter password'
+                                        }}
+                                        required
+                                    />
+                                </div>
 
+                                <div className="login-remember ui-group">
+                                    <CheckBox
+                                        name="remember"
+                                        text="Remember me"
+                                        clickHandler={this.rememberToggler}
+                                        isActive={rememberMe}
+                                    />
+                                </div>
+
+                                <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
+                                <div className="signup__form-cta">
+                                    <button type="submit" className="btn btn-signup btn--block">Sign In</button>
+                                </div>
+                            </div>
+                        </Formsy>
                     </div>
+
                     <div className="col-md-12 info-text">
                         <div className="content text-center">
                             <h4 className="text-uppercase text-white">Are you looking for The Kini Group corporate site? <a href="https://thekinigroup.com/" target="_blank" className="text-yellow">Click Here</a></h4>
@@ -251,10 +260,10 @@ class KMLogin extends Component {
                     <div className="navbar navbar-default navbar-fixed-bottom">
                         <div className="col-xs-12 col-sm-12 col-lg-6 footer-left">
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
-			</div>
+            </div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button onClick={() => { window.open(window.location.origin + "/Account/TermsAndConditions", "_traget"); }} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button onClick={() => { window.open(window.location.origin + "/Account/PrivacyPolicy", "_traget"); }} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>
@@ -279,5 +288,5 @@ const mapDispatchToProps = (dispatch) => (
         setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
         setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
     });
-
+    
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));
