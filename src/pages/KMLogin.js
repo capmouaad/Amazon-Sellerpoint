@@ -5,7 +5,7 @@ import Formsy from 'formsy-react';
 import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
-import { withRouter, Redirect, Link } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import Image from '../components/Helpers/Image';
 import { APP_CONFIG } from '../constants'
 import api, {MainSiteUrl} from '../services/Api';
@@ -240,8 +240,7 @@ class KMLogin extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-
-                                <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
+                                <a href= {window.location.origin+"/Account/ForgotPassword"} className="forgot"> Forgot Password? </a>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Sign In</button>
                                 </div>
