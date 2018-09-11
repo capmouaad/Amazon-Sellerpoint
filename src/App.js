@@ -8,6 +8,9 @@ import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { KMLogin } from './routes'
+import { hotjar } from 'react-hotjar';
+
+hotjar.initialize(921921, 6);
 
 class App extends Component {
   state = {
@@ -23,22 +26,6 @@ class App extends Component {
     });
 
     svg4everybody();
-  }
-
-  componentWillMount(){
-    this.mountHotJar(window, document);
-  }
-
-  mountHotJar = (h, o, a, r) => {
-    console.log('hot jar mounted')
-    // Hotjar Tracking Code for www.kinimetrix.com
-    h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
-    h._hjSettings = { hjid: 921921, hjsv: 6 };
-    a = o.getElementsByTagName('head')[0];
-    r = o.createElement('script');
-    r.async = 1;
-    r.src = 'https://static.hotjar.com/c/hotjar-' + h._hjSettings.hjid + '.js?sv=' + h._hjSettings.hjsv;
-    a.appendChild(r);
   }
 
   onOpenModal = () => {
