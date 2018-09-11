@@ -36,6 +36,8 @@ class KMLogin extends Component {
             isFormSubmited: false,
             clientType: 0
         }
+
+        document.title="KiniMetrix";
     }
 
     componentDidMount() {
@@ -253,8 +255,8 @@ class KMLogin extends Component {
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
 			</div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={()=>{window.location=window.location.origin + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={()=>{window.location=window.location.origin + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>

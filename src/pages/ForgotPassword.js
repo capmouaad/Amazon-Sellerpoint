@@ -127,7 +127,7 @@ class ForgotPassword extends Component {
                                         <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
                                     </div>
 
-                                    <Link to='/login' className="cancel-btn"> Cancel </Link>
+                                    <Link to='' onClick={()=> window.history.back()} className="cancel-btn"> Cancel </Link>
 
                                 </div>
                             </Formsy>) : (<Formsy className="signup__form login-form thankyou-form">
