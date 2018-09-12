@@ -155,7 +155,7 @@ Are you sure you want to leave?
                   </div>
                 </div>
               </div>
-              <NavLink onClick={this.closeHamburger} to='/' className="header__logo">
+              <NavLink onClick={this.closeHamburger} to='/dash/dashboards' className="header__logo">
                 <SvgIcon name="logo" />
               </NavLink>
               <div className="header__welcome-link">

@@ -125,7 +125,6 @@ class Dashboard extends Component {
                         component={DashboardWelcome}
                     />
                     <Route render={({ history: { location: { pathname, search, hash } } }) => {
-                        console.log('>>>> herhehrehr', pathname)
                         return pathname.slice(-1) === '/' ?
                             <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
                             pathname === '/dash' ?
