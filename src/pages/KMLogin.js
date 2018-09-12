@@ -8,7 +8,7 @@ import FormLoader from '../components/Forms/FormLoader';
 import { withRouter, Redirect } from 'react-router-dom';
 import Image from '../components/Helpers/Image';
 import { APP_CONFIG } from '../constants'
-import api, {MainSiteUrl} from '../services/Api';
+import api from '../services/Api';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
@@ -261,8 +261,8 @@ class KMLogin extends Component {
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
             </div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/TermsAndConditions";}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button onClick={()=>{window.location=MainSiteUrl + "/Account/PrivacyPolicy";}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={()=>{window.open(window.location.origin + "/Account/TermsAndConditions", "_blank");}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={()=>{window.open(window.location.origin + "/Account/PrivacyPolicy", "_blank");}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>

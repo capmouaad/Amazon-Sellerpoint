@@ -37,10 +37,10 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(Footer);
 
 export function tAndC() {
-    window.open(window.location.origin + "/Account/TermsAndConditions");
+    window.open(window.location.origin + "/Account/TermsAndConditions", "_blank");
 }
 
 export function privacyPolicy() {
-    window.open(window.location.origin + "/Account/PrivacyPolicy");
+    window.open(window.location.origin + "/Account/PrivacyPolicy", "_blank");
 }
 
