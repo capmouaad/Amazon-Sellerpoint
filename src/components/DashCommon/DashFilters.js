@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
-import Select from 'react-select';
+import Select from 'tuna.react-select';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js';
 import { APP_CONFIG } from '../../constants'
@@ -71,6 +71,10 @@ const colourStyles = {
             color: 'white',
         },
     }),
+    placeholder: (styles, { data }) => ({
+        ...styles,
+        color: '#595959'
+    })
 };
 
 class DashFilters extends Component {
@@ -404,7 +408,10 @@ class DashFilters extends Component {
                     <div className="dash-filters__wrapper">
                         <div className="data-grouped data-filter">
                             <label>View data by </label>
-                            <Select className="qlik-select mar-r" isMulti={false}
+                            <Select
+                                className="qlik-select mar-r"
+                                isMulti={false}
+                                autoFocusFirstOption={false}
                                 isDisabled={!QlikConnected}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
                                 options={DataGroupByOptions}
@@ -415,7 +422,13 @@ class DashFilters extends Component {
                             /></div>
                         <div className="date-range-picker data-filter">
                             <label>Date range </label>
-                            <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
+                            <DateRangePicker
+                                alwaysShowCalendars
+                                onEvent={this.handleEvent}
+                                ranges={ranges}
+                                startDate={pickerStartDate}
+                                endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container"
+                            >
                                 <div className="input-group">
                                     <span className="input-group-btn date-range-picker-calender-btn">
                                         <button className="default date-range-toggle">
@@ -434,7 +447,11 @@ class DashFilters extends Component {
 
                         <div className="seller-id data-filter">
                             <label>Seller ID </label>
-                            <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                            <Select
+                                className="qlik-select mar-r"
+                                isMult
+                                autoFocusFirstOption={false}
+                                closeMenuOnSelect={false}
                                 isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
@@ -444,11 +461,16 @@ class DashFilters extends Component {
                                 value={SellerIDSelectedOptions}
                                 styles={colourStyles}
                                 placeholder="SellerID"
-                            /></div>
+                            />
+                        </div>
 
                         <div className="marketplace data-filter">
                             <label>Marketplace </label>
-                            <Select className="qlik-select mar-r" isMulti closeMenuOnSelect={false}
+                            <Select
+                                className="qlik-select mar-r"
+                                isMulti
+                                autoFocusFirstOption={false}    
+                                closeMenuOnSelect={false}
                                 isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
@@ -458,10 +480,15 @@ class DashFilters extends Component {
                                 value={MarketPlaceNameSelectedOptions}
                                 styles={colourStyles}
                                 placeholder="Marketplace"
-                            /></div>
+                            />
+                        </div>
                         <div className="seller-sku data-filter">
                             <label>Seller SKU </label>
-                            <Select className="qlik-select mar-r-0" isMulti closeMenuOnSelect={false}
+                            <Select
+                                className="qlik-select mar-r-0"
+                                isMulti
+                                autoFocusFirstOption={false}
+                                closeMenuOnSelect={false}
                                 isDisabled={!QlikConnected}
                                 hideSelectedOptions={false}
                                 onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
