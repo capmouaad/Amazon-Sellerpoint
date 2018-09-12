@@ -121,10 +121,13 @@ class Login extends Component {
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
+                    history.push('/dash/dashboard')
+                } else {
+                    history.push('/dash/welcome')
                 }
 
                 this.setState({
-                    authenticated: true,
+                    // authenticated: true,
                     clientType: UserInfo.ClientType
                 })
             } else {

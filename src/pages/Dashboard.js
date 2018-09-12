@@ -121,14 +121,17 @@ class Dashboard extends Component {
                     <Route path={`${match.url}/configuration`} component={DashboardConfiguration} />
                     <Route
                         exact
-                        path={match.url}
+                        path={`${match.url}/welcome`}
                         component={DashboardWelcome}
                     />
-                    <Route render={({ history: { location: { pathname, search, hash } } }) => (
-                        pathname.slice(-1) === '/' ?
+                    <Route render={({ history: { location: { pathname, search, hash } } }) => {
+                        console.log('>>>> herhehrehr', pathname)
+                        return pathname.slice(-1) === '/' ?
                             <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
+                            pathname === '/dash' ?
+                            <Redirect to={`${pathname}/dashboards`} /> :
                             null
-                    )} />
+                    }} />
                 </Switch>
             </React.Fragment>
         )
