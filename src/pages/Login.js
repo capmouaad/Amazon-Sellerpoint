@@ -32,7 +32,8 @@ class Login extends Component {
             formIsValid: false,
             apiError: null,
             authenticated: false,
-            isFormSubmited: false
+            isFormSubmited: false,
+            clientType: 0
         }
     }
 
@@ -117,19 +118,20 @@ class Login extends Component {
                     this.props.resetSignUp()
                 }
 
+                this.setState({
+                    authenticated: true,
+                     clientType: UserInfo.ClientType
+                 })
+
                 const importStatusRes = await api.get(`GetDataImportStatus`)
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
-                    history.push('/dash/dashboard')
+                    history.push('/dash/dashboards')
                 } else {
                     history.push('/dash/welcome')
                 }
-
-                this.setState({
-                    // authenticated: true,
-                    clientType: UserInfo.ClientType
-                })
+               
             } else {
                 this.setState({
                     apiError: loginRes.data.ErrorMessage
@@ -148,12 +150,10 @@ class Login extends Component {
     }
 
     render() {
-
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
-
-        if (authenticated) {         
+        if (authenticated) {               
             if (clientType !== 3) {
-                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);         
+                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 0);         
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
