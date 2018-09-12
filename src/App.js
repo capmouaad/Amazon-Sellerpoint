@@ -8,9 +8,6 @@ import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { KMLogin } from './routes'
-import { hotjar } from 'react-hotjar';
-
-hotjar.initialize(921921, 6);
 
 class App extends Component {
   state = {

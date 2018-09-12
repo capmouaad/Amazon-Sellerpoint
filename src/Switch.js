@@ -4,10 +4,12 @@ import { routes } from './routes';
 import { connect } from 'react-redux';
 import ScrollTo from './services/ScrollTo';
 import ReactGA from 'react-ga';
+import { hotjar } from 'react-hotjar';
 
 class RenderSwitch extends React.Component {
 
   componentDidMount(){
+    hotjar.initialize(921921, 6);
     ReactGA.initialize('UA-114018340-1');
     ReactGA.pageview(window.location.pathname + window.location.search);
   }
