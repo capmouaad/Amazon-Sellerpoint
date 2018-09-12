@@ -20,14 +20,6 @@ class DashboardWelcome extends Component {
   }
 
   render () {
-    const { DataImportComplete } = this.props
-
-    if (DataImportComplete) {
-      return (
-        <Redirect to={`${process.env.PUBLIC_URL}/dash/dashboards`} />
-      )
-    }
-
     return (
       <React.Fragment>
         <ImportProgress />
