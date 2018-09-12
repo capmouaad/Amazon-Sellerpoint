@@ -91,7 +91,7 @@ class DashSection extends Component {
                             <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
                         </div>
                         <div className='wrapper-radio-sku'>
-                            <h5>Show/Hide Child SKUs (Grouping)*</h5>
+                            <h5 className="ft-14">Show/Hide Child SKUs (Grouping)*</h5>
                             <input type="radio" key="hide" name="radio_sku_child" className='style-radio-sku' onClick={(e) => { this.toggleChildSKU({ option: HIDE_OPTION.Hide }); }} checked={vShowChildSellerSKU === HIDE_OPTION.Hide} /><span>Hide</span>
                             <input type="radio" key="show" name="radio_sku_child" className='style-radio-sku' onClick={(e) => { this.toggleChildSKU({ option: HIDE_OPTION.Show }); }} checked={vShowChildSellerSKU === HIDE_OPTION.Show} /><span>Show</span>
                         </div>
