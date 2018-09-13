@@ -92,7 +92,7 @@ class SignupStep3 extends Component {
     const { shouldRedirect, isFormSubmited, apiError, error } = this.state;
 
     if (shouldRedirect) {
-      return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
+      return <Redirect to={`${process.env.PUBLIC_URL}/dash/welcome`} />
     }
 
     return (

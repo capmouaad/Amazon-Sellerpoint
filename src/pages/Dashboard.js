@@ -59,7 +59,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.checkNavDashboard()
+        this.props.authToken && this.checkNavDashboard()
     }
 
     checkNavDashboard = () => {
@@ -127,11 +127,13 @@ class Dashboard extends Component {
                         component={DashboardWelcome}
                     />
                     <Route render={({ history: { location: { pathname, search, hash } } }) => {
-                        return pathname.slice(-1) === '/' ?
+                        if (pathname === '/') {
+                            return <Redirect to={`dash/dashboards`} />
+                        } else {
+                            return pathname.slice(-1) === '/' ?
                             <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
-                            pathname === '/dash' ?
-                            <Redirect to={`${pathname}/dashboards`} /> :
-                            null
+                            <Redirect to={`dash/dashboards`} />
+                        }
                     }} />
                 </Switch>
             </React.Fragment>
