@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { SET_STATUS_PROGRESS } from '../../store/ActionTypes'
 
 const IBar = (props) => {
-    const { name, progress } = props
+    const { name, progress, optedOut } = props
     const isCompleated = progress === 100
 
     return (
@@ -12,12 +12,12 @@ const IBar = (props) => {
             <div className="i-bar__name">{name}</div>
             <div className="i-bar__status">
                 <div
-                    className={"i-bar__progress" + (isCompleated ? " is-compleated" : "")}
+                    className={"i-bar__progress" + (optedOut ? " is-optedOut" : isCompleated ? " is-compleated" : "")}
                     style={{ "width": `${progress}%` }}
                 >
                     {
-                        progress > 1 &&
-                        <span>{isCompleated ? "Complete" : Math.ceil(progress) + " %"}</span>
+
+                        <span>{optedOut ? "Opted Out" : isCompleated ? "Complete" : Math.ceil(progress) + " %"}</span>
                     }
                 </div>
             </div>
@@ -65,7 +65,8 @@ class ImportProgress extends Component {
                     setStatusProgress({
                         finaceDataProgress: res.data.FinanceDataImportProgress,
                         reportDataProgress: res.data.ReportDataImportProgress,
-                        adDataProgress: res.data.AdDataImportProgress
+                        adDataProgress: res.data.AdDataImportProgress,
+                        adOptedOut: res.data.AdvertisingOptedOut
                     })
                 } else {
                     setStatusProgress({
@@ -100,7 +101,7 @@ class ImportProgress extends Component {
                         <div className="i-progress__bars">
                             <IBar name="Financials" progress={statusProgress ? statusProgress.finaceDataProgress : 0} />
                             <IBar name="Products" progress={statusProgress ? statusProgress.reportDataProgress : 0} />
-                            <IBar name="Advertising" progress={statusProgress ? statusProgress.adDataProgress : 0} />
+                            <IBar name="Advertising" progress={statusProgress ? statusProgress.adDataProgress : 0} optedOut={statusProgress.adOptedOut} />
                         </div>
                     </div>
                 </div>
@@ -111,12 +112,12 @@ class ImportProgress extends Component {
 
 const mapStateToProps = (state) => (
     {
-      statusProgress: state.header.statusProgress
+        statusProgress: state.header.statusProgress
     }
-  );
-  
+);
+
 const mapDispatchToProps = (dispatch) => ({
     setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data })
 });
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(ImportProgress);
