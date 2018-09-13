@@ -32,7 +32,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "sellersku",
             accessor: d => d.SellerSKU,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
+                matchSorter(rows, filter.value, { keys: ["SellerSKU"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true
         },
         {
@@ -42,7 +42,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "name",
             accessor: d => d.Name,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Name"] }),
+                matchSorter(rows, filter.value, { keys: ["Name"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true,
             style: { whiteSpace: 'unset' }
         },
@@ -53,7 +53,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "marketplacename",
             accessor: d => d.MarketplaceName,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
+                matchSorter(rows, filter.value, { keys: ["MarketplaceName"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true
         },
         {
@@ -63,7 +63,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "brand",
             accessor: d => d.Brand,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Brand"] }),
+                matchSorter(rows, filter.value, { keys: ["Brand"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true
         },
         {
@@ -73,7 +73,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "avgprice",
             accessor: d => d.AvgHistoricalPrice,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
+                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true,
             Cell: this.renderAvgHistoricalPrice
         },
@@ -84,7 +84,7 @@ export default class DashSKUASINGrouping extends Component {
             className: "landedcost",
             accessor: d => ['$', d.LandedCost.toFixed(2)],
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+                matchSorter(rows, filter.value, { keys: ["LandedCost"],threshold: matchSorter.rankings.CONTAINS }),
             filterAll: true
         }
     ];
