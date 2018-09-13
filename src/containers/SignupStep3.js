@@ -22,7 +22,8 @@ class SignupStep3 extends Component {
       isFormSubmited: false,
       apiError: null,
       isAdvertisingOptedOut: false,
-      error: false
+      error: false,
+      isDisabled: false
     }
   }
 
@@ -88,8 +89,32 @@ class SignupStep3 extends Component {
     })
   }
 
+  getSellerMarketplaces = () => {
+    api
+      .get(`GetSellerMarketPlaces`)
+      .then((res) => {
+        console.log('backend responce to GET GetSellerMarketPlaces', res)
+        const { Marketplaces } = res.data
+        const MarketsConnected = Marketplaces.some((market) => market.IsAdvertisingConnected === true)
+
+        if (MarketsConnected) {
+          this.setState({ isDisabled: true })
+        } else {
+          this.setState({ isDisabled: false })
+        }
+
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  componentDidMount () {
+    this.getSellerMarketplaces()
+  }
+
   render() {
-    const { shouldRedirect, isFormSubmited, apiError, error } = this.state;
+    const { shouldRedirect, isFormSubmited, apiError, error, isDisabled } = this.state;
 
     if (shouldRedirect) {
       return <Redirect to={`${process.env.PUBLIC_URL}/dash/welcome`} />
@@ -110,7 +135,7 @@ class SignupStep3 extends Component {
               onFormSubmited={this.onFormSubmited}
             />
             <div className="signup__form-cta signup__form-cta--centered">
-              <input type="checkbox" onChange={this.onCheckedInput} /> I don't have advertising data to connect
+              <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''}/> I don't have advertising data to connect
               </div>
 
             <div className="signup__form-cta signup__form-cta--centered">

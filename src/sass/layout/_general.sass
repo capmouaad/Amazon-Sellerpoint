@@ -143,3 +143,21 @@ body, html
   left: 56%
   top: 40%
   z-index: 1
+
+.check-box-disabled
+  position: relative
+  &:after
+    content: ""
+    vertical-align: middle
+    text-align: center
+    line-height: 12px
+    position: absolute
+    cursor: pointer
+    height: 12px
+    width: 12px
+    border-radius: 3px
+    left: 0
+    top: 0
+    font-size: 10px
+    background: #999
+    cursor: auto !important
