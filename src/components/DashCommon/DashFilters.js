@@ -94,7 +94,7 @@ class DashFilters extends Component {
     }
 
     handleEvent = async (event, picker) => {
-        if (event.type === 'apply') {
+        if (event.type === 'apply' && this.props.QlikConnected) {
             const startDate = moment(picker.startDate).format('MM/DD/YYYY')
             const endDate = moment(picker.endDate).format('MM/DD/YYYY')
 
@@ -343,6 +343,16 @@ class DashFilters extends Component {
         this.initialSelection();
     }
 
+    componentDidUpdate (prevProps) {
+        if (this.props.QlikConnected && !prevProps.QlikConnected) {
+            this.renderDataGroupBy()
+            this.renderSellerID()
+            this.renderMarketDropDown()
+            this.binddropdown();
+            this.bindCurrentSelections();
+        }
+    }
+
     initialSelection = async () => {
         const { pickerStartDate, pickerEndDate } = this.props
         if (!pickerStartDate && !pickerEndDate) {
@@ -350,13 +360,6 @@ class DashFilters extends Component {
             const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
             this.handleDateSelection(startDate, endDate);
         }
-        setTimeout(async () => {
-            this.renderDataGroupBy()
-            this.renderSellerID()
-            this.renderMarketDropDown()
-            this.binddropdown();
-            this.bindCurrentSelections();
-        }, 2500);
     }
 
     onResetQlik = async () => {
