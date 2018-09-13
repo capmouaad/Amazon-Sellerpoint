@@ -8,6 +8,7 @@ import DashboardWelcome from '../containers/DashboardWelcome';
 import DashboardDashboards from '../containers/DashboardDashboards';
 import DashboardPlannings from '../containers/DashboardPlannings';
 import DashboardConfiguration from '../containers/DashboardConfiguration';
+import QlikConnector from '../components/Qlik/QlikConnector'
 
 const Configuration_TAB_MAP = {
     'COGS Setup': {
@@ -115,6 +116,7 @@ class Dashboard extends Component {
 
         return (
             <React.Fragment>
+                <QlikConnector />
                 <Switch>
                     <Route path={`${match.url}/dashboards`} component={DashboardDashboards} />
                     <Route path={`${match.url}/plannings`} component={DashboardPlannings} />
