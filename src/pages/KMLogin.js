@@ -14,7 +14,7 @@ import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
-import { CanvasBG, CanvasBG1 }  from  '../components/CanvasBG.js'
+import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js'
 
 const options = {
     width: window.innerWidth,
@@ -67,13 +67,11 @@ class KMLogin extends Component {
         this.setState({ ...this.state, [fieldName]: fleldVal });
     }
 
-
     rememberToggler = () => {
         this.setState({
             rememberMe: !this.state.rememberMe
         })
     }
-
 
     handleSubmit = (e) => {
         if (this.state.formIsValid) {
@@ -140,7 +138,7 @@ class KMLogin extends Component {
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
-                }              
+                }
                 this.setState({
                     authenticated: true,
                     clientType: UserInfo.ClientType
@@ -161,9 +159,9 @@ class KMLogin extends Component {
     render() {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
 
-        if (authenticated) {         
+        if (authenticated) {
             if (clientType !== 3) {
-                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);         
+                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
@@ -173,10 +171,10 @@ class KMLogin extends Component {
             <div className="kmlogin-bg">
                 <div id="canvas-wrapper">
                     <canvas id="demo-canvas"></canvas>
-                 </div>
-                 <div id="canvas-wrapper1">
+                </div>
+                <div id="canvas-wrapper1">
                     <canvas id="demo-canvas1"></canvas>
-                 </div>
+                </div>
                 <section className="login clearfix">
                     <div className="header-logo">
                         <Image image="login-logo.png" />
@@ -240,7 +238,7 @@ class KMLogin extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-                                <a href= {window.location.origin+"/Account/ForgotPassword"} className="forgot"> Forgot Password? </a>
+                                <a href={window.location.origin + "/Account/ForgotPassword"} className="forgot"> Forgot Password? </a>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Sign In</button>
                                 </div>
@@ -250,7 +248,7 @@ class KMLogin extends Component {
 
                     <div className="col-md-12 info-text">
                         <div className="content text-center">
-                            <h4 className="text-uppercase text-white">Are you looking for The Kini Group corporate site? <a href="https://thekinigroup.com/" target="_blank" className="text-yellow">Click Here</a></h4>
+                            <h4 className="text-uppercase text-white">Are you looking for The Kini Group corporate site? <a href="https://thekinigroup.com/" target="_blank" rel="noopener noreferrer" className="text-yellow">Click Here</a></h4>
                         </div>
                     </div>
                 </section>
@@ -261,8 +259,8 @@ class KMLogin extends Component {
                             &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
             </div>
                         <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
-                            <button onClick={()=>{window.open(window.location.origin + "/Account/TermsAndConditions", "_blank");}} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
-                            <button onClick={()=>{window.open(window.location.origin + "/Account/PrivacyPolicy", "_blank");}} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                            <button onClick={() => { window.open(window.location.origin + "/Account/TermsAndConditions", "_blank"); }} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={() => { window.open(window.location.origin + "/Account/PrivacyPolicy", "_blank"); }} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
                         </div>
                     </div>
                 </div>
@@ -287,5 +285,5 @@ const mapDispatchToProps = (dispatch) => (
         setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
         setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
     });
-    
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));

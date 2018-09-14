@@ -9,7 +9,6 @@ export const CanvasBG = (options) => {
   let width = options.width
   let height = options.height
 
-
   const initHeader = () => {
     largeHeader = document.getElementById('canvas-wrapper')
     largeHeader.style.height = height+'px';
@@ -76,20 +75,20 @@ export const CanvasBG = (options) => {
       window.addEventListener('resize', resize);
   }
 
-  const mouseMove = (e) => {
-      let posx = 0
-      let posy = 0
-      if (e.pageX || e.pageY) {
-          posx = e.pageX;
-          posy = e.pageY;
-      }
-      else if (e.clientX || e.clientY)    {
-          posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-          posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-      }
-      target.x = posx;
-      target.y = posy;
-  }
+//   const mouseMove = (e) => {
+//       let posx = 0
+//       let posy = 0
+//       if (e.pageX || e.pageY) {
+//           posx = e.pageX;
+//           posy = e.pageY;
+//       }
+//       else if (e.clientX || e.clientY)    {
+//           posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+//           posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+//       }
+//       target.x = posx;
+//       target.y = posy;
+//   }
 
   const scrollCheck = () => {
       if(document.body.scrollTop > height) animateHeader = false;
@@ -263,20 +262,20 @@ export const CanvasBG1 = (options) => {
       window.addEventListener('resize', resize);
   }
 
-  const mouseMove = (e) => {
-      let posx = 0
-      let posy = 0
-      if (e.pageX || e.pageY) {
-          posx = e.pageX;
-          posy = e.pageY;
-      }
-      else if (e.clientX || e.clientY)    {
-          posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-          posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-      }
-      target.x = posx;
-      target.y = posy;
-  }
+//   const mouseMove = (e) => {
+//       let posx = 0
+//       let posy = 0
+//       if (e.pageX || e.pageY) {
+//           posx = e.pageX;
+//           posy = e.pageY;
+//       }
+//       else if (e.clientX || e.clientY)    {
+//           posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+//           posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+//       }
+//       target.x = posx;
+//       target.y = posy;
+//   }
 
   const scrollCheck = () => {
       if(document.body.scrollTop > height) animateHeader = false;

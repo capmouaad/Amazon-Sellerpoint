@@ -1,48 +1,42 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ImportProgress from '../components/DashCommon/ImportProgress';
-
 import { setHeaderClass } from '../actions/header';
 
 class DashboardPlannings extends Component {
   static propTypes = {
     setHeaderClass: PropTypes.func.isRequired
   };
-  constructor(){
+  constructor() {
     super();
     this.addCustomScript();
-    this.state ={
-open:true
+    this.state = {
+      open: true
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.setHeaderClass('header--dash');
   }
 
-  addCustomScript(){
+  addCustomScript() {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=3s";
     script.async = true;
     document.body.appendChild(script);
-}
+  }
 
-
-  render(){
+  render() {
     return (
       <React.Fragment>
-        <ImportProgress />        
-        <br />      
-
-         <div className="dash-container">
+        <ImportProgress />
+        <br />
+        <div className="dash-container">
           <div className="container container--full">
-                           
-            <div className="_form_3 form-border"></div>   
-        
-            </div>
-          </div>     
+            <div className="_form_3 form-border"></div>
+          </div>
+        </div>
       </React.Fragment>
     )
   }

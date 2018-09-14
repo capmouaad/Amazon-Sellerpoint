@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { routes } from './routes';
 import svg4everybody from 'svg4everybody';
-
 import UserConfirmationModal from './components/UserConfirmationModal'
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { KMLogin } from './routes'
 
 class App extends Component {
   state = {
