@@ -109,14 +109,17 @@ export default class DashCOGSSetup extends Component {
     }
 
     renderLandedCost(cellInfo) {
+
         return (<div className="inpt-landed-cost">{["$",
-            <input type={"number"} min={0}
+            <input type={"number"} min={0.00}
+                step="1.00"
                 contentEditable
                 key={cellInfo.original.COGSId}
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
                 name={cellInfo.original.LandedCost}
                 defaultValue={cellInfo.original.LandedCost.toFixed(2)}
                 onChange={e => {
+
                     e.target.name = e.target.value;
                     this.lstEditedCOGS = this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value > 0 ? e.target.value : e.target.defaultValue) });
@@ -247,7 +250,7 @@ export default class DashCOGSSetup extends Component {
                                                 className: "brand",
                                                 accessor: d => d.Brand,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"],  threshold: matchSorter.rankings.CONTAINS }),
+                                                    matchSorter(rows, filter.value, { keys: ["Brand"], threshold: matchSorter.rankings.CONTAINS }),
                                                 filterAll: true
                                             },
                                             {
