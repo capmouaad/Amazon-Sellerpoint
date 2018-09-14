@@ -109,7 +109,7 @@ class SignupStep3 extends Component {
       });
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.getSellerMarketplaces()
   }
 
@@ -135,7 +135,7 @@ class SignupStep3 extends Component {
               onFormSubmited={this.onFormSubmited}
             />
             <div className="signup__form-cta signup__form-cta--centered">
-              <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''}/> I don't have advertising data to connect
+              <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''} /> I don't have advertising data to connect
               </div>
 
             <div className="signup__form-cta signup__form-cta--centered">
