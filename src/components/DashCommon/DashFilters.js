@@ -468,7 +468,7 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={SellerIDSelectedOptions}
                                 styles={colourStyles}
-                                placeholder="SellerID"
+                                placeholder=""
                             />
                         </div>
 
@@ -487,7 +487,7 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={MarketPlaceNameSelectedOptions}
                                 styles={colourStyles}
-                                placeholder="Marketplace"
+                                placeholder=""
                             />
                         </div>
                         <div className="seller-sku data-filter">
@@ -505,13 +505,13 @@ class DashFilters extends Component {
                                 controlShouldRenderValue={false}
                                 value={SellerSKUSelectedOptions}
                                 styles={colourStyles}
-                                placeholder="Seller SKU"
+                                placeholder=""
                             />
                         </div>
                     </div>
                     <div className={"dash-section" + (isTabOpened ? "" : " is-closed")}>
                         <div className="dash-section__heading">
-                            <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 10 }}>
+                            <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 2 }}>
                                 <div className="dash-section__toggler-icon"></div>
                             </div>
                             <h2 className="dash-filters__selected-title">Selected Filters</h2>
