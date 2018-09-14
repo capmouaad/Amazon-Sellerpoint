@@ -8,7 +8,7 @@ import { hotjar } from 'react-hotjar';
 
 class RenderSwitch extends React.Component {
 
-  componentDidMount(){
+  componentDidMount() {
     hotjar.initialize(921921, 6);
     ReactGA.initialize('UA-114018340-1');
     ReactGA.pageview(window.location.pathname + window.location.search);
@@ -20,14 +20,14 @@ class RenderSwitch extends React.Component {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }
 
-  render () {
-    return(
+  render() {
+    return (
       <Switch>
         {routes.map(route => (
           <Route
             key={route.path}
             exact={route.isExact}
-            path={process.env.PUBLIC_URL + route.path}
+            path={route.isKMRoute ? route.path : process.env.PUBLIC_URL + route.path}
             component={route.component}
           />
         ))}

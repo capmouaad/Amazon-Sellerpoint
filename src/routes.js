@@ -64,6 +64,13 @@ export const routes = [
     component: Login
   },
   {
+    isExact: true,
+    isKMRoute: true,
+    path: '/Account/Login',
+    name: 'KMLogin',
+    component: KMLogin
+  },
+  {
     path: '/signup',
     name: 'Signup',
     component: Signup
@@ -87,11 +94,6 @@ export const routes = [
     path: '/Tester',
     name: 'Tester',
     component: Tester
-  },
-  {
-    path: '/km-login',
-    name: 'KMLogin',
-    component: KMLogin
   },
   {
     path: '',

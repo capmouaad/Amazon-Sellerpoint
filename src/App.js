@@ -55,32 +55,20 @@ class App extends Component {
   render() {
     const { modalIsOpen, modalMessage } = this.state
     return (
-      <BrowserRouter>
-        <Switch>
-          <Route
-            // key={route.path}
-            exact
-            path={`/Account/Login`}
-            component={KMLogin}
+      <BrowserRouter getUserConfirmation={this.getUserConfirmation} basename={'/SellerPoint'} >
+        <div className="page">
+          <Header routes={routes.filter(route => route.forNavBar)} />
+          <div className="page__content">
+            <RenderSwitch />
+          </div>
+          <Footer />
+          <UserConfirmationModal
+            modalIsOpen={modalIsOpen}
+            modalMessage={modalMessage}
+            onCloseModal={this.onCloseModal}
+            onUserConfirm={this.onUserConfirm}
           />
-          <BrowserRouter getUserConfirmation={this.getUserConfirmation} basename={'/SellerPoint'} >
-            <div className="page">
-              <Header routes={routes.filter(route => route.forNavBar)} />
-              <div className="page__content">
-                <RenderSwitch />
-              </div>
-              <Footer />
-
-              {/* router confirmation modal */}
-              <UserConfirmationModal
-                modalIsOpen={modalIsOpen}
-                modalMessage={modalMessage}
-                onCloseModal={this.onCloseModal}
-                onUserConfirm={this.onUserConfirm}
-              />
-            </div>
-          </BrowserRouter>
-        </Switch>
+        </div>
       </BrowserRouter>
     );
   }
