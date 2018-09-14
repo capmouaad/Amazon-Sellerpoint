@@ -16,7 +16,7 @@ const IBar = (props) => {
                     style={{ "width": `${progress}%` }}
                 >
                     {
-
+                        (progress > 1 || optedOut) &&
                         <span>{optedOut ? "Opted Out" : isCompleated ? "Complete" : Math.ceil(progress) + " %"}</span>
                     }
                 </div>
