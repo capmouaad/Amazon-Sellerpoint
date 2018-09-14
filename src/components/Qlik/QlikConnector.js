@@ -134,14 +134,21 @@ class QlikConnector extends React.Component {
 
     qApp.on('error', (error) => {
       console.log('qlik.setOnError' + ((error !== undefined && error.message !== undefined) ? ': ' + error.message : ''))
-      if ((error !== undefined && error.message !== undefined) && (error.message === 'Not connected' || error.message === 'Socket closed' || error.message === 'Connection lost. Make sure that Qlik Sense is running properly. If your session has timed out due to inactivity, refresh to continue working.' || error.message === 'No available Qlik Sense engine was found. Refresh your browser or contact your system administrator.')) {
-         this.setState({
-           isModal: true,
-           qlikError: error.message
-         })
-      }
+      if (error !== undefined && error.message !== undefined)
+        if (error.message === 'Not connected' || error.message === 'Socket closed' || error.message === 'No available Qlik Sense engine was found. Refresh your browser or contact your system administrator.') {
+          this.setState({
+            isModal: true,
+            qlikError: 'Oops! Something went wrong.\n\nPlease reload the page to continue working. If the issue persists, please let us know at support@kinimetrix.com'
+          })
+        }
+        else if (error.message === 'Connection lost. Make sure that Qlik Sense is running properly. If your session has timed out due to inactivity, refresh to continue working.') {
+          this.setState({
+            isModal: true,
+            qlikError: 'Oops! Your session may have timed out due to inactivity.\n\nPlease reload the page to continue working. If the issue persists, please let us know at support@kinimetrix.com'
+          })
+        }
     })
-    
+
     await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).selectValues(['Week'], false, true);
     await qApp.field(APP_CONFIG.QS_FIELD_NAME.DataGroupBy).lock();
 
@@ -149,7 +156,7 @@ class QlikConnector extends React.Component {
     const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
     const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
     await qApp.field('Date').selectMatch('>=' + startDate + '<=' + endDate, true).then(async () => {
-      await   qApp.field('Date').lock();
+      await qApp.field('Date').lock();
     });
 
     //}
@@ -161,16 +168,17 @@ class QlikConnector extends React.Component {
     this.setState({
       isModal: false
     })
+    window.location.reload();
   }
 
   render() {
-    const { isModal, qlikError }  = this.state
+    const { isModal, qlikError } = this.state
     return (
       <Modal center showCloseIcon={false} open={isModal} onClose={this.onCloseModal}>
         <div className="modal-dialog modal-md loader-inside loading-over">
           <div className="modal-content modal-user-config">
             <div className="modal-header modal-header-user-config">
-                <h4 className="modal-title" id="myModalLabel">{`Warning!`}</h4>
+              <h4 className="modal-title" id="myModalLabel">{`Warning!`}</h4>
             </div>
             <div className="modal-body">
               <p>{qlikError}</p>
