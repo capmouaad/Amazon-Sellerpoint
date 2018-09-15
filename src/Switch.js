@@ -7,7 +7,6 @@ import ReactGA from 'react-ga';
 import { hotjar } from 'react-hotjar';
 
 class RenderSwitch extends React.Component {
-
   componentDidMount() {
     hotjar.initialize(921921, 6);
     ReactGA.initialize('UA-114018340-1');
@@ -16,18 +15,18 @@ class RenderSwitch extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.location.pathname !== prevProps.location.pathname) {
       ScrollTo(0, 300);
+      ReactGA.pageview(window.location.pathname + window.location.search);
     }
-    ReactGA.pageview(window.location.pathname + window.location.search);
   }
 
   render() {
     return (
       <Switch>
-        {routes.map(route => (
+        {routes.filter(route => route.isKMRoute !== true).map(route => (
           <Route
             key={route.path}
             exact={route.isExact}
-            path={route.isKMRoute ? route.path : process.env.PUBLIC_URL + route.path}
+            path={route.path}
             component={route.component}
           />
         ))}

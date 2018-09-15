@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { routes } from './routes';
 import svg4everybody from 'svg4everybody';
 import UserConfirmationModal from './components/UserConfirmationModal'
 import RenderSwitch from './Switch';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { KMLogin } from './routes'
 
 class App extends Component {
   state = {
@@ -53,20 +54,29 @@ class App extends Component {
   render() {
     const { modalIsOpen, modalMessage } = this.state
     return (
-      <BrowserRouter getUserConfirmation={this.getUserConfirmation} basename={'/SellerPoint'} >
-        <div className="page">
-          <Header routes={routes.filter(route => route.forNavBar)} />
-          <div className="page__content">
-            <RenderSwitch />
-          </div>
-          <Footer />
-          <UserConfirmationModal
-            modalIsOpen={modalIsOpen}
-            modalMessage={modalMessage}
-            onCloseModal={this.onCloseModal}
-            onUserConfirm={this.onUserConfirm}
+      <BrowserRouter>
+        <Switch>
+          <Route
+            exact
+            path={`/Account/Login`}
+            component={KMLogin}
           />
-        </div>
+          <BrowserRouter getUserConfirmation={this.getUserConfirmation} basename={'/SellerPoint'} >
+            <div className="page">
+              <Header routes={routes.filter(route => route.forNavBar)} />
+              <div className="page__content">
+                <RenderSwitch />
+              </div>
+              <Footer />
+              <UserConfirmationModal
+                modalIsOpen={modalIsOpen}
+                modalMessage={modalMessage}
+                onCloseModal={this.onCloseModal}
+                onUserConfirm={this.onUserConfirm}
+              />
+            </div>
+          </BrowserRouter>
+        </Switch>
       </BrowserRouter>
     );
   }
