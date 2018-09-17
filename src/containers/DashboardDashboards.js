@@ -10,6 +10,7 @@ import DashBusinessResults from '../components/DashDashboards/DashBusinessResult
 import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
 import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
 import DashFilters from '../components/DashCommon/DashFilters'
+import ReloadStatusBar from '../components/ReloadStatusBar'
 
 class DashboardDashboards extends Component {
   static propTypes = {
@@ -42,6 +43,7 @@ class DashboardDashboards extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
+        <ReloadStatusBar />
         <DashboardNavTabs routes={dashboards} />
         <DashFilters />
         <div className="dash">

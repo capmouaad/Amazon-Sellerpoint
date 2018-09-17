@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import { setHeaderClass } from '../actions/header';
+import ReloadStatusBar from '../components/ReloadStatusBar'
 
 class DashboardPlannings extends Component {
   static propTypes = {
@@ -31,6 +32,7 @@ class DashboardPlannings extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
+        <ReloadStatusBar />
         <br />
         <div className="dash-container">
           <div className="container container--full">

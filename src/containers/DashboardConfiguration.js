@@ -9,6 +9,7 @@ import DashCOGSSetup from '../components/DashSettings/DashCOGSSetup'
 import DashSKUASINGrouping from '../components/DashSettings/DashSKUASINGrouping'
 import DashNotifications from '../components/DashSettings/DashNotifications'
 import ImportProgress from '../components/DashCommon/ImportProgress';
+import ReloadStatusBar from '../components/ReloadStatusBar'
 
 class DashboardConfiguration extends Component {
   static propTypes = {
@@ -40,6 +41,7 @@ class DashboardConfiguration extends Component {
     return (
       <React.Fragment>
         <ImportProgress />
+        <ReloadStatusBar />
         <DashboardNavTabs
           routes={settings}
           modifierClass=""
