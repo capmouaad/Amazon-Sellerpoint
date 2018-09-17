@@ -6,7 +6,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { withRouter } from 'react-router-dom'
 
 import { setSignupStep, setSignupEmail, setSignupId, setSignupFields } from '../actions/signup';
-import { logIn,setAuthToken } from '../actions/login';
+import { logIn, setAuthToken } from '../actions/login';
 import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
@@ -116,14 +116,14 @@ class SignupStep1 extends Component {
 
     // check dublicate first
     api
-      .get(`CheckEmail?Email=${email}`)
+      .get(`CheckEmail?Email=` + encodeURIComponent(email))
       .then((res) => {
         console.log('backend responce to Get CheckEmail', res)
         if (res.data.IsDuplicateUser) {
           history.push(`/login`)
-          this.formRef.current.updateInputsWithError({
-            email: res.data.ErrorMessage
-          });
+          // this.formRef.current.updateInputsWithError({
+          //   email: res.data.ErrorMessage
+          // });
           this.setState({ isFormSubmited: false })
         } else {
           this.createUser(leadObj) // move on if it's fine
@@ -147,7 +147,7 @@ class SignupStep1 extends Component {
           this.props.setAuthToken(res.data.AuthToken);
           this.updateSignup();
         } else {
-          if (res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
+          if (res.data.ErrorMessage && res.data.ErrorMessage.toLowerCase().includes('google recaptcha')) {
             this.recaptchaRef.reset && this.recaptchaRef.reset()
           }
           this.setState({

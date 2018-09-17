@@ -1,4 +1,26 @@
+ /* Qlik Table customizations*/ 
+th.qv-st-header-cell:not(.qv-st-total-cell)
+  background-color: #F1F9FF
+th.qv-st-header-cell:not(.qv-st-total-cell) div.qv-st-value
+  color: #2E79B9
+  font-size: 12px
+  font-weight: 500
+.qv-st-header-cell:hover:not(.qv-st-total-cell)
+  background-color: #F1F9FF!important
+// th.qv-st-header-cell-search i.lui-icon--search::before 
+//   content: ''
+th.qv-st-header-cell.ng-scope.ui-draggable.ui-draggable-handle.ui-draggable-disabled.qv-st-header-cell-numeric.qv-st-total-cell
+  font-size: 12px
+th.qv-st-header-cell.ng-scope.ui-draggable.ui-draggable-handle.ui-draggable-disabled.qv-st-total-cell
+  font-size: 12px
+td.qv-st-data-cell.ng-scope.qv-st-data-cell-dimension-value
+  font-size: 12px
+  font-weight: 500
+td.qv-st-data-cell.ng-scope.qv-st-data-cell-numeric
+  font-size: 12px
+  font-weight: 500
+
+/* React Select element for binding qlik dropdowns.*/
 .qlik-select
-  width: 200px;
-  z-index: 99998 !important;
-  margin-right: 5px;
+  margin-right: 5px
+  z-index: 999 !important

@@ -1,21 +1,58 @@
 import React, { Component } from 'react'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import { connect } from 'react-redux';
+import UserConfirmationModal from './UserConfirmationModal'
 
 class HeaderUser extends Component {
-    myProfile = () => {
-        window.location.href = window.location.origin + "/User/Myprofile"
+    state = {
+        isMenuOpened: false,
+        modalIsOpen: false,
+        modalMessage: `
+By leaving this page, you will close out the process of adding a new marketplace.\n
+Are you sure you want to leave?
+    `,
+        navigateUrl: null
     }
-    changePassword = () => {
-        window.location.href = window.location.origin + "/User/ChangePassword"
-    }
-    render() {
 
+    myProfile = () => {
+        if (window.location.pathname.includes('addMarketPlace')) {
+            this.setState({
+                modalIsOpen: true,
+                navigateUrl: `/User/Myprofile`
+            })
+        } else {
+            window.location.href = window.location.origin + "/User/Myprofile"
+        }
+    }
+
+    changePassword = () => {
+        if (window.location.pathname.includes('addMarketPlace')) {
+            this.setState({
+                modalIsOpen: true,
+                navigateUrl: `/User/ChangePassword`
+            })
+        } else {
+            window.location.href = window.location.origin + "/User/ChangePassword"
+        }
+    }
+
+    onUserConfirm = () => {
+        this.onCloseModal()
+        window.location.href = window.location.origin + this.state.navigateUrl
+    }
+
+    onCloseModal = () => {
+        this.setState({
+            modalIsOpen: false
+        })
+    }
+
+    render () {
         const { isMenuOpened } = this.props
+        const { modalIsOpen, modalMessage } = this.state
 
         return (
-            <div
-                className={"header__user" + (isMenuOpened ? " is-active" : "")} onClick={this.props.toggleUsermenu}      >
+            <div className={"header__user" + (isMenuOpened ? " is-active" : "")} onClick={this.props.toggleUsermenu}>
                 <div className="header__user-avatar">
                     {this.props.userInfo && <img src={this.props.userInfo.ProfilePhoto} alt="My Profile" />}
                 </div>
@@ -40,6 +77,12 @@ class HeaderUser extends Component {
                         </div>
                     </div>
                 </div>
+                <UserConfirmationModal
+                    modalIsOpen={modalIsOpen}
+                    modalMessage={modalMessage}
+                    onCloseModal={this.onCloseModal}
+                    onUserConfirm={this.onUserConfirm}
+                />
             </div>
         )
     }

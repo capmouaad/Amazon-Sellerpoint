@@ -2,6 +2,8 @@
   margin: auto
   width: 100%
   max-width: 615px
+  position: relative
+  z-index: 100
 
 .login
   > .container
@@ -16,6 +18,25 @@
 +r($tablet)
   .login-remember
     max-width: 100%
+  .kmlogin-bg     
+    .login-footer 
+      .navbar
+        padding: 20px 48px 10px;
+        .col-lg-6
+          line-height: 28px;         
+          display: block!important;
+          text-align: center!important; 
+          width: 100% !important; 
+          button.btn.btn-bordered-dark
+            float: none;
+            margin: 12px 0 0 10px!important;            
+          img 
+            width: 183px;   
+            display: inline-block;
+            margin-top: 0;
+            height: 32px;
+            position: relative;
+            top: 10px; 
 
 +r($mobile)
   .login-container
@@ -25,7 +46,38 @@
   .login
     > .container
       min-height: calc(100vh - 90px - 70px - 80px)
-
+  .kmlogin-bg
+    .info-text
+      padding: 0 15px !important;
+    .login-container
+      margin-left: 60px
+    .login-footer 
+      .navbar
+        .col-lg-6
+          width: 100% !important;
+  .kmlogin-bg 
+    .login-container  
+      margin-left: 0;    
+      max-width: 360px !important;
+      width: 100%!important;
+      margin: 0 auto!important;
+    .login-footer 
+      .navbar
+        padding: 20px 48px 10px;
+        .col-lg-6
+          line-height: 28px;         
+          display: block!important;
+          text-align: center;
+          .button.btn.btn-bordered-dark
+            float: none;
+            margin: 20px 0 0 10px;           
+          img 
+            width: 183px;   
+            display: inline-block;  
+            margin-top: 0;
+            height: 32px;
+            position: relative;
+            top: 10px;
 
 .login-form 
   .ui-group--labeled
@@ -175,7 +227,7 @@
       float: left;
       width: 100%;
 
-.login-form
+.login-form 
   a.cancel-btn  
     font-size: 14px;
     text-decoration: underline;
@@ -207,6 +259,185 @@
       left: 11px;
      
 .asterisk-removed
-  span
+  span.asterisk
     display:  none;
-  
+
+.line-h
+  line-height: 24px !important;
+
+.link-color
+  a
+    color: #143f80;
+    font-weight: 550 !important;   
+
+.link-color
+  a:hover    
+    text-decoration: underline;
+.mar-t
+  margin-top: 24px!important;
+
+.thankyou-form
+  width: 87% !important;
+
+.kmlogin-bg
+  background-color: #091d3a;  
+  overflow: auto;
+  margin: 0;
+  display: block;
+  position: relative;
+  .login-container
+    max-width: 360px;
+    .signup__form
+      padding: 15px;
+      h2
+        color: #091d3a;
+        font-size: 24px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+
+.kmlogin-bg 
+  .forgot
+    color: #091d3a!important;
+    text-decoration: none!important;
+    margin-top: 10px!important;
+  .ico 
+    fill: #091d3a!important;  
+  .login-form 
+    .login-remember
+      .ui-checkbox__label:before
+        width: 18px;
+        height: 18px;
+        border: 1px solid #fbc52d; 
+        border-radius: 0; 
+      .ui-checkbox__label  
+       span 
+        padding-left: 30px;  
+    .ui-group
+      position: relative; 
+      margin-top: 4px;
+      margin-bottom: 23px;
+ 
+    .input-box 
+      input
+        border-radius: 0;
+        border: 1px solid #d5d5d5;  
+        padding-left: 54px;
+      span.icon-bak  
+        background-color: #e6e6e6;
+        position: absolute;
+        top: 1px;
+        bottom: 1px;
+        width: 41px;
+        left: 1px; 
+        svg 
+          width: 21px;
+          height: 19px;
+          position: absolute;
+          top: 13px;
+          left: 10px;
+          path
+            fill: #091d3a;
+  .signup__form-cta
+    .btn
+      font-size: 15px !important;
+      font-weight: 600;
+      color: #383838 !important;
+      height: 38px;
+      border: 1px solid #e6b737;
+      line-height: 18px;
+      background-color: transparent;
+      border-radius: 25px;   
+    .btn:hover  
+      background-color: #e6b737;
+      color: #383838!important;  
+.login-footer
+  .navbar
+    border-top: 2px solid #c5d6de;
+    padding: 17px 12px 0px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    bottom: 0;
+    margin-bottom: 0;
+    border-width: 1px 0 0;
+    border-radius: 0;
+    float: left;
+    width: 100%;      
+    .col-lg-6
+      width: 50%;   
+      float: left;  
+    .col-lg-6.buttn-group      
+      text-align: right;  
+      button.btn.btn-bordered-dark  
+        margin-left: 4px;
+        border: 1px solid #091d3a;
+        border-radius: 5px;
+        background: transparent !important;
+        color: #091d3a!important;
+        font-size: 13px!important;
+        padding: 7px 12px;
+        outline: none;
+        font-weight: 400;
+      button.btn.btn-bordered-dark:hover  
+        background: #fbc52d !important;
+        
+
+.kmlogin-bg    
+  HEIGHT: 100VH;
+  .header-logo
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 18px;
+    img
+      max-width: 100%;
+      height: auto;
+      width: 550px;
+  .content   
+    padding-top: 40px;
+    padding-bottom: 40px; 
+    h4.text-white
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 18px;
+      font-weight: bold;
+      TEXT-ALIGN: CENTER;  
+      a              
+        color: #fbc52d;     
+ 
+.kmlogin-bg
+  .ui-checkbox__label:after
+    left: 4px;
+  .btn
+    margin-bottom: 12px;
+  .login-footer 
+    .buttn-group
+      float: right!important;
+      display: block!important;
+    .navbar-fixed-bottom
+      position: fixed;
+      right: 0;
+      left: 0;
+      z-index: 1030;
+      bottom: 0;
+      margin-bottom: 0;
+      border-width: 1px 0 0;
+    .navbar 
+      .col-lg-6 
+        flex-direction: row;
+        width: 50%;
+        float: left;
+        display: flex;
+        ALIGN-ITEMS: center;
+        height: auto;
+        span
+          margin: 0 4px;
+          img 
+            width: 205px;
+            display: inline-block;
+            height: auto;
+
+@media screen and (max-height: 760px) 
+  .kmlogin-bg 
+    .login-footer
+      .navbar-fixed-bottom
+        position: relative;
+    

@@ -8,7 +8,9 @@ import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAV
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 import { resetStateDashFilter } from '../actions/dashFilter'
+import { setStatusBar } from '../actions/dashFilter'
 
+import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
 
@@ -44,7 +46,12 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      isMenuOpened: false
+      isMenuOpened: false,
+      modalIsOpen: false,
+      modalMessage: `
+By leaving this page, you will close out the process of adding a new marketplace.\n
+Are you sure you want to leave?
+  `
     }
   }
 
@@ -69,37 +76,55 @@ class Header extends React.Component {
     component.preload();
   };
 
-  logOutUser = async () => {
+  logOutUser = () => {
+    if (window.location.pathname.includes('addMarketPlace')) {
+      this.setState({
+        modalIsOpen: true
+      })
+    } else {
+      this.proceedLogOut()
+    }
+  }
+
+  proceedLogOut = async () => {
     try {
-      const logOffRes = await api.get(`LogOff`)
-      console.log('backend responce to GET LogOff', logOffRes)
+      // close modal then continue
+      this.onCloseModal()
 
-      // reset qlik connection redux
-      this.props.closeAppQlik()
-      this.props.setStatusProgress({
-        finaceDataProgress: 0,
-        reportDataProgress: 0,
-        adDataProgress: 0
-      })
-      this.props.setNavbarDashboard({
-          dashboards: [],
-          settings: []
-      })
-
-      this.props.resetStateDashFilter()
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
         await qApp.close()
       // clear qlik window object
       window.GlobalQdtComponents = null
-      // destroy session
-      this.props.resetSignUp()
-      this.props.logOut()
+      // reset qlik connection redux
+      this.props.closeAppQlik()
+
+      const logOffRes = await api.get(`LogOff`)
+      console.log('backend responce to GET LogOff', logOffRes)
+
       //window.location.reload()
     } catch (e) {
       console.error(e)
     }
+
+    this.props.setStatusProgress({
+      finaceDataProgress: 0,
+      reportDataProgress: 0,
+      adDataProgress: 0
+    })
+    this.props.setNavbarDashboard({
+        dashboards: [],
+        settings: []
+    })
+
+    this.props.resetStateDashFilter()
+
+    this.props.setStatusBar(false)
+
+    // destroy session
+    this.props.resetSignUp()
+    this.props.logOut()
   }
 
   toggleUsermenu = () => {
@@ -108,9 +133,14 @@ class Header extends React.Component {
     })
   }
 
-  render() {
+  onCloseModal = () => {
+    this.setState({
+      modalIsOpen: false
+    })
+  }
 
-    // const { isMenuOpened } = this.state;
+  render() {
+    const { modalIsOpen, modalMessage } = this.state
     const { menuOpened } = this.props;
 
     return (
@@ -128,7 +158,7 @@ class Header extends React.Component {
                   </div>
                 </div>
               </div>
-              <NavLink onClick={this.closeHamburger} to='/' className="header__logo">
+              <NavLink onClick={this.closeHamburger} to='/dash/dashboards' className="header__logo">
                 <SvgIcon name="logo" />
               </NavLink>
               <div className="header__welcome-link">
@@ -193,6 +223,12 @@ class Header extends React.Component {
             </div>
           </div>
         </div>
+        <UserConfirmationModal
+          modalIsOpen={modalIsOpen}
+          modalMessage={modalMessage}
+          onCloseModal={this.onCloseModal}
+          onUserConfirm={this.proceedLogOut}
+        />
       </div>
     )
   }
@@ -212,7 +248,8 @@ const mapDispatchToProps = (dispatch) => ({
   setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
   setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
   resetStateDashFilter: () => dispatch(resetStateDashFilter()),
+  setStatusBar: (data) => dispatch(setStatusBar(data)),
   logOut: () => dispatch(logOut())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(onClickOutside(Header));
+export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(onClickOutside(Header))

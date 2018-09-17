@@ -7,6 +7,7 @@ import Modal from 'react-responsive-modal';
 import Dropzone from 'react-dropzone';
 import FormLoader from '../Forms/FormLoader';
 import Toaster, { showToastMessage } from '../../services/toasterNotification'
+import FilterInput from '../Helpers/FilterInput'
 
 export default class DashCOGSSetup extends Component {
 
@@ -95,8 +96,8 @@ export default class DashCOGSSetup extends Component {
                 this.setState({ loading: false });
                 if (res.data.IsSuccess) {
                     this.setState({
-                        data: res.data.LstCOGSTable
-                    });
+                        data: []
+                    }, () => this.setState({ data: res.data.LstCOGSTable }));
                 } else {
                     this.setState({
                         apiError: res.data.ErrorMessage
@@ -109,14 +110,17 @@ export default class DashCOGSSetup extends Component {
     }
 
     renderLandedCost(cellInfo) {
+
         return (<div className="inpt-landed-cost">{["$",
-            <input type={"number"} min={0}
+            <input type={"number"} min={0.00}
+                step="1.00"
                 contentEditable
                 key={cellInfo.original.COGSId}
                 style={{ backgroundColor: "#fafafa", width: "100%", textAlign: "right" }}
                 name={cellInfo.original.LandedCost}
                 defaultValue={cellInfo.original.LandedCost.toFixed(2)}
                 onChange={e => {
+
                     e.target.name = e.target.value;
                     this.lstEditedCOGS = this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)
                     this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value > 0 ? e.target.value : e.target.defaultValue) });
@@ -195,6 +199,7 @@ export default class DashCOGSSetup extends Component {
                                         data={data}
                                         noDataText="No products found."
                                         filterable
+                                        minRows={1}
                                         defaultFilterMethod={(filter, row) =>
                                             String(row[filter.id]) === filter.value}
                                         columns={[
@@ -205,7 +210,9 @@ export default class DashCOGSSetup extends Component {
                                                 className: "status",
                                                 accessor: d => d.Status,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Status"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["Status"], threshold: matchSorter.rankings.STARTS_WITH }),
+                                                Filter: ({ filter, onChange }) =>
+                                                    <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true
                                             },
                                             {
@@ -215,7 +222,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "sellersku",
                                                 accessor: d => d.SellerSKU,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["SellerSKU"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true
                                             },
                                             {
@@ -225,7 +233,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "name",
                                                 accessor: d => d.Name,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Name"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["Name"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true,
                                                 style: { whiteSpace: 'unset' }
                                             },
@@ -236,7 +245,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "marketplacename",
                                                 accessor: d => d.MarketplaceName,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["MarketplaceName"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true
                                             },
                                             {
@@ -246,7 +256,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "brand",
                                                 accessor: d => d.Brand,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["Brand"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["Brand"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true
                                             },
                                             {
@@ -256,7 +267,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "avgprice",
                                                 accessor: d => d.AvgHistoricalPrice,
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true,
                                                 Cell: this.renderAvgHistoricalPrice
                                             },
@@ -267,7 +279,8 @@ export default class DashCOGSSetup extends Component {
                                                 className: "landedcost",
                                                 accessor: "LandedCost",
                                                 filterMethod: (filter, rows) =>
-                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+                                                    matchSorter(rows, filter.value, { keys: ["LandedCost"], threshold: matchSorter.rankings.CONTAINS }),
+                                                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
                                                 filterAll: true,
                                                 Cell: this.renderLandedCost
                                             }

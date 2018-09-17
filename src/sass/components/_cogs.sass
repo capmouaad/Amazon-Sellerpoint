@@ -1,14 +1,13 @@
-.inpt-landed-cost
-  float: right
-  text-align: right
+.inpt-landed-cost  
   input
-    width: 85px !important
+    width: 85% !important
     margin-left: 4px
     padding: 4px
     background-color: #FFF !important
-    border: 1px solid #CCC
-    float: right
+    border: 1px solid #CCC    
     margin-right: 4px
+    box-shadow: none
+
 .panel
   &.panel-dark
     border-color: #c5d6de
@@ -193,6 +192,7 @@ p.red
     width: 38%
     float: right
     margin: auto
+    margin-top: 2px;
 
 .instruction-notes h3 
     color: #091d3a
@@ -321,13 +321,25 @@ body
   width: 52%;
      
 .status
-  width: 1% !important;
+  width: 0.4% !important;
 
 .name
   width: 22% !important;
 
 .sellersku
   width: 3% !important;
+
+.modal-content
+  .sellersku
+    width: 5% !important;
+  .marketplacename
+    width: 7% !important;
+  .avgprice
+   width: 7% !important;
+  .brand
+    width: 8% !important;
+  .landedcost
+   width: 4% !important;
 
 .marketplacename
   width: 5% !important;
@@ -342,7 +354,7 @@ body
   width: 1% !important;
   
 .action
-  width: 1% !important;
+  width: 0.2% !important;
  
 .not-found
   font-size: 16px !important;
@@ -352,7 +364,7 @@ body
   cursor: pointer;
      
 body, button, input, isindex, keygen, select, textarea
-  font-size: 16px !important;
+  //font-size: 16px !important;
   color: #595959!important;
 
 .upload-discription 
@@ -382,5 +394,58 @@ a#btnUpload
     
 .floatLeft
   float: left;
-
   
+.mar-l
+  margin-left: 12px;
+
+
+.rt-th
+  text-align: left;
+.rt-th.avgprice, .rt-th.landedcost, .rt-td.avgprice, .rt-td.landedcost
+  text-align: right;
+.search-box
+  padding: 0; 
+  border: none!important;
+  margin: -5px -5.5px;
+  position: relative;
+  border-top: 2px solid #ece6e6!important;
+  svg
+    position: absolute;
+    right: 8px; 
+    top: calc(50% - 7px);
+  input
+    border: 1px solid #E8E6E8 !important;
+    background-color: #F1F9FF !important;
+    border-radius: 0!important;
+    width: 100%!important;
+    margin: 0!important;
+    padding: 6px 7px!important;
+    padding-right: 20px!important
+
+.ico-magnifying-glass-bold
+  fill: #14a2e7 !important;
+
+.ReactTable 
+  .rt-noData
+    padding: 10px !important;
+    top: 55% !important;   
+ 
+.ico-close
+  fill: #4a4a4a !important;
+
+.close-round
+  top: calc(50% - 8px);
+  width: 17px !important;
+  height: 17px !important;
+  background-color: #D8D8D8 !important;
+  border-radius: 50%;
+  text-align: center;
+  position: absolute;
+  right: 7px;
+  svg
+    width: 7px;
+    height: 7px;
+    position: static; 
+
+.cursor-pointer
+  cursor: pointer;

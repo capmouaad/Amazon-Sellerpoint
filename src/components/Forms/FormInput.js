@@ -13,6 +13,7 @@ class FormInput extends Component {
     onChangeHandler: PropTypes.func,
     mask: PropTypes.array,
     icon: PropTypes.string,
+    iconClass: PropTypes.string,
   };
 
   changeValue = (event) => {
@@ -21,15 +22,27 @@ class FormInput extends Component {
   }
 
   getIcon = () => {
-    const { icon } = this.props
+    const { icon, iconClass } = this.props
 
     if (icon) {
-      return (
-        <div className="input-box">
-          <SvgIcon name={icon} />
-          {this.getInput()}
-        </div>
-      )
+
+      if (iconClass) {
+        return (
+          <div className="input-box">
+            <span className="icon-bak">
+              <SvgIcon name={icon} /></span>
+            {this.getInput()}
+          </div>
+        )
+      }
+      else {
+        return (
+          <div className="input-box">
+            <SvgIcon name={icon} />
+            {this.getInput()}
+          </div>
+        )
+      }
     }
     else {
       return (
@@ -70,28 +83,41 @@ class FormInput extends Component {
   }
 
   render() {
-    const { name, label, isRequired } = this.props
+    const { name, label, isRequired, iconClass } = this.props
 
     // An error message is returned only if the component is invalid
     const errorMessage = this.props.isFormSubmitted() ? this.props.getErrorMessage() : null;
     const parentClass = this.props.isFormSubmitted() ? this.props.isValid() ? 'ui-group' : 'ui-group has-error' : 'ui-group'
 
-    return (
-      <React.Fragment>
-        <div className={parentClass + (label ? " ui-group--labeled" : "")}>
-          <label htmlFor={name}>
-            {isRequired() ? (<span>*</span>) : ""}
-            {label}
-          </label>
+    if (iconClass) {
+      return (
+        <React.Fragment>
+          <div className={parentClass + (label ? " ui-group--labeled" : "")}>
+            {this.getIcon()}
+          </div>
+          {errorMessage &&
+            <span className="ui-input-validation">{errorMessage}</span>
+          }
+        </React.Fragment>
+      )
+    }
+    else {
+      return (
+        <React.Fragment>
+          <div className={parentClass + (label ? " ui-group--labeled" : "")}>
+            <label htmlFor={name}>
+              {isRequired() ? (<span className="asterisk">*</span>) : ""}
+              {label}
+            </label>
+            {this.getIcon()}
+          </div>
+          {errorMessage &&
+            <span className="ui-input-validation">{errorMessage}</span>
+          }
+        </React.Fragment>
+      )
+    }
 
-          {this.getIcon()}
-
-        </div>
-        {errorMessage &&
-          <span className="ui-input-validation">{errorMessage}</span>
-        }
-      </React.Fragment>
-    )
 
   }
 }

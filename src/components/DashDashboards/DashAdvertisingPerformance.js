@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 
 import DashSection from '../DashCommon/DashSection';
+import ReloadTimeInGMT from '../ReloadTimeInGMT'
 
 export default class DashAdvertisingPerformance extends Component {
     render () {
         return (
             <React.Fragment>
-
+                <ReloadTimeInGMT />
                 <div className="dash-container">
                     <div className="container container--full">
                         <div className="dash-grid">
@@ -26,7 +27,7 @@ export default class DashAdvertisingPerformance extends Component {
                                 name="Ad Unit Impressions, Clicks, and Conversions"
                                 toolTipSimple="true"
                                 toolTipHeader="Impressions, Clicks, and Conversions"
-                                dange toolTipContent={"This chart shows the relations between impressions, clicks, and conversions. By looking at all 3 metrics as a components that all work together, we can gather strong insights into how our advertising is performing.<br/><br/>For example, if impressions are trending up, while click-through rate and conversions are trending down, this may be an indication that you're: <br/>[a] driving weak keywords, <br/>[b] increasing ad spend when the demand is unable to keep up, <br/>[c] your listing has not been resonating with customers for some reason (perhaps your rating has decreased), or <br/>[d] your competition has improved significantly.<br/><br/><u>Impressions:</u> How many times your ad is shown. An impression is counted each time your ad is shown to a customer.<br/><br/><u>Click-Through Rate (CTR):</u> A ratio showing how often people who see your ad end up clicking it. Click-Through Rate can be used to gauge how well your keywords and ads are performing.<br/><br/><u>Conversion Rate (CR):</u>The number of purchases per ad click, shown as a percentage."}
+                                dange toolTipContent={"This chart shows the relations between impressions, clicks, and conversions. By looking at all 3 metrics as a components that all work together, we can gather strong insights into how our advertising is performing.<br/><br/>For example, if impressions are trending up, while click-through rate and conversions are trending down, this may be an indication that you're: <br/>[a] driving weak keywords, <br/>[b] increasing ad spend when the demand is unable to keep up, <br/>[c] your listing has not been resonating with customers for some reason (perhaps your rating has decreased), or <br/>[d] your competition has improved significantly.<br/><br/><u>Impressions:</u> How many times your ad is shown. An impression is counted each time your ad is shown to a customer.<br/><br/><u>Click-Through Rate (CTR):</u> A ratio showing how often people who see your ad end up clicking it. Click-Through Rate can be used to gauge how well your keywords and ads are performing.<br/><br/><u>Conversion Rate (CR):</u> The number of purchases after ad click, shown as a percentage."}
                                 qdt={{
                                     type: 'QdtViz',
                                     props: {

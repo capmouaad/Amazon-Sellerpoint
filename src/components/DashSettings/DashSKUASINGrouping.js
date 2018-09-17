@@ -7,6 +7,7 @@ import Modal from 'react-responsive-modal';
 import Toaster, { showToastMessage } from '../../services/toasterNotification'
 import FormLoader from '../Forms/FormLoader';
 import 'react-toastify/dist/ReactToastify.css';
+import FilterInput from '../Helpers/FilterInput'
 
 export default class DashSKUASINGrouping extends Component {
     skuIds = [];
@@ -22,7 +23,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "status",
             accessor: d => d.Status,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Status"] }),
+                matchSorter(rows, filter.value, { keys: ["Status"], threshold: matchSorter.rankings.STARTS_WITH }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -32,7 +34,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "sellersku",
             accessor: d => d.SellerSKU,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["SellerSKU"] }),
+                matchSorter(rows, filter.value, { keys: ["SellerSKU"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -42,7 +45,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "name",
             accessor: d => d.Name,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Name"] }),
+                matchSorter(rows, filter.value, { keys: ["Name"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true,
             style: { whiteSpace: 'unset' }
         },
@@ -53,7 +57,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "marketplacename",
             accessor: d => d.MarketplaceName,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["MarketplaceName"] }),
+                matchSorter(rows, filter.value, { keys: ["MarketplaceName"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -63,7 +68,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "brand",
             accessor: d => d.Brand,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["Brand"] }),
+                matchSorter(rows, filter.value, { keys: ["Brand"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -73,7 +79,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "avgprice",
             accessor: d => d.AvgHistoricalPrice,
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"] }),
+                matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true,
             Cell: this.renderAvgHistoricalPrice
         },
@@ -84,7 +91,8 @@ export default class DashSKUASINGrouping extends Component {
             className: "landedcost",
             accessor: d => ['$', d.LandedCost.toFixed(2)],
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["LandedCost"] }),
+                matchSorter(rows, filter.value, { keys: ["LandedCost"], threshold: matchSorter.rankings.CONTAINS }),
+                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         }
     ];
@@ -544,13 +552,13 @@ export default class DashSKUASINGrouping extends Component {
                                             <div className="dash-new-Marketplace btn-group">
                                                 <a className="btn btn-primary btn-new-Marketplace" onClick={this.onOpenGroupSelectedModal}>Group Selected SKUs</a>
                                                 <a className="btn btn-new-Marketplace existing-group" onClick={this.onOpenGroupedSKUModal}>Add to existing group</a>
-                                                <a className="btn btn-new-Marketplace existing-group" onClick={this.clearAllSelection}>Clear All Selection</a>
+                                                <button className="btn-clear-filter mar-l" onClick={this.clearAllSelection}>clear selections</button>
                                             </div>                                                                   </div>
-
                                     </div>
                                     <div className="row">
                                         <ReactTable
                                             data={data}
+                                            minRows={1}
                                             noDataText="No ungrouped skus found."
                                             filterable
                                             defaultFilterMethod={(filter, row) =>
@@ -572,6 +580,7 @@ export default class DashSKUASINGrouping extends Component {
 
                                 <div id="divTableGroupDataHolder" className="tab-content  cust-cogs">
                                     <ReactTable id="TableGroupDataHolder"
+                                        minRows={1}
                                         data={grouped_data}
                                         noDataText="No grouped skus found."
                                         filterable
@@ -630,6 +639,7 @@ export default class DashSKUASINGrouping extends Component {
                                                 </div>
 
                                                 <ReactTable
+                                                    minRows={1}
                                                     data={childSKUs}
                                                     noDataText="No child skus found."
                                                     filterable
@@ -679,6 +689,7 @@ export default class DashSKUASINGrouping extends Component {
                                             <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
 
                                                 <ReactTable
+                                                    minRows={1}
                                                     data={selSKUs_data}
                                                     noDataText="No child skus found."
                                                     filterable
@@ -728,6 +739,7 @@ export default class DashSKUASINGrouping extends Component {
                                             </div>
                                             <div id="divTableExistingGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
                                                 <ReactTable id="TableGroupDataHolder"
+                                                    minRows={1}
                                                     data={grouped_data}
                                                     noDataText="No grouped skus found."
                                                     filterable

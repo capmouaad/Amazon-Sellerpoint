@@ -17,16 +17,16 @@ class Signup extends Component {
     signupStep: PropTypes.number
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.checkEmail()
     this.updateURL();
     this.props.setHeaderClass('header--logo-only');
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     this.updateURL();
   }
-  
+
   checkEmail = async () => {
     try {
       const { history, location } = this.props
@@ -35,8 +35,8 @@ class Signup extends Component {
       const email = params.get('email')
 
       if (email) {
-        const checkEmailRes = await api.get(`CheckEmail?Email=${email}`)
-        if ( checkEmailRes.data.IsDuplicateUser ){
+        const checkEmailRes = await api.get(`CheckEmail?Email=` + encodeURIComponent(email))
+        if (checkEmailRes.data.IsDuplicateUser) {
           history.push(`/login`)
         }
       }
@@ -53,7 +53,7 @@ class Signup extends Component {
     const emailStr = email ? `?email=${email}` : null
 
     let newPath = process.env.PUBLIC_URL + "/signup/step-" + (signupStep);
-    if ( location.pathname === newPath ){
+    if (location.pathname === newPath) {
       return
     }
     history.push({
@@ -63,10 +63,10 @@ class Signup extends Component {
   }
 
 
-  render(){
+  render() {
     const { match } = this.props
 
-    return(
+    return (
       <div className="signup">
         <div className="container">
           <SignupNav />

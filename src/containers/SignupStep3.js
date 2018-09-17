@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { setSignupStep } from '../actions/signup';
+import { setAddMarketStep, setSignupStep } from '../actions/signup';
 import FormLoader from '../components/Forms/FormLoader';
 import ConnectMarketplaces from '../components/ConnectMarketplaces';
 import api from '../services/Api'
-import { SET_ADD_MARKET_STEP } from '../store/ActionTypes'
 import { APP_CONFIG } from '../constants'
 
 class SignupStep3 extends Component {
@@ -23,7 +22,8 @@ class SignupStep3 extends Component {
       isFormSubmited: false,
       apiError: null,
       isAdvertisingOptedOut: false,
-      error: false
+      error: false,
+      isDisabled: false
     }
   }
 
@@ -48,11 +48,15 @@ class SignupStep3 extends Component {
         this.setState({
           error: false
         })
+
         await this.compleateSignupOnBackend()
-        this.setState({
-          shouldRedirect: true
-        })
-        this.props.setSignupStep(1);
+
+        if (!this.props.onGoBackMarket) {
+          this.setState({
+            shouldRedirect: true
+          })
+          this.props.setSignupStep(1);
+        }
       }
     } catch (e) {
       console.error(e)
@@ -67,14 +71,13 @@ class SignupStep3 extends Component {
       }
     }
 
-    const ressignup = await api.post('SignUpComplete');
-
-
-
-    if (!ressignup.data.IsSuccess) {
-      throw new Error(ressignup.data.ErrorMessage)
+    if (!this.props.onGoBackMarket) {
+      const ressignup = await api.post('SignUpComplete')
+      if (!ressignup.data.IsSuccess) {
+        throw new Error(ressignup.data.ErrorMessage)
+      }
     } else {
-      this.props.onGoBackMarket && this.props.onGoBackMarket()
+      this.props.onGoBackMarket()
       this.props.setAddMarketStep(1)
     }
   }
@@ -86,11 +89,35 @@ class SignupStep3 extends Component {
     })
   }
 
+  getSellerMarketplaces = () => {
+    api
+      .get(`GetSellerMarketPlaces`)
+      .then((res) => {
+        console.log('backend responce to GET GetSellerMarketPlaces', res)
+        const { Marketplaces } = res.data
+        const MarketsConnected = Marketplaces.some((market) => market.IsAdvertisingConnected === true)
+
+        if (MarketsConnected) {
+          this.setState({ isDisabled: true })
+        } else {
+          this.setState({ isDisabled: false })
+        }
+
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  componentDidMount() {
+    this.getSellerMarketplaces()
+  }
+
   render() {
-    const { shouldRedirect, isFormSubmited, apiError, error } = this.state;
+    const { shouldRedirect, isFormSubmited, apiError, error, isDisabled } = this.state;
 
     if (shouldRedirect) {
-      return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
+      return <Redirect to={`${process.env.PUBLIC_URL}/dash/welcome`} />
     }
 
     return (
@@ -103,12 +130,12 @@ class SignupStep3 extends Component {
           <div className="signup__form">
             <div className="signup__heading">Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns</div>
             <ConnectMarketplaces
-              advState={APP_CONFIG.LWA_Source.SignUpStep3.state}
+              advState={this.props.advState || APP_CONFIG.LWA_Source.SignUpStep3.state}
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
             />
             <div className="signup__form-cta signup__form-cta--centered">
-              <input type="checkbox" onChange={this.onCheckedInput} /> I don't have advertising data to connect
+              <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''} /> I don't have advertising data to connect
               </div>
 
             <div className="signup__form-cta signup__form-cta--centered">
@@ -126,16 +153,15 @@ class SignupStep3 extends Component {
   }
 }
 
-
 const mapStateToProps = (state) => ({
   signupId: state.signup.signupId,
   LWA: state.lwa,
   sellerId: state.signup.fields.seller_id
-});
+})
 
 const mapDispatchToProps = (dispatch) => ({
   setSignupStep: (data) => dispatch(setSignupStep(data)),
-  setAddMarketStep: (data) => dispatch({ type: SET_ADD_MARKET_STEP, payload: data })
-});
+  setAddMarketStep: (data) => dispatch(setAddMarketStep(data))
+})
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignupStep3);
+export default connect(mapStateToProps, mapDispatchToProps)(SignupStep3)

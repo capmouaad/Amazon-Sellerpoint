@@ -1,27 +1,26 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import DashboardNavTabs from '../components/DashCommon/DashboardNavTabs';
-
 import { setHeaderClass } from '../actions/header';
 import DashFinancialPerformance from '../components/DashDashboards/DashFinancialPerformance'
 import DashBusinessResults from '../components/DashDashboards/DashBusinessResults'
 import DashOperationalPerformance from '../components/DashDashboards/DashOperationalPerformance'
 import DashAdvertisingPerformance from '../components/DashDashboards/DashAdvertisingPerformance'
 import DashFilters from '../components/DashCommon/DashFilters'
-import QlikConnector from '../components/Qlik/QlikConnector'
+import ReloadStatusBar from '../components/ReloadStatusBar'
+
 class DashboardDashboards extends Component {
   static propTypes = {
     setHeaderClass: PropTypes.func.isRequired
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.setHeaderClass('header--dash');
   }
-  
+
   renderRouteComponent = (route) => {
     switch (route.name) {
       case 'Financial Performance':
@@ -37,15 +36,15 @@ class DashboardDashboards extends Component {
     }
   }
 
-  render(){
+  render() {
     const { navDashboard } = this.props // from the router
     const { dashboards } = navDashboard
 
     return (
       <React.Fragment>
         <ImportProgress />
+        <ReloadStatusBar />
         <DashboardNavTabs routes={dashboards} />
-        <QlikConnector />
         <DashFilters />
         <div className="dash">
           {dashboards.map(route => (
@@ -61,7 +60,6 @@ class DashboardDashboards extends Component {
     )
   }
 }
-
 
 const mapStateToProps = (state) => (
   {

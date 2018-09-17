@@ -23,3 +23,8 @@ export const setSignupFields = (data) => ({
   type: types.SET_SIGNUP_FIELDS,
   payload: data
 })
+
+export const setAddMarketStep = (data) => ({
+  type: types.SET_ADD_MARKET_STEP,
+  payload: data
+})

@@ -10,7 +10,8 @@ const initialState = {
   statusProgress: {
     adDataProgress: 0,
     finaceDataProgress: 0,
-    reportDataProgress: 0
+    reportDataProgress: 0,
+    adOptedOut: false
   }
 }
 

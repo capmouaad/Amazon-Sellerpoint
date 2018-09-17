@@ -13,8 +13,8 @@ class MWSActionAuth extends Component {
     super(props);
 
     this.state = {
-      seller_id: props.signupFields.seller_id,
-      mws_auth: props.signupFields.mws_auth,
+      seller_id: '',
+      mws_auth: '',
       apiError: null,
       isFormSubmited: false
     }
@@ -22,6 +22,9 @@ class MWSActionAuth extends Component {
     this.formRef = React.createRef();
   }
 
+  componentWillUnmount () {
+    this.formRef.reset()
+  }
 
   handleChange = (e) => {
     let fieldName = e.target.name;
@@ -80,7 +83,6 @@ class MWSActionAuth extends Component {
       .catch(function (error) {
         console.log(error);
       });
-
   }
 
   updateSignup = (marketplace_data) => {
@@ -115,7 +117,7 @@ class MWSActionAuth extends Component {
             onValidSubmit={this.validSubmit}
             onValid={this.formValid}
             onInvalid={this.formInvalid}
-            ref={this.formRef}
+            ref={(node) => { this.formRef = node }}
           >
             { apiError &&
               <span className="ui-input-validation">{apiError}</span>
@@ -146,15 +148,15 @@ class MWSActionAuth extends Component {
               onChangeHandler={this.handleChange}
               required
             />
+
+            <p className="t-parapgraph">If you are having trouble, below is an example of where to find this information. </p>
+            <Image image="amazonMWS.jpg" />
+
+            <div className="signup__form-cta signup__form-cta--centered">
+              <button type="submit" className="btn btn-signup btn--block">Next</button>
+            </div>
           </Formsy>
-          <p className="t-parapgraph">If you are having trouble, below is an example of where to find this information. </p>
-          <Image image="amazonMWS.jpg" />
         </div>
-
-        <div className="signup__form-cta signup__form-cta--centered">
-          <span onClick={this.submitForm} className="btn btn-signup btn--block">Next</span>
-        </div>
-
       </div>
     )
   }

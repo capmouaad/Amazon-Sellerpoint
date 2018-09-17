@@ -21,7 +21,8 @@ class ForgotPassword extends Component {
             isFormSubmited: false,
             apiError: null,
             email: "",
-            formIsValid: false
+            formIsValid: false,
+            showThankYouPage: false
         }
     }
 
@@ -63,72 +64,78 @@ class ForgotPassword extends Component {
 
             const { IsSuccess } = forgotPasswordRes.data;
             if (IsSuccess) {
+                this.formRef.reset()
                 this.setState({
-                    email: "",
-                });
+                    showThankYouPage: true // show the thank you message
+                })
             } else {
                 this.setState({
                     apiError: forgotPasswordRes.data.ErrorMessage
                 })
             }
+        } catch (e) {
+            console.log(e)
+        } finally {
             this.setState({
                 isFormSubmited: false // reset submit status
             })
-        } catch (e) {
-            console.log(e)
         }
     }
 
     render() {
-        const { email, apiError, isFormSubmited } = this.state;
+        const { email, apiError, isFormSubmited, showThankYouPage } = this.state;
 
         return (
 
             <div className="signup login">
                 <div className="container">
                     <div className="login-container">
+                        {!showThankYouPage ? (
+                            <Formsy
+                                className="signup__form login-form"
+                                onValidSubmit={this.handleSubmit}
+                                onValid={this.formValid}
+                                onInvalid={this.formInvalid}
+                                ref={(node) => { this.formRef = node }}
+                            >
+                                <h2>Reset Password</h2>
+                                <p>We will send you an e-mail with instructions</p>
+                                <p className="mb-15">on how to reset your password.</p>
+                                <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
+                                    <FormLoader />
+                                    {apiError &&
+                                        <span className="ui-input-validation">{apiError}</span>
+                                    }
+                                    <div className="email asterisk-removed">
+                                        <FormInput
+                                            name="email"
+                                            label="Email"
+                                            placeholder=""
+                                            icon="email"
+                                            value={email}
+                                            validations="isEmail"
+                                            validationErrors={{
+                                                isEmail: "This is not a valid email",
+                                                isDefaultRequiredValue: 'Please enter email'
+                                            }}
+                                            onChangeHandler={this.handleChange}
+                                            ref={(node) => { this.emailInput = node }}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="signup__form-cta">
+                                        <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
+                                    </div>
 
-                        <Formsy
-                            className="signup__form login-form"
-                            onSubmit={this.submitForm}
-                            onValidSubmit={this.handleSubmit}
-                            onValid={this.formValid}
-                            onInvalid={this.formInvalid}
-                            ref={this.formRef}
-                        >
-                            <h2>Reset Password</h2>
-                            <p>We will send you an e-mail with instructions</p>
-                            <p className="mb-15">on how to reset your password.</p>
-                            <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
-                                <FormLoader />
-                                {apiError &&
-                                    <span className="ui-input-validation">{apiError}</span>
-                                }
-                                <div className="email asterisk-removed">
-                                    <FormInput
-                                        name="email"
-                                        label="Email"
-                                        placeholder=""
-                                        icon="email"
-                                        value={email}
-                                        validations="isEmail"
-                                        validationErrors={{
-                                            isEmail: "This is not a valid email",
-                                            isDefaultRequiredValue: 'Please enter email'
-                                        }}
-                                        onChangeHandler={this.handleChange}
-                                        required
-                                    />
+                                    <Link to='' onClick={()=> window.history.back()} className="cancel-btn"> Cancel </Link>
+
                                 </div>
-                                <div className="signup__form-cta">
-                                    <button type="submit" className="btn btn-signup btn--block">Reset Password</button>
-                                </div>
-
-                                <Link to='/login' className="cancel-btn"> Cancel </Link>
-
-                            </div>
-                        </Formsy>
-
+                            </Formsy>) : (<Formsy className="signup__form login-form thankyou-form">
+                                <h2>Reset Password</h2>
+                                <p className="mb-15 line-h mar-t">Instructions to reset your password have been sent to the address provided.</p>
+                                <p className="mb-15">Please check your inbox and spam folder.</p>
+                                <p className="mb-15 link-color"><Link to='/login'>Click here</Link> to return to the login screen.</p>
+                            </Formsy>)}
                     </div>
                 </div>
             </div>

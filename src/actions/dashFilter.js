@@ -63,6 +63,11 @@ export const resetStateDashFilter = () => ({
   type: types.RESET_STATE_DASH_FILTER
 })
 
+export const setStatusBar = (data) => ({
+  type: types.SET_STATUS_BAR,
+  payload: data
+})
+
 
 
 

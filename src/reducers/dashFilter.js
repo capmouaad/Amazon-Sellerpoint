@@ -11,7 +11,8 @@ const initialState = {
   SellerSKUSelectedOptions: null,
   currentSelections: [],
   pickerStartDate: '',
-  pickerEndDate: ''
+  pickerEndDate: '',
+  isShowStatusBar: false
 }
 
 const dashFilter = (state = initialState, action) => {
@@ -86,13 +87,16 @@ const dashFilter = (state = initialState, action) => {
     case types.RESET_QLIK_FILTER:
       return {
         ...state,
-        SellerIDOptions: [],
-        MarketPlaceNameOptions: [],
-        SellerSKUOptions: [],
         SellerIDSelectedOptions: null,
         MarketPlaceNameSelectedOptions: null,
         SellerSKUSelectedOptions: null,
         currentSelections:[]
+      }
+
+      case types.SET_STATUS_BAR:
+      return {
+        ...state,
+        isShowStatusBar: action.payload
       }
 
     case types.RESET_STATE_DASH_FILTER:

@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import VideoList from '../components/VideoList';
 import Alert from '../components/Alert';
 import SvgIcon from '../components/Helpers/SvgIcon';
-
 import { setHeaderClass } from '../actions/header';
 
 class DashboardWelcome extends Component {
@@ -15,19 +13,11 @@ class DashboardWelcome extends Component {
     setHeaderClass: PropTypes.func.isRequired
   };
 
-  componentDidMount () {
+  componentDidMount() {
     this.props.setHeaderClass('header--dash-welcome');
   }
 
-  render () {
-    const { DataImportComplete } = this.props
-
-    if (DataImportComplete) {
-      return (
-        <Redirect to={`${process.env.PUBLIC_URL}/dash/dashboards`} />
-      )
-    }
-
+  render() {
     return (
       <React.Fragment>
         <ImportProgress />
@@ -60,7 +50,6 @@ class DashboardWelcome extends Component {
     )
   }
 }
-
 
 const mapStateToProps = (state) => ({
   DataImportComplete: state.login.DataImportComplete

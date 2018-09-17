@@ -9,11 +9,6 @@ function MyLoadable(opts) {
   }, opts));
 };
 
-// export const Home = MyLoadable({
-//   loader: () => import("./pages/Home"),
-//   modules: ['./pages/Home'],
-//   webpack: () => [require.resolveWeak('./pages/Home')]
-// });
 export const Dashboard = MyLoadable({
   loader: () => import("./pages/Dashboard"),
   modules: ['./pages/Dashboard'],
@@ -39,6 +34,16 @@ export const ForgotPassword = MyLoadable({
   modules: ['./pages/ForgotPassword'],
   webpack: () => [require.resolveWeak('./pages/ForgotPassword')]
 });
+export const Tester = MyLoadable({
+  loader: () => import("./pages/Tester"),
+  modules: ['./pages/Tester'],
+  webpack: () => [require.resolveWeak('./pages/Tester')]
+});
+export const KMLogin = MyLoadable({
+  loader: () => import("./pages/KMLogin"),
+  modules: ['./pages/KMLogin'],
+  webpack: () => [require.resolveWeak('./pages/KMLogin')]
+});
 export const NotFound = MyLoadable({
   loader: () => import("./pages/NotFound"),
   modules: ['./pages/NotFound'],
@@ -57,6 +62,13 @@ export const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    isExact: true,
+    isKMRoute: true,
+    path: '/Account/Login',
+    name: 'KMLogin',
+    component: KMLogin
   },
   {
     path: '/signup',
@@ -78,8 +90,13 @@ export const routes = [
     name: 'ForgotPassword',
     component: ForgotPassword
   },
-   {
+  {
+    path: '/Tester',
+    name: 'Tester',
+    component: Tester
+  },
+  {
     path: '',
     component: NotFound
-  }  
+  }
 ];

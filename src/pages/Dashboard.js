@@ -8,6 +8,7 @@ import DashboardWelcome from '../containers/DashboardWelcome';
 import DashboardDashboards from '../containers/DashboardDashboards';
 import DashboardPlannings from '../containers/DashboardPlannings';
 import DashboardConfiguration from '../containers/DashboardConfiguration';
+import QlikConnector from '../components/Qlik/QlikConnector'
 
 const Configuration_TAB_MAP = {
     'COGS Setup': {
@@ -58,7 +59,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.checkNavDashboard()
+        this.props.authToken && this.checkNavDashboard()
     }
 
     checkNavDashboard = () => {
@@ -107,27 +108,33 @@ class Dashboard extends Component {
 
     render() {
         const { match, authToken } = this.props
-        if ( !authToken ){
+        if ( !authToken ) {
             return (
-              <Redirect to={`${process.env.PUBLIC_URL}/login`} />
+                <Redirect to={`${process.env.PUBLIC_URL}/login`} />
             )
-          }
+        }
+
         return (
             <React.Fragment>
+                <QlikConnector />
                 <Switch>
                     <Route path={`${match.url}/dashboards`} component={DashboardDashboards} />
                     <Route path={`${match.url}/plannings`} component={DashboardPlannings} />
                     <Route path={`${match.url}/configuration`} component={DashboardConfiguration} />
                     <Route
                         exact
-                        path={match.url}
+                        path={`${match.url}/welcome`}
                         component={DashboardWelcome}
                     />
-                    <Route render={({ history: { location: { pathname, search, hash } } }) => (
-                        pathname.slice(-1) === '/' ?
+                    <Route render={({ history: { location: { pathname, search, hash } } }) => {
+                        if (pathname === '/') {
+                            return <Redirect to={`dash/dashboards`} />
+                        } else {
+                            return pathname.slice(-1) === '/' ?
                             <Redirect to={`${pathname.slice(0, -1)}${search}${hash}`} /> :
-                            null
-                    )} />
+                            <Redirect to={`dash/dashboards`} />
+                        }
+                    }} />
                 </Switch>
             </React.Fragment>
         )

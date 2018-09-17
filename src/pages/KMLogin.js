@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect, withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
-import api from '../services/Api';
 import FormInput from '../components/Forms/FormInput';
 import CheckBox from '../components/Forms/CheckBox';
 import FormLoader from '../components/Forms/FormLoader';
-import { setSignupStep } from '../actions/signup';
+import { withRouter, Redirect } from 'react-router-dom';
+import Image from '../components/Helpers/Image';
+import { APP_CONFIG } from '../constants'
+import api from '../services/Api';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
-
+import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
-import { APP_CONFIG } from '../constants'
+import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js'
 
-class Login extends Component {
+const options = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    Loc: {
+        x: window.innerWidth / 6,
+        y: window.innerHeight / 6
+    }
+}
+
+class KMLogin extends Component {
     static propTypes = {
         setHeaderClass: PropTypes.func.isRequired,
         logIn: PropTypes.func.isRequired,
@@ -35,6 +45,12 @@ class Login extends Component {
             isFormSubmited: false,
             clientType: 0
         }
+    }
+
+    componentDidMount() {
+        this.props.setHeaderClass('no-header')
+        CanvasBG(options)
+        CanvasBG1(options)
     }
 
     formInvalid = () => {
@@ -118,26 +134,20 @@ class Login extends Component {
                     this.props.resetSignUp()
                 }
 
-                this.setState({
-                    authenticated: true,
-                     clientType: UserInfo.ClientType
-                 })
-
                 const importStatusRes = await api.get(`GetDataImportStatus`)
                 const { DataImportComplete } = importStatusRes.data
                 if (DataImportComplete) {
                     setDataImportComplete(true)
-                    history.push('/dash/dashboards')
-                } else {
-                    history.push('/dash/welcome')
                 }
-               
+                this.setState({
+                    authenticated: true,
+                    clientType: UserInfo.ClientType
+                })
             } else {
                 this.setState({
                     apiError: loginRes.data.ErrorMessage
                 })
             }
-
             this.setState({
                 isFormSubmited: false // reset submit status
             })
@@ -145,26 +155,31 @@ class Login extends Component {
             console.log(e)
         }
     }
-    componentDidMount() {
-        this.props.setHeaderClass('header--logo-only');
-    }
 
     render() {
         const { email, password, rememberMe, apiError, isFormSubmited, authenticated, clientType } = this.state;
-        if (authenticated) {               
+
+        if (authenticated) {
             if (clientType !== 3) {
-                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 0);         
+                setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);
             }
             else {
                 return <Redirect to={`${process.env.PUBLIC_URL}/dash`} />
             }
         }
-
         return (
-            <div className="signup login">
-                <div className="container">
+            <div className="kmlogin-bg">
+                <div id="canvas-wrapper">
+                    <canvas id="demo-canvas"></canvas>
+                </div>
+                <div id="canvas-wrapper1">
+                    <canvas id="demo-canvas1"></canvas>
+                </div>
+                <section className="login clearfix">
+                    <div className="header-logo">
+                        <Image image="login-logo.png" />
+                    </div>
                     <div className="login-container">
-
                         <Formsy
                             className="signup__form login-form"
                             onSubmit={this.submitForm}
@@ -174,8 +189,8 @@ class Login extends Component {
                             ref={this.formRef}
                         >
                             <h2>Sign In</h2>
-                            <p>Sign In to start using our powerful</p>
-                            <p className="mb-15">Business Intelligence tools</p>
+                            <p>Sign In to start using our powerful Business</p>
+                            <p className="mb-15">Intelligence tools for your organization.</p>
                             <div className={"loader-container " + (isFormSubmited ? "is-loading" : "")}>
                                 <FormLoader />
                                 {apiError &&
@@ -185,8 +200,9 @@ class Login extends Component {
                                     <FormInput
                                         name="email"
                                         label="Email"
-                                        placeholder=""
-                                        icon="email"
+                                        placeholder="Email"
+                                        icon="envelope"
+                                        iconClass="bak-grey"
                                         value={email}
                                         validations="isEmail"
                                         validationErrors={{
@@ -201,9 +217,10 @@ class Login extends Component {
                                     <FormInput
                                         name="password"
                                         type="password"
-                                        icon="lock"
+                                        icon="padlock"
+                                        iconClass="bak-grey"
                                         label="Password"
-                                        placeholder=""
+                                        placeholder="Password"
                                         value={password}
                                         onChangeHandler={this.handleChange}
                                         validationErrors={{
@@ -221,14 +238,30 @@ class Login extends Component {
                                         isActive={rememberMe}
                                     />
                                 </div>
-
-                                <Link to='/forgotpassword' className="forgot"> Forgot Password? </Link>
+                                <a href={window.location.origin + "/Account/ForgotPassword"} className="forgot"> Forgot Password? </a>
                                 <div className="signup__form-cta">
                                     <button type="submit" className="btn btn-signup btn--block">Sign In</button>
                                 </div>
-                                <Link to='/signup' className="memeber"> Not a member? Sign up </Link>
                             </div>
                         </Formsy>
+                    </div>
+
+                    <div className="col-md-12 info-text">
+                        <div className="content text-center">
+                            <h4 className="text-uppercase text-white">Are you looking for The Kini Group corporate site? <a href="https://thekinigroup.com/" target="_blank" rel="noopener noreferrer" className="text-yellow">Click Here</a></h4>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="login-footer">
+                    <div className="navbar navbar-default navbar-fixed-bottom">
+                        <div className="col-xs-12 col-sm-12 col-lg-6 footer-left">
+                            &copy; <span> <Image image="Logo2.png" /></span>. All rights reserved.
+            </div>
+                        <div className="col-xs-12 col-sm-12 col-lg-6 buttn-group">
+                            <button onClick={() => { window.open(window.location.origin + "/Account/TermsAndConditions", "_blank"); }} className="btn btn-bordered-dark"><i className="fa fa-file-text"></i>Terms & Conditions</button>
+                            <button onClick={() => { window.open(window.location.origin + "/Account/PrivacyPolicy", "_blank"); }} className="btn btn-bordered-dark"><i className="fa fa-key"></i>Privacy Policy</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,21 +269,21 @@ class Login extends Component {
     }
 }
 
-
 const mapStateToProps = (state) => ({
     DataImportComplete: state.login.DataImportComplete
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    setHeaderClass: (data) => dispatch(setHeaderClass(data)),
-    logIn: (data) => dispatch(logIn(data)),
-    setAuthToken: (data) => dispatch(setAuthToken(data)),
-    setSignupId: (data) => dispatch(setSignupId(data)),
-    setSignupStep: (data) => dispatch(setSignupStep(data)),
-    setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
-    resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
-    setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
-});
+const mapDispatchToProps = (dispatch) => (
+    {
+        setHeaderClass: (data) => dispatch(setHeaderClass(data)),
+        logIn: (data) => dispatch(logIn(data)),
+        setAuthToken: (data) => dispatch(setAuthToken(data)),
+        setSignupId: (data) => dispatch(setSignupId(data)),
+        setSignupStep: (data) => dispatch(setSignupStep(data)),
+        setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
+        resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
+        setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
+        setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
+    });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));

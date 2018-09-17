@@ -2,20 +2,20 @@ import React, { Component } from "react";
 
 export default class Loader extends Component {
   descriptionBlock = () => {
-    const { timedOut, error, pastDelay, retry } = this.props;
+    const { timedOut, error, pastDelay, retry, backGroundProcessing, message } = this.props;
 
     if (error) {
       // When the loader has errored
       return (
         <div className="loader__desc">
-          Something wrong. <br/> Would you like to <a onClick={ retry }>Retry</a>?
+          Something wrong. <br /> Would you like to <a onClick={retry}>Retry</a>?
         </div>
       );
     } else if (timedOut) {
       // When the loader has taken longer than the timeout
       return (
         <div className="loader__desc">
-          Loading is slower than normal... <br/> Would you like to <a onClick={ retry }>Retry</a>?
+          Loading is slower than normal... <br /> Would you like to <a onClick={retry}>Retry</a>?
         </div>
       )
     } else if (pastDelay) {
@@ -24,6 +24,12 @@ export default class Loader extends Component {
       // return (
       //   <div className="loader__desc">Loading...</div>
       // );
+    }
+    else if (backGroundProcessing) {
+      // When there is background processing.
+      return (
+        <div className="loader__desc">{message}</div>
+      );
     } else {
       // When the loader has just started
       return null;
@@ -31,13 +37,13 @@ export default class Loader extends Component {
 
   }
 
-  render(){
-    const { timedOut, error, pastDelay } = this.props;
+  render() {
+    const { timedOut, error, pastDelay, backGroundProcessing } = this.props;
 
-    if ( !error && !timedOut && !pastDelay ){
+    if (!error && !timedOut && !pastDelay && !backGroundProcessing) {
       return null
     } else {
-      return(
+      return (
         <div className="loader">
           <div className='preloader-dots'>
             <div className='dot'></div>
@@ -45,7 +51,7 @@ export default class Loader extends Component {
             <div className='dot'></div>
             <div className='dot'></div>
           </div>
-          { this.descriptionBlock() }
+          {this.descriptionBlock()}
         </div>
       )
     }

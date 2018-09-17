@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
-import Select from 'react-select';
+import Select from 'tuna.react-select';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js';
 import { APP_CONFIG } from '../../constants'
@@ -15,18 +15,40 @@ const initialState = {
 
 const colourStyles = {
     control: styles => ({ ...styles, backgroundColor: 'white' }),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    option: (styles, { data, isAlternative, isDisabled, isFocused, isPossible, isSelected }) => {
         const color = chroma('#2683FE');
+        let checkBackgroundColor
+        let checkColor
+        if (isDisabled) {
+            checkBackgroundColor = '#A8A8A8'
+            checkColor = 'white'
+        } else if (isPossible) {
+            checkBackgroundColor = 'white'
+            checkColor = 'black'
+        } else if (isAlternative) {
+            checkBackgroundColor = '#DDDDDD'
+            checkColor = 'black'
+        } else if (isSelected) {
+            checkBackgroundColor = '#2683FE'
+            checkColor = 'white'
+        } else {
+            // default color and bgcolor
+        }
+
+        if (isFocused) {
+            if (!isSelected) {
+                checkBackgroundColor = color.alpha(0.1).css()
+                checkColor = data.color
+            } else {
+                checkBackgroundColor = 'white'
+                checkColor = 'black'
+            }
+        }
+
         return {
             ...styles,
-            backgroundColor: isDisabled
-                ? '#DDDDDD'
-                : isSelected ? '#2683FE' : isFocused ? color.alpha(0.1).css() : null,
-            color: isDisabled
-                ? 'black'
-                : isSelected
-                    ? chroma.contrast(color, 'black') > 2 ? 'white' : 'black'
-                    : data.color,
+            backgroundColor: checkBackgroundColor,
+            color: checkColor,
             cursor: isDisabled ? 'not-allowed' : 'default'
         };
     },
@@ -49,6 +71,10 @@ const colourStyles = {
             color: 'white',
         },
     }),
+    placeholder: (styles, { data }) => ({
+        ...styles,
+        color: '#595959'
+    })
 };
 
 class DashFilters extends Component {
@@ -68,7 +94,7 @@ class DashFilters extends Component {
     }
 
     handleEvent = async (event, picker) => {
-        if (event.type === 'apply') {
+        if (event.type === 'apply' && this.props.QlikConnected) {
             const startDate = moment(picker.startDate).format('MM/DD/YYYY')
             const endDate = moment(picker.endDate).format('MM/DD/YYYY')
 
@@ -153,6 +179,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.SellerID
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByState": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -160,7 +191,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
@@ -175,6 +207,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.MarketPlaceName
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByState": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -182,7 +219,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
@@ -196,6 +234,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.SellerSKU
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByState": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -203,7 +246,8 @@ class DashFilters extends Component {
                         "qHeight": 2000,
                         "qWidth": 1
                     }
-                ]
+                ],
+                "qShowAlternatives": true
             }, this.bindData);
         }
     }
@@ -218,7 +262,9 @@ class DashFilters extends Component {
                     return {
                         value: item[0].qElemNumber,
                         label: item[0].qText,
-                        isDisabled: item[0].qState !== 'O' && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
+                        isPossible: item[0].qState === 'O',
+                        isAlternative: item[0].qState === 'A',
+                        isDisabled: (item[0].qState === 'X' || item[0].qState === 'XS' || item[0].qState === 'XL') && reply.qListObject.qDimensionInfo.qFallbackTitle !== APP_CONFIG.QS_FIELD_NAME.DataGroupBy ? true : false
                     }
                 })
         }
@@ -304,23 +350,31 @@ class DashFilters extends Component {
     }
 
     componentDidMount() {
-        this.initialSelection();
+        this.initialSelection()
+        this.firstBind();
     }
 
-    initialSelection = async () => {
+    componentDidUpdate (prevProps) {
+        if (this.props.QlikConnected && !prevProps.QlikConnected) {
+            this.firstBind();
+        }
+    }
+
+    initialSelection = () => {
         const { pickerStartDate, pickerEndDate } = this.props
         if (!pickerStartDate && !pickerEndDate) {
             const startDate = moment().subtract(59, 'days').format('MM/DD/YYYY');
             const endDate = moment().subtract(1, 'days').format('MM/DD/YYYY');
             this.handleDateSelection(startDate, endDate);
         }
-        setTimeout(async () => {
-            this.renderDataGroupBy()
-            this.renderSellerID()
-            this.renderMarketDropDown()
-            this.binddropdown();
-            this.bindCurrentSelections();
-        }, 2500);
+    }
+
+    firstBind = () => {
+        this.renderDataGroupBy()
+        this.renderSellerID()
+        this.renderMarketDropDown()
+        this.binddropdown()
+        this.bindCurrentSelections()
     }
 
     onResetQlik = async () => {
@@ -356,75 +410,118 @@ class DashFilters extends Component {
             SellerSKUSelectedOptions,
             currentSelections,
             pickerStartDate,
-            pickerEndDate
+            pickerEndDate,
+            QlikConnected
         } = this.props
 
         return (
             <div className="dash-filters">
                 <div className="container container--full">
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="dash-filters__title">FILTERS</div>
-                        <button className='btn-clear-filter' onClick={this.onResetQlik}>
+                        <div className="dash-filters__title mar-b">FILTERS</div>
+                        <button className='btn-clear-filter mar-b' onClick={this.onResetQlik}>
                             clear filters
                         </button>
                     </div>
                     <div className="dash-filters__wrapper">
-                        <Select className="qlik-select" isMulti={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
-                            options={DataGroupByOptions}
-                            isClearable={false}
-                            placeholder="Data Grouped By"
-                            value={DataGroupBySelectedOptions}
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
-                            options={SellerIDOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={SellerIDSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="SellerID"
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
-                            options={MarketPlaceNameOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={MarketPlaceNameSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="Marketplace"
-                        />
-                        <Select className="qlik-select" isMulti closeMenuOnSelect={false}
-                            hideSelectedOptions={false}
-                            onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
-                            options={SellerSKUOptions}
-                            isClearable={false}
-                            controlShouldRenderValue={false}
-                            value={SellerSKUSelectedOptions}
-                            styles={colourStyles}
-                            placeholder="Seller SKU"
-                        />
-                        <DateRangePicker alwaysShowCalendars onEvent={this.handleEvent} ranges={ranges} startDate={pickerStartDate} endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container">
-                            <div className="input-group">
-                                <span className="input-group-btn date-range-picker-calender-btn">
-                                    <button className="default date-range-toggle">
-                                        <i className="fa fa-calendar" />
-                                    </button>
-                                </span>
-                                <input
-                                    readOnly
-                                    type="text"
-                                    className="form-control date-picker"
-                                    value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
-                                />
-                            </div>
-                        </DateRangePicker>
+                        <div className="data-grouped data-filter">
+                            <label>View data by </label>
+                            <Select
+                                className="qlik-select mar-r"
+                                isMulti={false}
+                                autoFocusFirstOption={false}
+                                isDisabled={!QlikConnected}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.DataGroupBy }) }}
+                                options={DataGroupByOptions}
+                                isClearable={false}
+                                placeholder="Data Grouped By"
+                                value={DataGroupBySelectedOptions}
+                                styles={colourStyles}
+                            /></div>
+                        <div className="date-range-picker data-filter">
+                            <label>Date range </label>
+                            <DateRangePicker
+                                alwaysShowCalendars
+                                onEvent={this.handleEvent}
+                                ranges={ranges}
+                                startDate={pickerStartDate}
+                                endDate={pickerEndDate} containerClass="react-bootstrap-daterangepicker-container"
+                            >
+                                <div className="input-group">
+                                    <span className="input-group-btn date-range-picker-calender-btn">
+                                        <button className="default date-range-toggle">
+                                            <i className="fa fa-calendar" />
+                                        </button>
+                                    </span>
+                                    <input
+                                        readOnly
+                                        type="text"
+                                        className="form-control date-picker"
+                                        value={(pickerStartDate && pickerEndDate) ? `${pickerStartDate} - ${pickerEndDate}` : ''}
+                                    />
+                                </div>
+                            </DateRangePicker>
+                        </div>
+
+                        <div className="seller-id data-filter">
+                            <label>Seller ID </label>
+                            <Select
+                                className="qlik-select mar-r"
+                                isMult
+                                autoFocusFirstOption={false}
+                                closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerID }) }}
+                                options={SellerIDOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={SellerIDSelectedOptions}
+                                styles={colourStyles}
+                                placeholder=""
+                            />
+                        </div>
+
+                        <div className="marketplace data-filter">
+                            <label>Marketplace </label>
+                            <Select
+                                className="qlik-select mar-r"
+                                isMulti
+                                autoFocusFirstOption={false}    
+                                closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.MarketPlaceName }) }}
+                                options={MarketPlaceNameOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={MarketPlaceNameSelectedOptions}
+                                styles={colourStyles}
+                                placeholder=""
+                            />
+                        </div>
+                        <div className="seller-sku data-filter">
+                            <label>Seller SKU </label>
+                            <Select
+                                className="qlik-select mar-r-0"
+                                isMulti
+                                autoFocusFirstOption={false}
+                                closeMenuOnSelect={false}
+                                isDisabled={!QlikConnected}
+                                hideSelectedOptions={false}
+                                onChange={(optionSelected) => { this.handleChange({ optionSelected, key: APP_CONFIG.QS_FIELD_NAME.SellerSKU }) }}
+                                options={SellerSKUOptions}
+                                isClearable={false}
+                                controlShouldRenderValue={false}
+                                value={SellerSKUSelectedOptions}
+                                styles={colourStyles}
+                                placeholder=""
+                            />
+                        </div>
                     </div>
                     <div className={"dash-section" + (isTabOpened ? "" : " is-closed")}>
                         <div className="dash-section__heading">
-                            <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 10 }}>
+                            <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 2 }}>
                                 <div className="dash-section__toggler-icon"></div>
                             </div>
                             <h2 className="dash-filters__selected-title">Selected Filters</h2>
@@ -463,7 +560,8 @@ const mapStateToProps = (state) => ({
     SellerSKUSelectedOptions: state.dashFilter.SellerSKUSelectedOptions,
     currentSelections: state.dashFilter.currentSelections,
     pickerStartDate: state.dashFilter.pickerStartDate,
-    pickerEndDate: state.dashFilter.pickerEndDate
+    pickerEndDate: state.dashFilter.pickerEndDate,
+    QlikConnected: state.qlik.connected
 })
 
 const mapDispatchToProps = (dispatch) => ({
