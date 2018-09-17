@@ -179,6 +179,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.SellerID
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByLoadOrder": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
@@ -202,6 +207,11 @@ class DashFilters extends Component {
                 "qDef": {
                     "qFieldDefs": [
                         APP_CONFIG.QS_FIELD_NAME.MarketPlaceName
+                    ],
+                    "qSortCriterias": [
+                        {
+                            "qSortByLoadOrder": 1
+                        }
                     ]
                 },
                 "qInitialDataFetch": [
