@@ -182,7 +182,7 @@ class DashFilters extends Component {
                     ],
                     "qSortCriterias": [
                         {
-                            "qSortByLoadOrder": 1
+                            "qSortByState": 1
                         }
                     ]
                 },
@@ -210,7 +210,7 @@ class DashFilters extends Component {
                     ],
                     "qSortCriterias": [
                         {
-                            "qSortByLoadOrder": 1
+                            "qSortByState": 1
                         }
                     ]
                 },
