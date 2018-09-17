@@ -13,7 +13,7 @@ const IBar = (props) => {
             <div className="i-bar__status">
                 <div
                     className={"i-bar__progress" + (optedOut ? " is-optedOut" : isCompleated ? " is-compleated" : "")}
-                    style={{ "width": `${progress}%` }}
+                    style={{ "width": optedOut ? `100%` : `${progress}%` }}
                 >
                     {
                         (progress > 1 || optedOut) &&
