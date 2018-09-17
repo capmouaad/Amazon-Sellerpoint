@@ -86,7 +86,7 @@ class DashSection extends Component {
                 </div>
                 {
                     clearFilters &&
-                    <div>
+                    <div className="sku-show-hide">
                         <div className='wrapper-btn-clear'>
                             <button className='btn-clear-filter' onClick={this.onResetQlik}>clear filters</button>
                         </div>
