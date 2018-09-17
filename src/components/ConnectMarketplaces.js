@@ -92,9 +92,8 @@ class ConnectMarketplaces extends Component {
                 <div className="panel">
                   <div className="panel-body">
                     <div className="instruction-notes instruction-notes-last">
-                      We will only be able to retreive the last two months of data from Amazon due to Amazon restrictions.
+                      We will only be able to retrieve advertising data from the prior two months due to Amazon restrictions.
                                             </div>
-
                     <div id="divTableChildGroupBySKUIdsDataHolder" className="tab-content cust-cogs">
                       <div className="mar-b-15">
                         <div className="row">
