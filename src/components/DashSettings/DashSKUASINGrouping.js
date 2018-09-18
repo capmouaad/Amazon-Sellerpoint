@@ -8,6 +8,7 @@ import Toaster, { showToastMessage } from '../../services/toasterNotification'
 import FormLoader from '../Forms/FormLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import FilterInput from '../Helpers/FilterInput'
+import { GetActiveQSReload } from '../ReloadStatusBar'
 
 export default class DashSKUASINGrouping extends Component {
     skuIds = [];
@@ -204,6 +205,9 @@ export default class DashSKUASINGrouping extends Component {
                         this.onCloseModal();
                         this.getUngroupedSKUs();
                         this.getGroupedSKUs();
+
+                        // call reload status bar api
+                        GetActiveQSReload()
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,
@@ -235,6 +239,9 @@ export default class DashSKUASINGrouping extends Component {
                         this.parentGroupId = 0;
                         this.onCloseModal();
                         this.getUngroupedSKUs();
+
+                        // call reload status bar api
+                        GetActiveQSReload()
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,

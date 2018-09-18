@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import api from '../services/Api'
 import { setSignupFields } from '../actions/signup';
 import Modal from 'react-responsive-modal';
+import FormLoader from './Forms/FormLoader'
 
 class ConnectMarketplaces extends Component {
 
@@ -13,7 +14,8 @@ class ConnectMarketplaces extends Component {
       sellerMarketplaces: [],
       advState: null,
       popupOpen: false,
-      sellerId: null
+      sellerId: null,
+      loading: false
     }
   }
 
@@ -22,6 +24,7 @@ class ConnectMarketplaces extends Component {
   }
 
   getSellerMarketplaces = () => {
+    this.setState({loading: true})
     api
       .get(`GetSellerMarketPlaces`)
       .then((res) => {
@@ -41,7 +44,10 @@ class ConnectMarketplaces extends Component {
       })
       .catch(function (error) {
         console.log(error);
-      });
+      })
+      .finally(() => {
+        this.setState({loading: false})
+      })
 
   }
 
@@ -81,7 +87,7 @@ class ConnectMarketplaces extends Component {
       "Advertising Data Status"
     ]
 
-    const { sellerMarketplaces, popupOpen, advState, sellerId } = this.state;
+    const { sellerMarketplaces, popupOpen, advState, sellerId, loading } = this.state;
 
     return (
       <div>
@@ -111,41 +117,44 @@ class ConnectMarketplaces extends Component {
           </div>
         </Modal>
 
-        <table className="signup__table">
-          <thead>
-            <tr>
-              {tableHeads.map((name, index) => {
-                return (<td key={index}>{name}</td>)
-              })}
-            </tr>
-          </thead>
-          {sellerMarketplaces &&
-            <tbody>
-              {sellerMarketplaces.map((mp, index) => {
-                const isConnected = mp.IsAdvertisingConnected
-                const isAvailable = mp.IsAdvertisingAvailable
-                return (
-                  <tr key={index}>
-                    <td><span className="for-desktop">{tableHeads[0]}</span>{mp.Name}</td>
-                    <td><span className="for-desktop">{tableHeads[1]}</span>{mp.SellerId}</td>
-                    <td><span className="for-desktop">{tableHeads[2]}</span>{mp.MWSStatus}</td>
-                    <td>
-                      {isConnected ?
-                        <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
-                        isAvailable ?
-                          <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
-                          <span className="signup__table-connection"> Not Available</span>
-                      }
-                    </td>
-                  </tr>
-                )
-              })
-              }
+        <div className={"loader-inside " + (loading ? "" : "loading-over")}>
+          <FormLoader />
+          <table className="signup__table">
+            <thead>
+              <tr>
+                {tableHeads.map((name, index) => {
+                  return (<td key={index}>{name}</td>)
+                })}
+              </tr>
+            </thead>
+            {sellerMarketplaces &&
+              <tbody>
+                {sellerMarketplaces.map((mp, index) => {
+                  const isConnected = mp.IsAdvertisingConnected
+                  const isAvailable = mp.IsAdvertisingAvailable
+                  return (
+                    <tr key={index}>
+                      <td><span className="for-desktop">{tableHeads[0]}</span>{mp.Name}</td>
+                      <td><span className="for-desktop">{tableHeads[1]}</span>{mp.SellerId}</td>
+                      <td><span className="for-desktop">{tableHeads[2]}</span>{mp.MWSStatus}</td>
+                      <td>
+                        {isConnected ?
+                          <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
+                          isAvailable ?
+                            <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
+                            <span className="signup__table-connection"> Not Available</span>
+                        }
+                      </td>
+                    </tr>
+                  )
+                })
+                }
 
-              {(sellerMarketplaces.length === 0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
-            </tbody>
-          }
-        </table>
+                {(sellerMarketplaces.length === 0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
+              </tbody>
+            }
+          </table>
+        </div>
 
       </div>
     )

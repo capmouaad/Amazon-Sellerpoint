@@ -31,7 +31,6 @@ export const APP_CONFIG = {
     SkuGroupLoading: 'Your updated SKU Grouping data is loading. Typically, this takes serveral minutes.',
     SkuGroupComplete: 'Your SKU Grouping update is complete.',
     BothLoading: 'Your updated COGS data and SKU Grouping data are loading. Typically, this takes serveral minutes.',
-    BothComplete: 'Your COGS and SKU Grouping update are complete.',
-    default: 'Your update is complete'
+    BothComplete: 'Your COGS and SKU Grouping update are complete.'
   }
 }

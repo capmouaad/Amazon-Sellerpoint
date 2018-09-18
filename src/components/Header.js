@@ -8,7 +8,7 @@ import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAV
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 import { resetStateDashFilter } from '../actions/dashFilter'
-import { setStatusBar } from '../actions/dashFilter'
+import { resetStatusBar } from '../actions/statusBar'
 
 import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
@@ -120,7 +120,8 @@ Are you sure you want to leave?
 
     this.props.resetStateDashFilter()
 
-    this.props.setStatusBar(false)
+    // Reset Status Bar
+    this.props.resetStatusBar()
 
     // destroy session
     this.props.resetSignUp()
@@ -248,7 +249,7 @@ const mapDispatchToProps = (dispatch) => ({
   setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
   setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
   resetStateDashFilter: () => dispatch(resetStateDashFilter()),
-  setStatusBar: (data) => dispatch(setStatusBar(data)),
+  resetStatusBar: () => dispatch(resetStatusBar()),
   logOut: () => dispatch(logOut())
 });
 
