@@ -56,9 +56,8 @@ class AddMarketSwitch extends Component {
     }
   }
 
-  goBackMarketPlace = () => {
-    this.props.onGoback()
-    this.props.resetSignupAuthStep(1)
+  goBackMarketPlace = ({ isSkipPrompt = false }) => {
+    this.props.onGoback({ isSkipPrompt })
   }
 
   renderTitleStep = () => {
@@ -81,12 +80,13 @@ class AddMarketSwitch extends Component {
       <div>
         <Prompt
           when
-          message={location =>
-            `
+          message={(location) => {
+            if (location.state && location.state.isSkipPrompt) return true
+            return `
 By leaving this page, you will close out the process of adding a new marketplace.\n
 Are you sure you want to leave?
             `
-          }
+          }}
         />
         <div>
           <button onClick={this.goBackMarketPlace} className="btn btn-go-back-market">{`Back to Marketplace Configuration Home`}</button>
@@ -129,8 +129,8 @@ class DashMarketplaceConfig extends Component {
     })
   }
 
-  onGoBack = () => {
-    this.props.history.push('/dash/configuration/marketplaceconfiguration')
+  onGoBack = ({ isSkipPrompt }) => {
+    this.props.history.push('/dash/configuration/marketplaceconfiguration', { isSkipPrompt })
   }
 
   render() {

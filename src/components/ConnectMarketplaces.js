@@ -129,28 +129,30 @@ class ConnectMarketplaces extends Component {
             </thead>
             {sellerMarketplaces &&
               <tbody>
-                {sellerMarketplaces.map((mp, index) => {
-                  const isConnected = mp.IsAdvertisingConnected
-                  const isAvailable = mp.IsAdvertisingAvailable
-                  return (
-                    <tr key={index}>
-                      <td><span className="for-desktop">{tableHeads[0]}</span>{mp.Name}</td>
-                      <td><span className="for-desktop">{tableHeads[1]}</span>{mp.SellerId}</td>
-                      <td><span className="for-desktop">{tableHeads[2]}</span>{mp.MWSStatus}</td>
-                      <td>
-                        {isConnected ?
-                          <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
-                          isAvailable ?
-                            <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
-                            <span className="signup__table-connection"> Not Available</span>
-                        }
-                      </td>
-                    </tr>
-                  )
-                })
+                {
+                  sellerMarketplaces.map((mp, index) => {
+                    const isConnected = mp.IsAdvertisingConnected
+                    const isAvailable = mp.IsAdvertisingAvailable
+                    return (
+                      <tr key={index}>
+                        <td><span className="for-desktop">{tableHeads[0]}</span>{mp.Name}</td>
+                        <td><span className="for-desktop">{tableHeads[1]}</span>{mp.SellerId}</td>
+                        <td><span className="for-desktop">{tableHeads[2]}</span>{mp.MWSStatus}</td>
+                        <td>
+                          {isConnected ?
+                            <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
+                            isAvailable ?
+                              <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
+                              <span className="signup__table-connection"> Not Available</span>
+                          }
+                        </td>
+                      </tr>
+                    )
+                  })
                 }
-
-                {(sellerMarketplaces.length === 0) ? <tr key="0"> <td colSpan="4" className="not-found"> No marketplace found.</td></tr> : ""}
+                {
+                  (sellerMarketplaces.length === 0) && <tr key="0"><td colSpan="4" className="not-found"> No marketplace found.</td></tr>
+                }
               </tbody>
             }
           </table>

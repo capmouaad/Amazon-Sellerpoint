@@ -152,6 +152,7 @@ class MWSActionDomain extends Component {
           { !!marketplaceDomains && options.map((cb, i) => {
             return(
               <CheckBox
+                key={`domainCheckBox-${i}`}
                 name={cb.name}
                 text={cb.text}
                 clickHandler={this.chooseOption.bind(this, cb.id)}

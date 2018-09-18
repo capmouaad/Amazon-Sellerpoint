@@ -77,7 +77,7 @@ class SignupStep3 extends Component {
         throw new Error(ressignup.data.ErrorMessage)
       }
     } else {
-      this.props.onGoBackMarket()
+      this.props.onGoBackMarket({ isSkipPrompt: true })
       this.props.setAddMarketStep(1)
     }
   }
