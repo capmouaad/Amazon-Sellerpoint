@@ -43,7 +43,7 @@ class MWSActionRegion extends Component {
           <br /><br />
           3. Grant permission to KiniMetrix Sellerpoint by confirming
           <br /><br />
-          <span className="t-up">4. Once the connection is made, you will come back and input the    ‘Seller  ID’ and the ‘MWS Auth Token’</span>
+          4. Once the connection is made, you will come back and input the ‘Seller ID’ and the ‘MWS Auth Token’
         </div>
         <div className="signup__form-cta signup__form-cta--centered">
           <span onClick={this.nextAction} className="btn btn-signup btn--block">Connect Marketplace</span>
