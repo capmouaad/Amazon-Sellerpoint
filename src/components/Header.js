@@ -8,7 +8,8 @@ import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAV
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 import { resetStateDashFilter } from '../actions/dashFilter'
-import { resetStatusBar } from '../actions/statusBar'
+import { resetStatusBar, setShowImportProgressBar } from '../actions/statusBar'
+import { clearReduxSignOut } from '../services/Api'
 
 import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
@@ -108,24 +109,7 @@ Are you sure you want to leave?
       console.error(e)
     }
 
-    this.props.setStatusProgress({
-      finaceDataProgress: 0,
-      reportDataProgress: 0,
-      adDataProgress: 0
-    })
-    this.props.setNavbarDashboard({
-        dashboards: [],
-        settings: []
-    })
-
-    this.props.resetStateDashFilter()
-
-    // Reset Status Bar
-    this.props.resetStatusBar()
-
-    // destroy session
-    this.props.resetSignUp()
-    this.props.logOut()
+    clearReduxSignOut()
   }
 
   toggleUsermenu = () => {
@@ -250,6 +234,7 @@ const mapDispatchToProps = (dispatch) => ({
   setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
   resetStateDashFilter: () => dispatch(resetStateDashFilter()),
   resetStatusBar: () => dispatch(resetStatusBar()),
+  setShowImportProgressBar: (data) => dispatch(setShowImportProgressBar(data)),
   logOut: () => dispatch(logOut())
 });
 
