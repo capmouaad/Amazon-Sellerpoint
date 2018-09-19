@@ -119,14 +119,23 @@ class SignupStep1 extends Component {
       .get(`CheckEmail?Email=` + encodeURIComponent(email))
       .then((res) => {
         console.log('backend responce to Get CheckEmail', res)
-        if (res.data.IsDuplicateUser) {
-          history.push(`/login`)
-          // this.formRef.current.updateInputsWithError({
-          //   email: res.data.ErrorMessage
-          // });
+        if (res.data.IsSuccess) {
+          if (res.data.IsDuplicateUser) {
+            history.push(`/login`)
+            // this.formRef.current.updateInputsWithError({
+            //   email: res.data.ErrorMessage
+            // });
+            this.setState({ isFormSubmited: false })
+          } else {
+            this.createUser(leadObj) // move on if it's fine
+          }
+        }
+        else {
+          this.setState({
+            apiError: res.data.ErrorMessage
+          })
+          showToastMessage(res.data.ErrorMessage, "Error");
           this.setState({ isFormSubmited: false })
-        } else {
-          this.createUser(leadObj) // move on if it's fine
         }
       })
       .catch(function (error) {
