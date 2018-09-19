@@ -142,7 +142,7 @@ class ConnectMarketplaces extends Component {
                           {isConnected ?
                             <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
                             isAvailable ?
-                              <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
+                              <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Click to Connect</span> :
                               <span className="signup__table-connection"> Not Available</span>
                           }
                         </td>
