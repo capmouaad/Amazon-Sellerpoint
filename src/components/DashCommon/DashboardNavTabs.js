@@ -34,9 +34,23 @@ class Help extends Component {
 
   OpenHelpBox = (e) => {
     if (this.state.isHelpOpen) {
-      this.setState({ isHelpOpen: false, });
+      this.setState({ isHelpOpen: false });
     } else {
       this.setState({ isHelpOpen: true });
+    }
+
+    var formDiv = document.getElementsByClassName('_form-content');
+    var thanksDiv = document.getElementsByClassName('_form-thank-you');
+
+    if (thanksDiv.length > 0) {
+      var input = formDiv[0].querySelectorAll('input');
+      var textarea = formDiv[0].querySelectorAll('textarea');
+      var button = formDiv[0].querySelectorAll("button")
+      formDiv[0].style.display = "block";
+      thanksDiv[0].style.display = "none";
+      input[0].value = "";
+      textarea[0].value = "";
+      button[0].disabled = false;
     }
   }
 

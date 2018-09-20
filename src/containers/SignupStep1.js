@@ -125,16 +125,17 @@ class SignupStep1 extends Component {
               apiError: res.data.ErrorMessage,
               isFormSubmited: false
             })
+            showToastMessage(res.data.ErrorMessage, "Error");
           } else {
             this.createUser(leadObj) // move on if it's fine
           }
         }
         else {
           this.setState({
-            apiError: res.data.ErrorMessage
+            apiError: res.data.ErrorMessage,
+            isFormSubmited: false
           })
           showToastMessage(res.data.ErrorMessage, "Error");
-          this.setState({ isFormSubmited: false })
         }
       })
       .catch(function (error) {
@@ -161,7 +162,6 @@ class SignupStep1 extends Component {
           this.setState({
             apiError: res.data.ErrorMessage
           })
-
           showToastMessage(res.data.ErrorMessage, "Error");
         }
 

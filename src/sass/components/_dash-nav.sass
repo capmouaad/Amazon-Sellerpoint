@@ -96,6 +96,7 @@
           text-align: center;
           width: 137px;
           margin-left: 50px;
+          line-height: 1.5em;
         a
           border: 1px solid #908b8b;
           padding: 8px;
@@ -147,3 +148,30 @@
   .dash-nav
     &--without-progress
       margin-top: 90px
+
+
+@media ( max-width: 1032px ) 
+  .dash-nav 
+  .help 
+    z-index: 99999999;
+    .help-box.true
+      display: block;
+      position: fixed;
+      top: 186px;  
+      right: 41px;
+      left: auto;
+      width: 238px;
+    .help_a
+      background-color: #fbd311;
+      padding: 8px 15px;
+      float: right;
+      border-radius: 0;
+      font-weight: 700;
+      position: fixed!important;
+      margin-bottom: 15px;
+      top: 201px;
+      right: -14px;
+      transform: rotate3d(0,0,1,-90deg);
+      &:after
+        display: none; 
+
