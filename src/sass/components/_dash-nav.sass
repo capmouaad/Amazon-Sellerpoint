@@ -74,8 +74,10 @@
         margin: 0 auto;
         width: 0px; 
  
-
+    .help-box.true
+      display: block;
     .help-box
+      display: none;
       float: left;
       width: 100%;
       BORDER: 1px solid #CCC;
@@ -88,6 +90,7 @@
       .content-tab1 
         float: left;
         width: 100%;
+        display: none;
         p
           margin-top: 24px;
           text-align: center;
@@ -104,7 +107,12 @@
           border-radius: 5px;
           font-weight: bold;   
           text-align: center;
- 
+      .content-tab1.true
+        display: block;
+      .content-tab2
+        display: none;
+      .content-tab2.true
+        display: block;
     .tabs
       a
         border: 1px solid #6bb3d3;
