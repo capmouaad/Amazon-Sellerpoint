@@ -137,11 +137,15 @@ class Login extends Component {
                
             } else {
                 this.setState({
-                    apiError: loginRes.data.ErrorMessage
+                    apiError: loginRes.data.ErrorMessage,
+                    isFormSubmited: false
                 })
             }
         } catch (e) {
             console.log(e)
+            this.setState({
+                isFormSubmited: false
+            })
         }
     }
     componentDidMount() {

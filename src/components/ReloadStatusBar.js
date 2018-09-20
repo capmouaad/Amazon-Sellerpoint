@@ -58,6 +58,8 @@ class ReloadStatusBar extends React.PureComponent {
   }
 
   componentDidMount () {
+    GetActiveQSReload()
+
     this.getReloadStatus = setInterval(() => {
         GetActiveQSReload()
     }, 5000)

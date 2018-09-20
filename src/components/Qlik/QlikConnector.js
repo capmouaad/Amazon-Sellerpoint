@@ -7,6 +7,8 @@ import { APP_CONFIG } from '../../constants'
 import moment from 'moment';
 import Modal from 'react-responsive-modal'
 
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 class QlikConnector extends React.Component {
 
   constructor(props) {
@@ -118,12 +120,16 @@ class QlikConnector extends React.Component {
         //engineApi: true
       }
     }
-    console.log('connectQlik');
 
     //if (!window.GlobalQdtComponents || !this.props.QlikConnected) {
     // Add few secs delay till Require Js is loaded.
-    let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
     await wait(1000);
+
+    if (!QlikData.QlikAppId) {
+      console.error('>>>> Error : No QlikAppId from server !')
+      this.requestQlikData()
+      return
+    }
 
     // Create Qdt Component instance.
     const qdtComponents = new QdtComponents(options.config, options.connections);
@@ -161,6 +167,7 @@ class QlikConnector extends React.Component {
 
     //}
     // Set QS connection complete flag.
+    console.log('connectQlik');
     this.props.setQlikConnection(true);
   }
 
