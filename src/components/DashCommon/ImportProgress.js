@@ -37,9 +37,9 @@ class ImportProgress extends Component {
     }
 
     componentDidMount() {
-        // this.checkStatusProgressBar()
-
         if (this.props.isShowImportProgressBar) {
+            this.getImportStatus()
+
             this.timerGetImportStatus = setInterval(() => {
                 this.getImportStatus()
             }, 10000)

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import onClickOutside from "react-onclickoutside";
 import api from '../services/Api';
@@ -15,7 +15,107 @@ import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
 
-const dashNavLinks = [
+const CONFIGURATION_TEXT = {
+  COGS: 'COGS',
+  GROUPING: 'GROUPING'
+}
+
+// move configuration nav link to separate component so we can mount / unmount it according to stateClass from redux instead of just hiding it by css
+class ConfigurationClass extends React.PureComponent {
+  constructor(props) {
+    super(props)
+    this.state = {
+      descFlag: '',
+      isShowFlag: false
+    }
+  }
+  GetCOGSAndSKUGroupingStatus = async () => {
+    try {
+      const { isShowFlag, descFlag } = this.state
+      const { data } = await api.get('GetCOGSAndSKUGroupingStatus')
+      console.log('backend responce to GET COGSAndSKUGroupingStatus', data)
+
+      let desc = descFlag
+      let flag = isShowFlag
+
+      if (data.IsSuccess) {
+        if (!data.COGSUpdated && !data.ViewedSKUGroup) {
+          desc = CONFIGURATION_TEXT.COGS
+          flag = true
+        } else if (!data.COGSUpdated && data.ViewedSKUGroup) {
+          desc = CONFIGURATION_TEXT.COGS
+          flag = true
+        } else if (data.COGSUpdated && !data.ViewedSKUGroup) {
+          desc = CONFIGURATION_TEXT.GROUPING
+          flag = true
+        } else {
+          desc = ''
+          flag = false
+        }
+
+        this.setState({
+          isShowFlag: flag,
+          descFlag: desc
+        })
+      } else {
+        console.error('GetCOGSAndSKUGroupingStatus ERROR:', data.ErrorMessage)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  clearCheckStatusInterval = () => {
+    this.timerGetCOGSAndSKUGroupingStatus && clearInterval(this.timerGetCOGSAndSKUGroupingStatus)
+  }
+
+  componentDidMount () {
+    this.GetCOGSAndSKUGroupingStatus()
+    this.timerGetCOGSAndSKUGroupingStatus = setInterval(() => {
+      this.GetCOGSAndSKUGroupingStatus()
+    }, 5000)
+  }
+
+  componentWillUnmount () {
+    this.clearCheckStatusInterval()
+  }
+
+  checkPath = (configDesc) => {
+    const publicUrl = process.env.PUBLIC_URL
+    let configPath = ''
+    if (configDesc === CONFIGURATION_TEXT.COGS) {
+      configPath = '/dash/configuration'
+    } else if (configDesc === CONFIGURATION_TEXT.GROUPING) {
+      configPath = '/dash/configuration/skuasinGrouping'
+    } else {
+      configPath = '/dash/configuration'
+    }
+
+    return `${publicUrl}${configPath}`
+  }
+
+  render () {
+    const { descFlag, isShowFlag } = this.state
+    return (
+      <li key={'configuration'}>
+        <NavLink to={this.checkPath(descFlag)} className="" activeClassName="is-active">
+          <div className="header__dash-icon">
+            <SvgIcon name='dash-nav-settings' />
+          </div>
+          <span>{`Configuration`}</span>
+        </NavLink>
+        {
+          isShowFlag &&
+          (<span className={`flag-status ${descFlag === CONFIGURATION_TEXT.COGS ? 'flag-status-cogs' : 'flag-status-grouping'}`}>{descFlag}</span>)
+        }
+      </li>
+    )
+  }
+}
+
+const Configuration = withRouter(ConfigurationClass)
+
+const makeDashNavLinks = [
   {
     name: "Dashboards",
     path: "/dash/dashboards",
@@ -28,8 +128,9 @@ const dashNavLinks = [
   },
   {
     name: "Configuration",
-    path: "/dash/configuration",
-    icon: "dash-nav-settings"
+    // path: configPath,
+    icon: "dash-nav-settings",
+    component: Configuration
   }
 ]
 
@@ -153,18 +254,22 @@ Are you sure you want to leave?
                 </Link>
               </div>
               <ul className="header__dash-nav">
-                {dashNavLinks.map((link, i) => {
-                  return (
-                    <li key={i}>
-                      <NavLink to={`${process.env.PUBLIC_URL + link.path}`} className="" activeClassName="is-active">
-                        <div className="header__dash-icon">
-                          <SvgIcon name={link.icon} />
-                        </div>
-                        <span>{link.name}</span>
-                      </NavLink>
-                    </li>
-                  )
-                })}
+                {
+                  this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
+                    return link.component
+                    ? <link.component key={`dash-${i}`} />
+                    : (
+                      <li key={`dash-${i}`}>
+                        <NavLink to={`${process.env.PUBLIC_URL + link.path}`} className="" activeClassName="is-active">
+                          <div className="header__dash-icon">
+                            <SvgIcon name={link.icon} />
+                          </div>
+                          <span>{link.name}</span>
+                        </NavLink>
+                      </li>
+                    )
+                  })
+                }
               </ul>
               <HeaderUser
                 toggleUsermenu={this.toggleUsermenu}
@@ -180,23 +285,27 @@ Are you sure you want to leave?
           <div className="container">
             <div className="mobile-nav__wrapper">
               <div className="mobile-nav__menu">
-                {dashNavLinks.map((link, i) => {
-                  return (
-                    <li key={i}>
-                      <NavLink
-                        to={`${process.env.PUBLIC_URL + link.path}`}
-                        className=""
-                        activeClassName="is-active"
-                        onClick={this.toggleHamburger}
-                      >
-                        <div className="mobile-nav__icon">
-                          <SvgIcon name={link.icon} />
-                        </div>
-                        <span>{link.name}</span>
-                      </NavLink>
-                    </li>
-                  )
-                })}
+                {
+                  this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
+                  return link.component
+                    ? <link.component key={`mobile-dash-${i}`} />
+                    : (
+                      <li key={`mobile-dash-${i}`}>
+                        <NavLink
+                          to={`${process.env.PUBLIC_URL + link.path}`}
+                          className=""
+                          activeClassName="is-active"
+                          onClick={this.toggleHamburger}
+                        >
+                          <div className="mobile-nav__icon">
+                            <SvgIcon name={link.icon} />
+                          </div>
+                          <span>{link.name}</span>
+                        </NavLink>
+                      </li>
+                    )
+                  })
+                }
               </div>
               <div className="mobile-nav__user">
                 <HeaderUser
