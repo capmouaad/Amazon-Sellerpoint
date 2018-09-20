@@ -9,7 +9,6 @@ export const GetActiveQSReload = async() => {
   const { isShowStatusBar, descStatusBar, isStatusBarActive } = store.getState().statusBar
   const { data } = await api.get(`GetActiveQSReloads`)
 
-  console.log('Backend response to GET GetActiveQSReloads', data)
   const { ActiveReloadDueToCogsUpdate, ActiveReloadDueToSKUGroupChanges } = data
 
   if (!isShowStatusBar && (ActiveReloadDueToCogsUpdate || ActiveReloadDueToSKUGroupChanges)) {

@@ -121,11 +121,10 @@ class SignupStep1 extends Component {
         console.log('backend responce to Get CheckEmail', res)
         if (res.data.IsSuccess) {
           if (res.data.IsDuplicateUser) {
-            history.push(`/login`)
-            // this.formRef.current.updateInputsWithError({
-            //   email: res.data.ErrorMessage
-            // });
-            this.setState({ isFormSubmited: false })
+            this.setState({
+              apiError: res.data.ErrorMessage,
+              isFormSubmited: false
+            })
           } else {
             this.createUser(leadObj) // move on if it's fine
           }

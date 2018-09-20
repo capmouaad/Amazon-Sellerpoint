@@ -75,8 +75,10 @@ class Dashboard extends Component {
             .get(`GetTabs`)
             .then((res) => {
                 if (res.data.IsSuccess) {
-                    const configurationTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Configuration').Tabs || []
-                    const dashboardTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Dashboards').Tabs || []
+                    const configTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Configuration')
+                    const configurationTabs = configTabs ? configTabs.Tabs : []
+                    const dashTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Dashboards')
+                    const dashboardTabs = dashTabs ? dashTabs.Tabs : []
 
                     const filterNavDash = dashboardTabs.map((tabString) => ({
                         ...DASHBOARD_TAB_MAP[tabString],

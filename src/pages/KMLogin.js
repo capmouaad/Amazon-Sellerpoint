@@ -134,23 +134,26 @@ class KMLogin extends Component {
                     this.props.resetSignUp()
                 }
 
-                const importStatusRes = await api.get(`GetDataImportStatus`)
-                const { DataImportComplete } = importStatusRes.data
-                if (DataImportComplete) {
-                    setDataImportComplete(true)
+                if (UserInfo.ClientType !== 3) {
+                    this.setState({
+                        authenticated: true,
+                        clientType: UserInfo.ClientType
+                     })
+                } else {
+                    const importStatusRes = await api.get(`GetDataImportStatus`)
+                    const { DataImportComplete, FinanceDataImportProgress, ReportDataImportProgress, AdvertisingOptedOut } = importStatusRes.data
+                    if (DataImportComplete || (FinanceDataImportProgress === 100 && ReportDataImportProgress === 100 && AdvertisingOptedOut)) {
+                        setDataImportComplete(true)
+                        history.push('/dash/dashboards')
+                    } else {
+                        history.push('/dash/welcome')
+                    }
                 }
-                this.setState({
-                    authenticated: true,
-                    clientType: UserInfo.ClientType
-                })
             } else {
                 this.setState({
                     apiError: loginRes.data.ErrorMessage
                 })
             }
-            this.setState({
-                isFormSubmited: false // reset submit status
-            })
         } catch (e) {
             console.log(e)
         }

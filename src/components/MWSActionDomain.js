@@ -13,12 +13,37 @@ class MWSActionDomain extends Component {
     this.state = {
       marketplaceDomains: this.props.signupFields.marketplace_domains, // state stores marketplaces ID only
       apiError: null,
-      isFormSubmited: false
+      isFormSubmited: false,
+      loading: false
+    }
+  }
+
+  componentDidMount () {
+    this.setupMarketplaceDomains()
+  }
+
+  setupMarketplaceDomains = async () => {
+    try {
+      this.setState({loading: true})
+      const res = await api.get(`GetSellerMarketPlaces`)
+      if (res.data.IsSuccess) {
+        this.setState({
+          marketplaceDomains: res.data.Marketplaces.map(x => x.MarketPlaceId)
+        })
+      } else {
+        this.setState({
+          apiError: res.data.ErrorMessage
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      this.setState({loading: false})
     }
   }
 
   chooseOption = (id) => {
-    const options = this.state.marketplaceDomains
+    let options = this.state.marketplaceDomains
     let index
 
     if (options) {
@@ -35,13 +60,12 @@ class MWSActionDomain extends Component {
     }
   }
 
-  nextAction = () => {
-    const { marketplaceDomains } = this.state
-    const { signupFields } = this.props
-    const seller_id = signupFields.seller_id
-    const mws_auth = signupFields.mws_auth
-
-    if ( marketplaceDomains ){
+  nextAction = async () => {
+    try {
+      const { marketplaceDomains } = this.state
+      const { signupFields } = this.props
+      const seller_id = signupFields.seller_id
+      const mws_auth = signupFields.mws_auth
 
       this.setState({
         isFormSubmited: true,
@@ -58,8 +82,7 @@ class MWSActionDomain extends Component {
         }
       })
 
-      const filteredMarketplaces = marketplaceData.filter( x =>
-        marketplaceDomains.indexOf(x.marketPlaceId) !== -1)
+      const filteredMarketplaces = marketplaceData.filter( x => marketplaceDomains.indexOf(x.marketPlaceId) !== -1 )
 
 
       const obj = {
@@ -68,58 +91,51 @@ class MWSActionDomain extends Component {
         marketplaces: filteredMarketplaces
       }
 
-      if(filteredMarketplaces.length>0){
-      
-      console.log('POST obj', obj)
-      //butch save
-      api
-        .post(`SaveMarketPlaceIds`, obj)
-        .then((res) => {
-          console.log('backend responce to POST SaveMarketPlaceIds', res)
-          if ( res.data.IsSuccess ){
-            this.props.setSignupFields({ // redux
-              ...this.props.signupFields,
-              marketplace_domains: marketplaceDomains,
-              // connected_marketplaces: filteredMarketplaces
-            })
-
-            if (this.props.isMarketSetup) {
-              this.props.setAddMarketStep(2)
-              this.props.setSignupAuthStep(1)
-            } else {
-              this.props.setSignupStep(3);
-              this.props.setSignupAuthStep(1); // reset ?
-
-              this.updateStepOnBackend()
-                .then(res => {
-                  console.log(res)
-                })
-                .catch(err => {
-
-                });
-            }
-
-          } else {
-            this.setState({
-              apiError: res.data.ErrorMessage
-            })
-          }
-
-          this.setState({
-            isFormSubmited: false // reset submit status
+      if(filteredMarketplaces.length > 0) {
+        //butch save
+        const res = await api.post(`SaveMarketPlaceIds`, obj)
+        console.log('backend responce to POST SaveMarketPlaceIds', res)
+        if ( res.data.IsSuccess ){
+          this.props.setSignupFields({ // redux
+            ...this.props.signupFields,
+            marketplace_domains: marketplaceDomains,
+            // connected_marketplaces: filteredMarketplaces
           })
 
+          if (this.props.isMarketSetup) {
+            this.props.setAddMarketStep(2)
+            this.props.setSignupAuthStep(1)
+          } else {
+            this.props.setSignupStep(3);
+            this.props.setSignupAuthStep(1); // reset ?
+
+            this.updateStepOnBackend()
+              .then(res => {
+                console.log(res)
+              })
+              .catch(err => {
+
+              });
+          }
+
+        } else {
+          this.setState({
+            apiError: res.data.ErrorMessage
+          })
+        }
+
+        this.setState({
+          isFormSubmited: false // reset submit status
         })
-        .catch(function (error) {
-          console.log(error);
-        });
-      }else{
+      } else {
         this.setState({
           apiError: "Please select one marketplace.",
           isFormSubmited: false // reset submit status
         })
       }
-    } // end if
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   async updateStepOnBackend(){
@@ -128,7 +144,7 @@ class MWSActionDomain extends Component {
   }
 
   render(){
-    const { marketplaceDomains, isFormSubmited, apiError } = this.state
+    const { marketplaceDomains, isFormSubmited, apiError, loading } = this.state
     const { signupFields } = this.props
 
     const options = signupFields.authenticated_marketplace.map(x => {
@@ -141,7 +157,7 @@ class MWSActionDomain extends Component {
 
     return(
       
-      <div className={"loader-container " + (isFormSubmited ? "is-loading" : null) }>
+      <div className={"loader-container " + (loading || isFormSubmited ? "is-loading" : null) }>
       
         <FormLoader />
         { apiError &&

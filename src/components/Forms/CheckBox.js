@@ -19,7 +19,7 @@ export default class CheckBox extends Component {
       <div className={isActive ? "ui-checkbox is-active" : "ui-checkbox"} onClick={clickHandler}>
         <input type="checkbox" name={name} id={name} />
         <div className="ui-checkbox__label">
-          <span>{text}</span>
+          <span>{name}</span>
         </div>
       </div>
     )
