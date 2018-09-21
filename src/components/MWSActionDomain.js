@@ -11,10 +11,11 @@ class MWSActionDomain extends Component {
     super(props);
 
     this.state = {
-      marketplaceDomains: this.props.signupFields.marketplace_domains, // state stores marketplaces ID only
+      marketplaceDomains: [], // state stores marketplaces ID only
       apiError: null,
       isFormSubmited: false,
-      loading: false
+      loading: false,
+      choosedOptions: []
     }
   }
 
@@ -28,11 +29,15 @@ class MWSActionDomain extends Component {
       const res = await api.get(`GetSellerMarketPlaces`)
       if (res.data.IsSuccess) {
         this.setState({
-          marketplaceDomains: res.data.Marketplaces.map(x => x.MarketPlaceId)
+          marketplaceDomains: res.data.Marketplaces.map(x => ({
+            id: x.MarketPlaceId,
+            isAddedtoMarket: true
+          }))
         })
       } else {
         this.setState({
-          apiError: res.data.ErrorMessage
+          apiError: res.data.ErrorMessage,
+          marketplaceDomains: this.props.signupFields.marketplace_domains
         })
       }
     } catch (e) {
@@ -43,26 +48,26 @@ class MWSActionDomain extends Component {
   }
 
   chooseOption = (id) => {
-    let options = this.state.marketplaceDomains
+    let options = this.state.choosedOptions
     let index
 
     if (options) {
       if (options.indexOf(id) === -1) {
         options.push(id)
-        } else {
+      } else {
         index = options.indexOf(id)
         options.splice(index, 1)
-        }
+      }
   
       this.setState({
-        marketplaceDomains: options
+        choosedOptions: options
       })
     }
   }
 
   nextAction = async () => {
     try {
-      const { marketplaceDomains } = this.state
+      const { choosedOptions } = this.state
       const { signupFields } = this.props
       const seller_id = signupFields.seller_id
       const mws_auth = signupFields.mws_auth
@@ -82,7 +87,7 @@ class MWSActionDomain extends Component {
         }
       })
 
-      const filteredMarketplaces = marketplaceData.filter( x => marketplaceDomains.indexOf(x.marketPlaceId) !== -1 )
+      const filteredMarketplaces = marketplaceData.filter( x => choosedOptions.indexOf(x.marketPlaceId) !== -1 )
 
 
       const obj = {
@@ -96,12 +101,6 @@ class MWSActionDomain extends Component {
         const res = await api.post(`SaveMarketPlaceIds`, obj)
         console.log('backend responce to POST SaveMarketPlaceIds', res)
         if ( res.data.IsSuccess ){
-          this.props.setSignupFields({ // redux
-            ...this.props.signupFields,
-            marketplace_domains: marketplaceDomains,
-            // connected_marketplaces: filteredMarketplaces
-          })
-
           if (this.props.isMarketSetup) {
             this.props.setAddMarketStep(2)
             this.props.setSignupAuthStep(1)
@@ -144,8 +143,9 @@ class MWSActionDomain extends Component {
   }
 
   render(){
-    const { marketplaceDomains, isFormSubmited, apiError, loading } = this.state
+    const { choosedOptions, marketplaceDomains, isFormSubmited, apiError, loading } = this.state
     const { signupFields } = this.props
+    console.log('>>> herhehrer', marketplaceDomains)
 
     const options = signupFields.authenticated_marketplace.map(x => {
       return {
@@ -170,9 +170,10 @@ class MWSActionDomain extends Component {
               <CheckBox
                 key={`domainCheckBox-${i}`}
                 name={cb.name}
-                text={cb.text}
+                text={cb.name}
                 clickHandler={this.chooseOption.bind(this, cb.id)}
-                isActive={marketplaceDomains.indexOf(cb.id) !== -1 }
+                isActive={choosedOptions.indexOf(cb.id) >= 0 }
+                isAddedToMarket={marketplaceDomains.findIndex((item) => item.id === cb.id) >= 0 }
               />
             )
           }) }

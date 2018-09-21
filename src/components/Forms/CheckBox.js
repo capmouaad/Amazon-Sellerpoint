@@ -13,13 +13,13 @@ export default class CheckBox extends Component {
 
   render(){
 
-    const { name, isActive, clickHandler, text } = this.props
+    const { name, isActive, clickHandler, text, isAddedToMarket } = this.props
 
     return(
-      <div className={isActive ? "ui-checkbox is-active" : "ui-checkbox"} onClick={clickHandler}>
+      <div className={isAddedToMarket ? 'ui-checkbox isAdded' : (isActive ? "ui-checkbox is-active" : "ui-checkbox")} onClick={isAddedToMarket ? () => {} : clickHandler}>
         <input type="checkbox" name={name} id={name} />
         <div className="ui-checkbox__label">
-          <span>{name}</span>
+          <span>{text}</span>
         </div>
       </div>
     )

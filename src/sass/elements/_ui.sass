@@ -1,8 +1,8 @@
 .ui-group
   position: relative
   margin-bottom: 15px
-  /* required as a fix for react-select dropdown
-  /* because of shadow fromt .Select-control on top of dropdown
+  // required as a fix for react-select dropdown
+  // because of shadow fromt .Select-control on top of dropdown
   &:nth-child(1)
     z-index: 5
   &:nth-child(2)
@@ -106,6 +106,15 @@
         // border-color: $colorBlue
       &::after
         transform: translateY(-50%) scale(1)
+  &.isAdded
+    .ui-checkbox__label
+      &::before
+        cursor: auto
+        background-color: #e8e8e8
+      &::after
+        transform: translateY(-50%) scale(1)
+        background-color: #868586
+        cursor: auto
   &__label
     display: flex
     align-items: center
