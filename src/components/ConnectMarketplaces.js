@@ -23,8 +23,12 @@ class ConnectMarketplaces extends Component {
     this.getSellerMarketplaces();
   }
 
+  onCloseModal = () => {
+    this.setState({ popupOpen: false });
+  };
+
   getSellerMarketplaces = () => {
-    this.setState({loading: true})
+    this.setState({ loading: true })
     api
       .get(`GetSellerMarketPlaces`)
       .then((res) => {
@@ -46,7 +50,7 @@ class ConnectMarketplaces extends Component {
         console.log(error);
       })
       .finally(() => {
-        this.setState({loading: false})
+        this.setState({ loading: false })
       })
 
   }
@@ -91,7 +95,7 @@ class ConnectMarketplaces extends Component {
 
     return (
       <div>
-        <Modal open={popupOpen}>
+        <Modal open={popupOpen} onClose={this.onCloseModal}>
           <div className="modal-dialog modal-md loader-inside step3-div">
             <div className="modal-content">
               <div className="modal-body">

@@ -14,7 +14,8 @@ import { setSignupStep } from '../actions/signup';
 import { setHeaderClass } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
-import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js'
+import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js';
+import { Helmet } from "react-helmet";
 
 const options = {
     width: window.innerWidth,
@@ -138,7 +139,7 @@ class KMLogin extends Component {
                     this.setState({
                         authenticated: true,
                         clientType: UserInfo.ClientType
-                     })
+                    })
                 } else {
                     const importStatusRes = await api.get(`GetDataImportStatus`)
                     const { DataImportComplete, FinanceDataImportProgress, ReportDataImportProgress, AdvertisingOptedOut } = importStatusRes.data
@@ -172,6 +173,11 @@ class KMLogin extends Component {
         }
         return (
             <div className="kmlogin-bg">
+
+                <Helmet>
+                    <title>KiniMetrix</title>
+                </Helmet>
+
                 <div id="canvas-wrapper">
                     <canvas id="demo-canvas"></canvas>
                 </div>
