@@ -1,5 +1,6 @@
 import Loadable from 'react-loadable';
 import Loader from './components/Loader';
+import { userIsAuthenticatedRedir, userIsNotAuthenticatedRedir } from './services/Auth'
 
 function MyLoadable(opts) {
   return Loadable(Object.assign({
@@ -55,30 +56,30 @@ export const routes = [
     isExact: true,
     path: '/',
     name: 'Dashboard',
-    component: Dashboard
+    component: userIsAuthenticatedRedir(Dashboard)
   },
   {
     isExact: true,
     path: '/login',
     name: 'Login',
-    component: Login
+    component: userIsNotAuthenticatedRedir(Login)
   },
   {
     isExact: true,
     isKMRoute: true,
     path: '/Account/Login',
     name: 'KMLogin',
-    component: KMLogin
+    component: userIsNotAuthenticatedRedir(KMLogin)
   },
   {
     path: '/signup',
     name: 'Signup',
-    component: Signup
+    component: userIsNotAuthenticatedRedir(Signup)
   },
   {
     path: '/dash',
     name: 'Dashboard',
-    component: Dashboard
+    component: userIsAuthenticatedRedir(Dashboard)
   },
   {
     path: '/LWACallback',
@@ -88,7 +89,7 @@ export const routes = [
   {
     path: '/forgotpassword',
     name: 'ForgotPassword',
-    component: ForgotPassword
+    component: userIsNotAuthenticatedRedir(ForgotPassword)
   },
   {
     path: '/Tester',

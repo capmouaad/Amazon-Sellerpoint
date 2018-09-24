@@ -20,8 +20,7 @@ class Help extends Component {
   }
 
   handleClickOutside = () => {
-    console.log("outside");
-    this.setState({ isHelpOpen: false });
+    if (this.state.isHelpOpen) this.setState({ isHelpOpen: false })
   };
 
   addCustomScript = () => {

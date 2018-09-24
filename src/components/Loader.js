@@ -41,10 +41,10 @@ export default class Loader extends Component {
     const { timedOut, error, pastDelay, backGroundProcessing } = this.props;
 
     if (!error && !timedOut && !pastDelay && !backGroundProcessing) {
-      return null
+      return <div className="loader loadable-loader"></div>
     } else {
       return (
-        <div className="loader">
+        <div className="loader loadable-loader">
           <div className='preloader-dots'>
             <div className='dot'></div>
             <div className='dot'></div>

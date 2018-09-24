@@ -8,12 +8,13 @@ import { OPEN_MENU, CLOSE_MENU, RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAV
 import { closeAppQlik } from '../actions/qlik'
 import { logOut } from '../actions/login';
 import { resetStateDashFilter } from '../actions/dashFilter'
-import { resetStatusBar, setShowImportProgressBar } from '../actions/statusBar'
+import { resetStatusBar } from '../actions/statusBar'
 import { clearReduxSignOut } from '../services/Api'
 
 import UserConfirmationModal from './UserConfirmationModal'
 import SvgIcon from '../components/Helpers/SvgIcon'
 import HeaderUser from './HeaderUser';
+import { isBrowser, isMobile } from 'react-device-detect'
 
 const CONFIGURATION_TEXT = {
   COGS: 'COGS',
@@ -33,7 +34,7 @@ class ConfigurationClass extends React.PureComponent {
     try {
       const { isShowFlag, descFlag } = this.state
       const { data } = await api.get('GetCOGSAndSKUGroupingStatus')
-      console.log('backend responce to GET COGSAndSKUGroupingStatus', data)
+      // console.log('backend responce to GET COGSAndSKUGroupingStatus', data)
 
       let desc = descFlag
       let flag = isShowFlag
@@ -128,7 +129,6 @@ const makeDashNavLinks = [
   },
   {
     name: "Configuration",
-    // path: configPath,
     icon: "dash-nav-settings",
     component: Configuration
   }
@@ -189,10 +189,9 @@ Are you sure you want to leave?
   }
 
   proceedLogOut = async () => {
+    // close modal then continue
+    this.onCloseModal()
     try {
-      // close modal then continue
-      this.onCloseModal()
-
       // close qlik app
       const qApp = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : null
       if (qApp)
@@ -202,10 +201,9 @@ Are you sure you want to leave?
       // reset qlik connection redux
       this.props.closeAppQlik()
 
+      //window.location.reload()
       const logOffRes = await api.get(`LogOff`)
       console.log('backend responce to GET LogOff', logOffRes)
-
-      //window.location.reload()
     } catch (e) {
       console.error(e)
     }
@@ -255,7 +253,7 @@ Are you sure you want to leave?
               </div>
               <ul className="header__dash-nav">
                 {
-                  this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
+                  isBrowser && this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
                     return link.component
                     ? <link.component key={`dash-${i}`} />
                     : (
@@ -286,7 +284,7 @@ Are you sure you want to leave?
             <div className="mobile-nav__wrapper">
               <div className="mobile-nav__menu">
                 {
-                  this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
+                  isMobile && this.props.stateClass === 'header--dash' && makeDashNavLinks.map((link, i) => {
                   return link.component
                     ? <link.component key={`mobile-dash-${i}`} />
                     : (
@@ -343,7 +341,6 @@ const mapDispatchToProps = (dispatch) => ({
   setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
   resetStateDashFilter: () => dispatch(resetStateDashFilter()),
   resetStatusBar: () => dispatch(resetStatusBar()),
-  setShowImportProgressBar: (data) => dispatch(setShowImportProgressBar(data)),
   logOut: () => dispatch(logOut())
 });
 

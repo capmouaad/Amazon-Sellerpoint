@@ -18,8 +18,3 @@ export const setDescStatusBar = (data) => ({
 export const resetStatusBar = () => ({
   type: types.RESET_STATUS_BAR
 })
-
-export const setShowImportProgressBar = (data) => ({
-  type: types.SET_SHOW_IMPORT_PROGRESS_BAR,
-  payload: data
-})
