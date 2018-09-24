@@ -54,21 +54,23 @@
         text-align: center
     .flag-status
       position: absolute
-      top: -10px
+      top: -8px
       display: flex
       align-items: center
       justify-content: flex-end
       max-width: 120px
       padding: 0 10px
-      height: 20px
-      font-size: 15px
+      height: 25px
+      font-size: 18px
+      font-family: Helvetica Neue
       color: #ffffff
       border-radius: 5px
-      background-color: red
+      background-color: #C60000
     .flag-status-cogs
-      right: -50px
+      right: -63px
+      width: 72px
     .flag-status-grouping
-      right: -88px
+      right: -108px
 
   &__dash-icon
     display: flex
@@ -124,7 +126,6 @@
 
     &.is-active
       .header__dropdown
-        z-index: 99999
         opacity: 1
         transform: translate(0,0)
         pointer-events: all
@@ -164,7 +165,7 @@
 
   &--logo-only
     .header
-      position: absolute
+      // position: absolute
       &__phone, &__menu, &__hamburger
         opacity: 0
         pointer-events: none

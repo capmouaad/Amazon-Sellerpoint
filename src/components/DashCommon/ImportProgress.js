@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import api from '../../services/Api';
 import { connect } from 'react-redux';
 import { SET_STATUS_PROGRESS } from '../../store/ActionTypes'
-import { setShowImportProgressBar } from '../../actions/statusBar'
 
 const IBar = (props) => {
     const { name, progress, optedOut } = props
@@ -55,7 +54,7 @@ class ImportProgress extends Component {
     }
 
     getImportStatus = async () => {
-        const { setStatusProgress, setShowImportProgressBar } = this.props
+        const { setStatusProgress } = this.props
 
         const { data } = await api.get('GetDataImportStatus')
         console.log('backend responce to GET GetDataImportStatus', data)
@@ -63,7 +62,6 @@ class ImportProgress extends Component {
         if (data.IsSuccess) {
             if (data.DataImportComplete || (data.FinanceDataImportProgress === 100 && data.ReportDataImportProgress === 100 && data.AdvertisingOptedOut)) {
                 this.clearCheckImportInterval()
-                setShowImportProgressBar(false)
             }
 
             setStatusProgress({
@@ -120,12 +118,11 @@ class ImportProgress extends Component {
 
 const mapStateToProps = (state) => ({
     statusProgress: state.header.statusProgress,
-    isShowImportProgressBar: state.statusBar.isShowImportProgressBar
+    isShowImportProgressBar: state.header.isShowImportProgressBar
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-    setShowImportProgressBar: (data) => dispatch(setShowImportProgressBar(data))
+    setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImportProgress);

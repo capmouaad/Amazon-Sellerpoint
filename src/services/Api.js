@@ -3,7 +3,8 @@ import { store } from '../store/store';
 import { logOut } from '../actions/login'
 import { resetStateDashFilter } from '../actions/dashFilter'
 import { closeAppQlik } from '../actions/qlik'
-import { resetStatusBar, setShowImportProgressBar } from '../actions/statusBar'
+import { resetStatusBar } from '../actions/statusBar'
+import { setShowImportProgressBar } from '../actions/header'
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD} from '../store/ActionTypes'
 
 //const BACKEND_URL = process.env.NODE_ENV === 'production' ? "http://name.herokuapp.com" : "http://localhost:8000/"
