@@ -59,7 +59,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.props.authToken && this.checkNavDashboard()
+        this.checkNavDashboard()
     }
 
     checkNavDashboard = () => {
@@ -109,12 +109,7 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { match, authToken } = this.props
-        if ( !authToken ) {
-            return (
-                <Redirect to={`${process.env.PUBLIC_URL}/login`} />
-            )
-        }
+        const { match } = this.props
 
         return (
             <React.Fragment>
@@ -144,7 +139,6 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    authToken: state.login.authToken,
     navDashboard: state.header.navDashboard
 })
 

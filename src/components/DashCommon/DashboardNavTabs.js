@@ -16,17 +16,19 @@ class Help extends Component {
   }
 
   componentWillMount() {
-    this.addCustomScript();
+    if (document.getElementById("help_script") == null) {
+      this.addCustomScript();
+    }
   }
 
   handleClickOutside = () => {
-    console.log("outside");
-    this.setState({ isHelpOpen: false });
+    if (this.state.isHelpOpen) this.setState({ isHelpOpen: false })
   };
 
   addCustomScript = () => {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=6";
+    script.id = "help_script"
     script.async = true;
     document.body.appendChild(script);
     this.setState({ loaded: true });

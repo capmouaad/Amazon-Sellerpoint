@@ -1,7 +1,6 @@
 import * as types from '../store/ActionTypes'
 
 const initialState = {
-  isShowImportProgressBar: true,
   isShowStatusBar: false,
   isStatusBarActive: null,
   descStatusBar: null
@@ -9,11 +8,6 @@ const initialState = {
 
 const statusBar = (state = initialState, action) => {
   switch (action.type) {
-    case types.SET_SHOW_IMPORT_PROGRESS_BAR:
-      return {
-        ...state,
-        isShowImportProgressBar: action.payload
-      }
     case types.SET_SHOW_STATUS_BAR:
       return {
         ...state,

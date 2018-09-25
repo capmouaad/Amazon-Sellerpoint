@@ -11,10 +11,11 @@ import { APP_CONFIG } from '../constants'
 import api from '../services/Api';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 import { setSignupStep } from '../actions/signup';
-import { setHeaderClass } from '../actions/header';
+import { setHeaderClass, setShowImportProgressBar } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
-import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js'
+import { CanvasBG, CanvasBG1 } from '../components/CanvasBG.js';
+import { Helmet } from "react-helmet";
 
 const options = {
     width: window.innerWidth,
@@ -86,7 +87,7 @@ class KMLogin extends Component {
     loginUser = async () => {
         try {
             const { email, password, rememberMe } = this.state;
-            const { history, setSignupStep, setDataImportComplete } = this.props
+            const { history, setSignupStep, setDataImportComplete, setShowImportProgressBar } = this.props
 
             this.setState({
                 isFormSubmited: true // reset submit status
@@ -120,11 +121,11 @@ class KMLogin extends Component {
                     switch (UserInfo.KMACurrentStep) {
                         case APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.key:
                             setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step)
-                            history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step}`)
+                            history.push(`SellerPoint/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectAdvertising.step}`)
                             break
                         case APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.key:
                             setSignupStep(APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step)
-                            history.push(`/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step}`)
+                            history.push(`SellerPoint/signup/step-${APP_CONFIG.SIGN_UP_STEP.ConnectSellerCentral.step}`)
                             break
                         default:
                             break
@@ -138,24 +139,30 @@ class KMLogin extends Component {
                     this.setState({
                         authenticated: true,
                         clientType: UserInfo.ClientType
-                     })
+                    })
                 } else {
                     const importStatusRes = await api.get(`GetDataImportStatus`)
                     const { DataImportComplete, FinanceDataImportProgress, ReportDataImportProgress, AdvertisingOptedOut } = importStatusRes.data
                     if (DataImportComplete || (FinanceDataImportProgress === 100 && ReportDataImportProgress === 100 && AdvertisingOptedOut)) {
                         setDataImportComplete(true)
-                        history.push('/dash/dashboards')
+                        setShowImportProgressBar(false)
+                        history.push(`${process.env.PUBLIC_URL}/SellerPoint/dash`)
                     } else {
-                        history.push('/dash/welcome')
+                        history.push(`${process.env.PUBLIC_URL}/SellerPoint/dash/welcome`)
                     }
                 }
+               
             } else {
                 this.setState({
-                    apiError: loginRes.data.ErrorMessage
+                    apiError: loginRes.data.ErrorMessage,
+                    isFormSubmited: false
                 })
             }
         } catch (e) {
             console.log(e)
+            this.setState({
+                isFormSubmited: false
+            })
         }
     }
 
@@ -172,6 +179,11 @@ class KMLogin extends Component {
         }
         return (
             <div className="kmlogin-bg">
+
+                <Helmet>
+                    <title>KiniMetrix</title>
+                </Helmet>
+
                 <div id="canvas-wrapper">
                     <canvas id="demo-canvas"></canvas>
                 </div>
@@ -276,17 +288,17 @@ const mapStateToProps = (state) => ({
     DataImportComplete: state.login.DataImportComplete
 });
 
-const mapDispatchToProps = (dispatch) => (
-    {
-        setHeaderClass: (data) => dispatch(setHeaderClass(data)),
-        logIn: (data) => dispatch(logIn(data)),
-        setAuthToken: (data) => dispatch(setAuthToken(data)),
-        setSignupId: (data) => dispatch(setSignupId(data)),
-        setSignupStep: (data) => dispatch(setSignupStep(data)),
-        setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
-        resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
-        setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-        setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
-    });
+const mapDispatchToProps = (dispatch) => ({
+    setHeaderClass: (data) => dispatch(setHeaderClass(data)),
+    logIn: (data) => dispatch(logIn(data)),
+    setAuthToken: (data) => dispatch(setAuthToken(data)),
+    setSignupId: (data) => dispatch(setSignupId(data)),
+    setSignupStep: (data) => dispatch(setSignupStep(data)),
+    setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
+    resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
+    setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
+    setShowImportProgressBar: (data) => dispatch(setShowImportProgressBar(data))
+});
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(KMLogin));

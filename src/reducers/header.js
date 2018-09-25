@@ -12,7 +12,8 @@ const initialState = {
     finaceDataProgress: 0,
     reportDataProgress: 0,
     adOptedOut: false
-  }
+  },
+  isShowImportProgressBar: true
 }
 
 const header = (state = initialState, action) => {
@@ -44,6 +45,12 @@ const header = (state = initialState, action) => {
       return {
         ...state,
         statusProgress: action.payload
+      }
+
+    case types.SET_SHOW_IMPORT_PROGRESS_BAR:
+      return {
+        ...state,
+        isShowImportProgressBar: action.payload
       }
 
     default:
