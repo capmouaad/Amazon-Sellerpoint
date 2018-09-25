@@ -19,6 +19,7 @@
       &--centered
         margin-left: auto
         margin-right: auto
+        text-align: center
 
   &__captcha
     max-width: 350px
@@ -99,11 +100,13 @@
       td
         background: #E5E5E5
         font-weight: bold
+        color: #000000
     tbody
       td
         border-bottom: 1px solid #979797
         padding-top: 10px
         padding-bottom: 10px
+        color: #000000
 
     td
       font-size: 14px
@@ -218,7 +221,7 @@
   &:hover
     border-color: #0A1E39
   &.is-active
-    border-color: #0A1E39
+    border: 3px solid #0A1E39
     color: #0A1E39
     &:after
       opacity: 1
@@ -262,3 +265,6 @@
   font-size: 18px
   strong
     font-weight: bold
+
+.config-padding
+  padding: 0 !important

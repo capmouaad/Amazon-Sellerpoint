@@ -61,16 +61,9 @@ class AddMarketSwitch extends Component {
   }
 
   renderTitleStep = () => {
-    const { signupAuthStep } = this.props
-    switch (signupAuthStep) {
-      case 1:
-        return <h1 className="signup__heading">{`Connect with your SellerCentral account`}</h1>
-      case 2:
-        return <h1 className="signup__heading">{`Connect with your SellerCentral account`}</h1>
-      case 3:
-        return <h1 className="signup__heading">{`Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns`}</h1>
-      default:
-        return null
+    const { addMarketStep } = this.props
+    if (addMarketStep === 1) {
+      return <h1 className="signup__heading">{`Connect with your SellerCentral account`}</h1>
     }
   }
 
@@ -82,14 +75,11 @@ class AddMarketSwitch extends Component {
           when
           message={(location) => {
             if (location.state && location.state.isSkipPrompt) return true
-            return `
-By leaving this page, you will close out the process of adding a new marketplace.\n
-Are you sure you want to leave?
-            `
+            return `By leaving this page, you will close out the process of adding a new marketplace.\nAre you sure you want to leave?`
           }}
         />
         <div>
-          <button onClick={this.goBackMarketPlace} className="btn btn-go-back-market">{`Back to Marketplace Configuration Home`}</button>
+          <button onClick={this.goBackMarketPlace} className="btn-go-back-market">{`Back to Marketplace Configuration Home`}</button>
         </div>
         <div className="signup-nav">
           <div className="signup-nav__wrapper">
@@ -97,7 +87,7 @@ Are you sure you want to leave?
             <SignupNavEl number={2} name="Connect<br/>Advertising Data" step={addMarketStep} />
           </div>
         </div>
-        <div style={{ paddingTop: 20 }}>
+        <div style={{ paddingTop: addMarketStep === 1 ? 20 : 0 }}>
           {
             this.renderTitleStep()
           }
