@@ -74,7 +74,7 @@ export const routes = [
   {
     path: '/signup',
     name: 'Signup',
-    component: userIsNotAuthenticatedRedir(Signup)
+    component: Signup
   },
   {
     path: '/dash',
