@@ -1,5 +1,6 @@
 import Loadable from 'react-loadable';
 import Loader from './components/Loader';
+import Admin from './containers/Admin';
 
 function MyLoadable(opts) {
   return Loadable(Object.assign({
@@ -89,6 +90,12 @@ export const routes = [
     path: '/forgotpassword',
     name: 'ForgotPassword',
     component: ForgotPassword
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin
+
   },
   {
     path: '/Tester',
