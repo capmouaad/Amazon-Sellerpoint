@@ -16,7 +16,9 @@ class Help extends Component {
   }
 
   componentWillMount() {
-    this.addCustomScript();
+    if (document.getElementById("help_script") == null) {
+      this.addCustomScript();
+    }
   }
 
   handleClickOutside = () => {
@@ -26,6 +28,7 @@ class Help extends Component {
   addCustomScript = () => {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=6";
+    script.id = "help_script"
     script.async = true;
     document.body.appendChild(script);
     this.setState({ loaded: true });
