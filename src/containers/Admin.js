@@ -22,7 +22,8 @@ class AdminComponent extends Component {
             sellerId: "",
             selectedSellerId: "",
             sellerIdPopup: false,
-            confirmPopup: false
+            confirmPopup: false,
+            clientId:0
         }
 
         this.getSellers = this.getSellers.bind(this);
@@ -40,8 +41,8 @@ class AdminComponent extends Component {
         this.getSellers();
     }
 
-    sellerIdPopup(val) {
-        this.setState({ sellerIdPopup: true, selectedSellerId: val });
+    sellerIdPopup(sellerId,clientId) {
+        this.setState({ sellerIdPopup: true, selectedSellerId: sellerId,clientId });
     }
     sellerIdSubmit() {
         if (this.state.selectedSellerId === this.state.sellerId) {
@@ -59,7 +60,7 @@ class AdminComponent extends Component {
     deleteSeller() {
         const that = this;
         api
-            .get(`DeleteSeller?sellerid=` + this.state.selectedSellerId)
+            .get(`DeleteSeller?clientId=` + this.state.clientId)
             .then((res) => {
                 that.setState({ isLoading: false });
                 that.cancel();
@@ -67,7 +68,7 @@ class AdminComponent extends Component {
                     showToastMessage("Seller deleted succesfully.", "Success");
                     that.getSellers();
                 } else {
-                    showToastMessage("An error has occurred.", "Error");
+                    showToastMessage(res.data.ErrorMessage, "Error");
                 }
             })
             .catch(function (error) {
@@ -153,7 +154,7 @@ class AdminComponent extends Component {
                                             {
                                                 Header: "Action",
                                                 id: "SellerId",
-                                                accessor: d => (<button onClick={() => this.sellerIdPopup(d.SellerId)}><SvgIcon name="garbage"></SvgIcon></button>)
+                                                accessor: d => (<button onClick={() => this.sellerIdPopup(d.SellerId,d.ClientId)}><SvgIcon name="garbage"></SvgIcon></button>)
                                             }
                                         ]}
                                         defaultPageSize={10}
