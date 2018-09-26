@@ -53,53 +53,42 @@ class MWSActionAuth extends Component {
     }
   }
 
-  sendToBackend = () => {
-    const { seller_id, mws_auth } = this.state;
+  sendToBackend = async () => {
+    try {
+      const { seller_id, mws_auth } = this.state;
 
-    const leadObj = {
-      sellerId: seller_id.trim(),
-      mwsAuthToken: mws_auth.trim()
-    }
+      const leadObj = {
+        sellerId: seller_id.trim(),
+        mwsAuthToken: mws_auth.trim()
+      }
 
-    this.setState({
-      isFormSubmited: true,
-      seller_id:leadObj.sellerId
-    })
-
-    // authenticate
-    api
-      .post(`AuthenticateMWSDetails`, leadObj)
-      .then((res) => {
-        console.log('back-end responce to post AuthenticateMWSDetails', res)
-        if ( res.data.IsSuccess ){
-          this.updateSignup(res.data.Marketplace);
-        } else {
-          this.setState({apiError: res.data.ErrorMessage})
-        }
-        this.setState({
-          isFormSubmited: false // reset submit status
-        })
+      this.setState({
+        isFormSubmited: true
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
 
-  updateSignup = (marketplace_data) => {
-
-    const { seller_id, mws_auth } = this.state;
-
-    this.props.setSignupFields({ // update redux store
-      ...this.props.signupFields,
-      seller_id: seller_id,
-      mws_auth: mws_auth,
-      authenticated_marketplace: marketplace_data
-    })
-
-    this.props.setSignupAuthStep(
-      this.props.signupAuthStep + 1
-    )
-
+      // authenticate
+      const res = await api.post(`AuthenticateMWSDetails`, leadObj)
+      console.log('back-end responce to post AuthenticateMWSDetails', res)
+      if ( res.data.IsSuccess ){
+        this.props.setSignupFields({ // update redux store
+          ...this.props.signupFields,
+          seller_id: leadObj.sellerId,
+          mws_auth: leadObj.mwsAuthToken,
+          authenticated_marketplace: res.data.Marketplace
+        })
+    
+        this.props.setSignupAuthStep(
+          this.props.signupAuthStep + 1
+        )
+      } else {
+        this.setState({
+          apiError: res.data.ErrorMessage,
+          isFormSubmited: false
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   render(){

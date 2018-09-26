@@ -49,8 +49,145 @@
       &:hover
         &::before
           opacity: 1
+  .help
+    float: right;
+    margin-top: -50px;
+    width: 260px;
+    position: relative;
+    .help_a
+      background-color: #FFC402;
+      padding: 8px 15px;
+      float: right;
+      border-radius: 6px;
+      font-weight: 750 !important;
+      position: relative; 
+      margin-bottom: 15px;
+      color: #1D3049 !important;
+      font-size: 14px!important;
+      &:after  
+        content: "";
+        border-top: 7px solid #FFC402;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        position: absolute;
+        bottom: -6px;         
+        right:  8px;
+        margin: 0 auto;
+        width: 0px; 
+ 
+    .help-box.true
+      display: block;
+    .help-box
+      display: none;
+      float: left;
+      width: 100%;
+      border: 1px solid #979797;
+      border-radius: 3px;
+      padding: 10px 15px;
+      position: absolute;
+      top: 46px;
+      z-index: 99999;
+      background-color: #FFF;
+      min-height: 315px;
+      .content-tab1 
+        float: left;
+        width: 100%;
+        display: none;
+        p
+          margin-top: 24px;
+          text-align: center;
+          width: 137px;
+          margin-left: 50px;         
+          color: #1D3049;	         
+          font-size: 14px;	
+          line-height: 16px;
+          color: #1D3049;	
+          text-align: center;	          
+        a
+          border: 1px solid #1D3049;	
+          border-radius: 6px;          
+          padding: 8px;
+          display: inline-block;
+          margin: 40px auto 0;
+         	color: #1D3049;
+          width: 100%;
+          font-size: 14px;          
+          font-weight: bold;   
+          text-align: center;
+          height: 34px;
+      .content-tab1.true
+        display: block;
+      .content-tab2
+        display: none;
+      .content-tab2.true
+        display: block;
+    .tabs
+      a
+        border: 1px solid #2E79B9;	           
+        width: 50%;
+        float: left;
+        padding: 8px;
+        color: #2E79B9;        
+        border-radius: 3px;
+        text-align: center;
+    
+      
+      a.tab1
+        border-radius: 3px 0 0 3px;
+       
+      
+      a.tab1
+        border-radius: 3px 0 0 3px;
+    
+    
+      a.tab2
+        border-radius: 0 3px 3px 0;
+        border-left: none;
+      
+      
+      a.active 
+        background-color: #2E79B9;
+        color: #FFF;  
+       
 
 +r($tablet)
   .dash-nav
     &--without-progress
       margin-top: 90px
+
+
+@media ( max-width: 1032px ) 
+  .dash-nav 
+  .help 
+    z-index: 99999999;
+    .help-box.true
+      display: block;
+      position: fixed;
+      top: 186px;  
+      right: 41px;
+      left: auto;
+      width: 238px;
+    .help_a
+      background-color: #fbd311;
+      padding: 8px 15px;
+      float: right;
+      border-radius: 0;
+      font-weight: 700;
+      position: fixed!important;
+      margin-bottom: 15px;
+      top: 201px;
+      right: -14px;
+      transform: rotate3d(0,0,1,-90deg);
+      &:after
+        display: none; 
+
+
+.svg-centre
+  text-align: center
+  display: inline-block
+  width: 100%
+  margin-top: 25px
+  margin-bottom: 17px
+  svg
+    width: 23px
+    height: 23px    

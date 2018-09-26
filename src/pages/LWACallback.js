@@ -55,7 +55,8 @@ class LWACallback extends Component {
       const obj = {
         code: authCode,
         scope: authScope,
-        sellerId: sellerId
+        sellerId: sellerId,
+        isInitialImport: localStorage.getItem("isInitialImport")
       }
 
       const res = await api.post(`ConnectAdvertisingData`, obj)

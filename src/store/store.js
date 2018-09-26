@@ -6,7 +6,7 @@ import localforage from 'localforage'
 const persistConfig = {
   key: 'root',
   storage: localforage,
-  blacklist: ['dashFilter']
+  blacklist: ['dashFilter', 'statusBar']
 }
 
 const createStoreWithMiddleware = compose(

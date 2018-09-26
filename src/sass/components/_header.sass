@@ -1,8 +1,4 @@
 .header
-  position: absolute
-  left: 0
-  right: 0
-  top: 0
   z-index: 9
   // fix offset for the dash nav
   max-height: 125px
@@ -38,6 +34,7 @@
     list-style: none
     margin: 0
     padding: 0
+    position: relative
     li
       margin-right: 30px
       &:last-child
@@ -55,6 +52,25 @@
         color: white
         margin-top: 3px
         text-align: center
+    .flag-status
+      position: absolute
+      top: -8px
+      display: flex
+      align-items: center
+      justify-content: flex-end
+      max-width: 120px
+      padding: 0 10px
+      height: 25px
+      font-size: 18px
+      font-family: Helvetica Neue
+      color: #ffffff
+      border-radius: 5px
+      background-color: #C60000
+    .flag-status-cogs
+      right: -63px
+      width: 72px
+    .flag-status-grouping
+      right: -108px
 
   &__dash-icon
     display: flex
@@ -117,6 +133,7 @@
 
   &__dropdown
     position: absolute
+    z-index: 9999
     right: 0
     top: 50px
     min-width: 220px
@@ -148,7 +165,7 @@
 
   &--logo-only
     .header
-      position: absolute
+      // position: absolute
       &__phone, &__menu, &__hamburger
         opacity: 0
         pointer-events: none

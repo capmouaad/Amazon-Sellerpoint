@@ -11,9 +11,18 @@ class DashboardPlannings extends Component {
   };
   constructor() {
     super();
-    this.addCustomScript();
     this.state = {
       open: true
+    }
+  }
+
+  componentWillMount() {
+    if (document.getElementById("notification_script") == null) {
+      this.addCustomScript();
+    }
+    else {
+      document.getElementById("notification_script").remove();
+      this.addCustomScript();
     }
   }
 
@@ -24,6 +33,7 @@ class DashboardPlannings extends Component {
   addCustomScript() {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=3s";
+    script.id = "notification_script";
     script.async = true;
     document.body.appendChild(script);
   }

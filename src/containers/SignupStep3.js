@@ -77,7 +77,7 @@ class SignupStep3 extends Component {
         throw new Error(ressignup.data.ErrorMessage)
       }
     } else {
-      this.props.onGoBackMarket()
+      this.props.onGoBackMarket({ isSkipPrompt: true })
       this.props.setAddMarketStep(1)
     }
   }
@@ -115,6 +115,7 @@ class SignupStep3 extends Component {
 
   render() {
     const { shouldRedirect, isFormSubmited, apiError, error, isDisabled } = this.state;
+    const { isMarketSetup } = this.props
 
     if (shouldRedirect) {
       return <Redirect to={`${process.env.PUBLIC_URL}/dash/welcome`} />
@@ -127,12 +128,13 @@ class SignupStep3 extends Component {
           {apiError &&
             <span className="ui-input-validation">{apiError}</span>
           }
-          <div className="signup__form">
+          <div className={isMarketSetup ? 'signup__form config-padding' : 'signup__form'}>
             <div className="signup__heading">Set up your advertising data by connecting your Sponsored Products so we can help you manage the effectiveness of your campaigns</div>
             <ConnectMarketplaces
               advState={this.props.advState || APP_CONFIG.LWA_Source.SignUpStep3.state}
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
+              isInitialImport={true}
             />
             <div className="signup__form-cta signup__form-cta--centered">
               <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''} /> I don't have advertising data to connect

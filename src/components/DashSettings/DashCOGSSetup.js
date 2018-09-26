@@ -8,6 +8,7 @@ import Dropzone from 'react-dropzone';
 import FormLoader from '../Forms/FormLoader';
 import Toaster, { showToastMessage } from '../../services/toasterNotification'
 import FilterInput from '../Helpers/FilterInput'
+import { GetActiveQSReload } from '../ReloadStatusBar'
 
 export default class DashCOGSSetup extends Component {
 
@@ -157,6 +158,9 @@ export default class DashCOGSSetup extends Component {
                     if (res.data.IsSuccess) {
                         showToastMessage(res.data.ErrorMessage, "Success");
                         this.getAllCOGS();
+
+                        // call reload status bar api
+                        GetActiveQSReload()
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage

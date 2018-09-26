@@ -6,8 +6,8 @@ import "react-table/react-table.css";
 import Modal from 'react-responsive-modal';
 import Toaster, { showToastMessage } from '../../services/toasterNotification'
 import FormLoader from '../Forms/FormLoader';
-import 'react-toastify/dist/ReactToastify.css';
 import FilterInput from '../Helpers/FilterInput'
+import { GetActiveQSReload } from '../ReloadStatusBar'
 
 export default class DashSKUASINGrouping extends Component {
     skuIds = [];
@@ -24,7 +24,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.Status,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["Status"], threshold: matchSorter.rankings.STARTS_WITH }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -35,7 +35,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.SellerSKU,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["SellerSKU"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -46,7 +46,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.Name,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["Name"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true,
             style: { whiteSpace: 'unset' }
         },
@@ -58,7 +58,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.MarketplaceName,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["MarketplaceName"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -69,7 +69,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.Brand,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["Brand"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         },
         {
@@ -80,7 +80,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => d.AvgHistoricalPrice,
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["AvgHistoricalPrice"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true,
             Cell: this.renderAvgHistoricalPrice
         },
@@ -92,7 +92,7 @@ export default class DashSKUASINGrouping extends Component {
             accessor: d => ['$', d.LandedCost.toFixed(2)],
             filterMethod: (filter, rows) =>
                 matchSorter(rows, filter.value, { keys: ["LandedCost"], threshold: matchSorter.rankings.CONTAINS }),
-                Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
+            Filter: ({ filter, onChange }) => <FilterInput onChange={onChange} filter={filter}></FilterInput>,
             filterAll: true
         }
     ];
@@ -204,6 +204,9 @@ export default class DashSKUASINGrouping extends Component {
                         this.onCloseModal();
                         this.getUngroupedSKUs();
                         this.getGroupedSKUs();
+
+                        // call reload status bar api
+                        GetActiveQSReload()
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,
@@ -235,6 +238,9 @@ export default class DashSKUASINGrouping extends Component {
                         this.parentGroupId = 0;
                         this.onCloseModal();
                         this.getUngroupedSKUs();
+
+                        // call reload status bar api
+                        GetActiveQSReload()
                     } else {
                         this.setState({
                             apiError: res.data.ErrorMessage,

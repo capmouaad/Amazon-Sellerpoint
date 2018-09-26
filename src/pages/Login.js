@@ -10,7 +10,7 @@ import FormLoader from '../components/Forms/FormLoader';
 import { setSignupStep } from '../actions/signup';
 import { RESET_STATE_SIGNUP, SET_STATUS_PROGRESS, SET_NAVBAR_DASHBOARD } from '../store/ActionTypes';
 
-import { setHeaderClass } from '../actions/header';
+import { setHeaderClass, setShowImportProgressBar } from '../actions/header';
 import { logIn, setAuthToken, setDataImportComplete } from '../actions/login';
 import { setSignupId } from '../actions/signup';
 import { APP_CONFIG } from '../constants'
@@ -70,7 +70,7 @@ class Login extends Component {
     loginUser = async () => {
         try {
             const { email, password, rememberMe } = this.state;
-            const { history, setSignupStep, setDataImportComplete } = this.props
+            const { history, setSignupStep, setDataImportComplete, setShowImportProgressBar } = this.props
 
             this.setState({
                 isFormSubmited: true // reset submit status
@@ -118,31 +118,34 @@ class Login extends Component {
                     this.props.resetSignUp()
                 }
 
-                this.setState({
-                    authenticated: true,
-                     clientType: UserInfo.ClientType
-                 })
-
-                const importStatusRes = await api.get(`GetDataImportStatus`)
-                const { DataImportComplete } = importStatusRes.data
-                if (DataImportComplete) {
-                    setDataImportComplete(true)
-                    history.push('/dash/dashboards')
+                if (UserInfo.ClientType !== 3) {
+                    this.setState({
+                        authenticated: true,
+                        clientType: UserInfo.ClientType
+                     })
                 } else {
-                    history.push('/dash/welcome')
+                    const importStatusRes = await api.get(`GetDataImportStatus`)
+                    const { DataImportComplete, FinanceDataImportProgress, ReportDataImportProgress, AdvertisingOptedOut } = importStatusRes.data
+                    if (DataImportComplete || (FinanceDataImportProgress === 100 && ReportDataImportProgress === 100 && AdvertisingOptedOut)) {
+                        setDataImportComplete(true)
+                        setShowImportProgressBar(false)
+                        history.push('/dash/dashboards')
+                    } else {
+                        history.push('/dash/welcome')
+                    }
                 }
                
             } else {
                 this.setState({
-                    apiError: loginRes.data.ErrorMessage
+                    apiError: loginRes.data.ErrorMessage,
+                    isFormSubmited: false
                 })
             }
-
-            this.setState({
-                isFormSubmited: false // reset submit status
-            })
         } catch (e) {
             console.log(e)
+            this.setState({
+                isFormSubmited: false
+            })
         }
     }
     componentDidMount() {
@@ -250,7 +253,8 @@ const mapDispatchToProps = (dispatch) => ({
     setDataImportComplete: (completed) => dispatch(setDataImportComplete(completed)),
     resetSignUp: () => dispatch({ type: RESET_STATE_SIGNUP }),
     setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data }),
-    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
+    setShowImportProgressBar: (data) => dispatch(setShowImportProgressBar(data))
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

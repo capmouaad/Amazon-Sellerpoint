@@ -36,49 +36,47 @@ class ImportProgress extends Component {
     }
 
     componentDidMount() {
-        this.checkStatusProgressBar()
+        if (this.props.isShowImportProgressBar) {
+            this.getImportStatus()
 
-        this.timerGetImportStatus = setInterval(() => {
-            if (!this.state.DataImportComplete) {
-                this.getImportStatus();
-            } else {
-                clearInterval(this.timerGetImportStatus);
-            }
-        }, 10000);
+            this.timerGetImportStatus = setInterval(() => {
+                this.getImportStatus()
+            }, 10000)
+        }
     }
 
     componentWillUnmount() {
-        clearInterval(this.timerGetImportStatus);
+        this.clearCheckImportInterval()
     }
 
-    getImportStatus = () => {
-        const { setStatusProgress } = this.props
-        api
-            .get(`GetDataImportStatus`)
-            .then((res) => {
-                console.log('backend responce to GET GetDataImportStatus', res)
+    clearCheckImportInterval = () => {
+        this.timerGetImportStatus && clearInterval(this.timerGetImportStatus)
+    }
 
-                if (res.data.IsSuccess) {
-                    this.setState({
-                        DataImportComplete: res.data.DataImportComplete
-                    })
-                    setStatusProgress({
-                        finaceDataProgress: res.data.FinanceDataImportProgress,
-                        reportDataProgress: res.data.ReportDataImportProgress,
-                        adDataProgress: res.data.AdDataImportProgress,
-                        adOptedOut: res.data.AdvertisingOptedOut
-                    })
-                } else {
-                    setStatusProgress({
-                        finaceDataProgress: 0,
-                        reportDataProgress: 0,
-                        adDataProgress: 0
-                    })
-                }
+    getImportStatus = async () => {
+        const { setStatusProgress } = this.props
+
+        const { data } = await api.get('GetDataImportStatus')
+        console.log('backend responce to GET GetDataImportStatus', data)
+        
+        if (data.IsSuccess) {
+            if (data.DataImportComplete || (data.FinanceDataImportProgress === 100 && data.ReportDataImportProgress === 100 && data.AdvertisingOptedOut)) {
+                this.clearCheckImportInterval()
+            }
+
+            setStatusProgress({
+                finaceDataProgress: data.FinanceDataImportProgress,
+                reportDataProgress: data.ReportDataImportProgress,
+                adDataProgress: data.AdDataImportProgress,
+                adOptedOut: data.AdvertisingOptedOut
             })
-            .catch(function (error) {
-                console.log(error);
-            });
+        } else {
+            setStatusProgress({
+                finaceDataProgress: 0,
+                reportDataProgress: 0,
+                adDataProgress: 0
+            })
+        }
     }
 
     checkStatusProgressBar = () => {
@@ -91,30 +89,37 @@ class ImportProgress extends Component {
 
     render() {
 
-        const { statusProgress } = this.props
+        const { statusProgress, isShowImportProgressBar } = this.props
 
         return (
-            <div className="i-progress">
-                <div className="container container--full">
-                    <div className="i-progress__wrapper">
-                        <div className="i-progress__title">DATA IMPORT STATUS</div>
-                        <div className="i-progress__bars">
-                            <IBar name="Financials" progress={statusProgress ? statusProgress.finaceDataProgress : 0} />
-                            <IBar name="Products" progress={statusProgress ? statusProgress.reportDataProgress : 0} />
-                            <IBar name="Advertising" progress={statusProgress ? statusProgress.adDataProgress : 0} optedOut={statusProgress.adOptedOut} />
+            <div>
+                {
+                    isShowImportProgressBar
+                    ? (
+                        <div className="i-progress">
+                            <div className="container container--full">
+                                <div className="i-progress__wrapper">
+                                    <div className="i-progress__title">DATA IMPORT STATUS</div>
+                                    <div className="i-progress__bars">
+                                        <IBar name="Financials" progress={statusProgress ? statusProgress.finaceDataProgress : 0} />
+                                        <IBar name="Products" progress={statusProgress ? statusProgress.reportDataProgress : 0} />
+                                        <IBar name="Advertising" progress={statusProgress ? statusProgress.adDataProgress : 0} optedOut={statusProgress.adOptedOut} />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    )
+                    : null
+                }
             </div>
         )
     }
 }
 
-const mapStateToProps = (state) => (
-    {
-        statusProgress: state.header.statusProgress
-    }
-);
+const mapStateToProps = (state) => ({
+    statusProgress: state.header.statusProgress,
+    isShowImportProgressBar: state.header.isShowImportProgressBar
+});
 
 const mapDispatchToProps = (dispatch) => ({
     setStatusProgress: (data) => dispatch({ type: SET_STATUS_PROGRESS, payload: data })

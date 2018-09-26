@@ -59,7 +59,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.props.authToken && this.checkNavDashboard()
+        this.checkNavDashboard()
     }
 
     checkNavDashboard = () => {
@@ -75,8 +75,10 @@ class Dashboard extends Component {
             .get(`GetTabs`)
             .then((res) => {
                 if (res.data.IsSuccess) {
-                    const configurationTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Configuration').Tabs || []
-                    const dashboardTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Dashboards').Tabs || []
+                    const configTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Configuration')
+                    const configurationTabs = configTabs ? configTabs.Tabs : []
+                    const dashTabs = res.data.ListOfTabs.find((item) => item.ModuleName === 'Dashboards')
+                    const dashboardTabs = dashTabs ? dashTabs.Tabs : []
 
                     const filterNavDash = dashboardTabs.map((tabString) => ({
                         ...DASHBOARD_TAB_MAP[tabString],
@@ -107,12 +109,7 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { match, authToken } = this.props
-        if ( !authToken ) {
-            return (
-                <Redirect to={`${process.env.PUBLIC_URL}/login`} />
-            )
-        }
+        const { match } = this.props
 
         return (
             <React.Fragment>
@@ -142,7 +139,6 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    authToken: state.login.authToken,
     navDashboard: state.header.navDashboard
 })
 

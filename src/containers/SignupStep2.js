@@ -11,29 +11,25 @@ class SignupStep2 extends Component {
     signupAuthStep: PropTypes.number
   };
 
-  // constructor(props){
-  //   super(props)
-  //
-  // }
-
   renderAction = () => {
     const action = this.props.signupAuthStep
 
-    if ( action === 1 ){
-      return ( <MWSActionRegion /> )
-    } else if ( action === 2 ){
-      return ( <MWSActionAuth /> )
-    } else if ( action === 3 ){
-      return ( <MWSActionDomain /> )
+    if (action === 1) {
+      return (<MWSActionRegion />)
+    } else if (action === 2) {
+      return (<MWSActionAuth />)
+    } else if (action === 3) {
+      return (<MWSActionDomain />)
     }
   }
 
-  render(){
-    return(
+  render() {
+    localStorage.setItem("isInitialImport", true);
+    return (
       <div className="signup__container">
         <div className="signup__form">
           <h1 className="signup__heading">Connect with your SellerCentral account</h1>
-          { this.renderAction() }
+          {this.renderAction()}
         </div>
       </div>
     )

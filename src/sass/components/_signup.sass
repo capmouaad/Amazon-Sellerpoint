@@ -1,6 +1,6 @@
 .signup
   flex: 1 0 auto
-  padding-top: 120px
+  // padding-top: 120px
   padding-bottom: 70px
   // min-height: 100vh
   background: $colorBlue
@@ -19,6 +19,7 @@
       &--centered
         margin-left: auto
         margin-right: auto
+        text-align: center
 
   &__captcha
     max-width: 350px
@@ -65,14 +66,14 @@
     max-width: 350px
 
   &__note
+    width: 571px
     background: #FFF3DE
     padding: 25px 10px 15px 25px
     font-size: 14px
     margin-left: -20px
     margin-right: -20px
     margin-bottom: 30px
-    .t-up
-      font-size: 17px
+    color: #383838
 
   &__seller-form
     margin-top: 25px
@@ -99,11 +100,13 @@
       td
         background: #E5E5E5
         font-weight: bold
+        color: #000000
     tbody
       td
         border-bottom: 1px solid #979797
         padding-top: 10px
         padding-bottom: 10px
+        color: #000000
 
     td
       font-size: 14px
@@ -178,8 +181,6 @@
       padding-right: 20px
     &__note
       font-size: 13px
-      .t-up
-        font-size: 15px
     &__subcontainer
       padding-left: 0
       padding-right: 0
@@ -220,7 +221,7 @@
   &:hover
     border-color: #0A1E39
   &.is-active
-    border-color: #0A1E39
+    border: 3px solid #0A1E39
     color: #0A1E39
     &:after
       opacity: 1
@@ -259,3 +260,11 @@
 .step3-div.modal-dialog
   margin-top: 35%;
   transform: translateY(-50%);
+
+.signup-text-important
+  font-size: 18px
+  strong
+    font-weight: bold
+
+.config-padding
+  padding: 0 !important

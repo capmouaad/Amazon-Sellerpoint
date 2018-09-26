@@ -12,7 +12,6 @@ import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
 import { tAndC, privacyPolicy } from '../components/Footer';
-import Toaster, { showToastMessage } from '../services/toasterNotification'
 
 class SignupStep1 extends Component {
   static propTypes = {
@@ -119,14 +118,21 @@ class SignupStep1 extends Component {
       .get(`CheckEmail?Email=` + encodeURIComponent(email))
       .then((res) => {
         console.log('backend responce to Get CheckEmail', res)
-        if (res.data.IsDuplicateUser) {
-          history.push(`/login`)
-          // this.formRef.current.updateInputsWithError({
-          //   email: res.data.ErrorMessage
-          // });
-          this.setState({ isFormSubmited: false })
-        } else {
-          this.createUser(leadObj) // move on if it's fine
+        if (res.data.IsSuccess) {
+          if (res.data.IsDuplicateUser) {
+            this.setState({
+              apiError: res.data.ErrorMessage,
+              isFormSubmited: false
+            })
+          } else {
+            this.createUser(leadObj) // move on if it's fine
+          }
+        }
+        else {
+          this.setState({
+            apiError: res.data.ErrorMessage,
+            isFormSubmited: false
+          })
         }
       })
       .catch(function (error) {
@@ -153,10 +159,7 @@ class SignupStep1 extends Component {
           this.setState({
             apiError: res.data.ErrorMessage
           })
-
-          showToastMessage(res.data.ErrorMessage, "Error");
         }
-
         this.setState({ isFormSubmited: false })
       })
       .catch(function (error) {
@@ -219,7 +222,6 @@ class SignupStep1 extends Component {
 
     return (
       <div className="signup__container">
-        <Toaster />
         <Formsy
           className="signup__form"
           onSubmit={this.submitForm}

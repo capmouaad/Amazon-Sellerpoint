@@ -48,13 +48,20 @@
           span
             background: $colorYellow
             border-color: $colorYellow
-            color: #333333
+            color: #1D3049
+            font-family: 'Helvetica Neue'
+            font-size: 16px
             font-weight: bold
+            text-align: center
+            width: 36px
+            height: 36px
         &__name_config
-          color: #333333
-          text-align: center
+          color: #1D3049
+          font-family: 'Varela Round'
           font-size: 14px
-          padding-top: 5px
+          line-height: 17px
+          text-align: center
+          margin-top: 8px
     
     &.is-feature
       .signup-nav
@@ -64,14 +71,22 @@
           &::after
             background-color: transparent !important
           span
-            border: 3px solid #cccccc !important
+            color: #888B8B
+            font-family: "Helvetica Neue"
+            font-size: 16px
             font-weight: bold
+            width: 36px
+            border: 3px solid #CCCCCC
+            background-color: #EDEDED
+            width: 36px
+            height: 36px
         &__name_config
-          text-align: center
-          color: #333333
-          text-align: center
+          color: #4A4A4A
+          font-family: 'Varela Round'
           font-size: 14px
-          padding-top: 5px
+          line-height: 17px
+          text-align: center
+          margin-top: 8px
     &.is-done
       .signup-nav
         &__number
@@ -97,15 +112,14 @@
       .signup-nav
         &__number
           span
-            background: $colorGreen
+            background: $colorGreen svg-load('../images/icons/checkmark.svg') no-repeat center
             background-size: 70%
             border-color: $colorGreen
-            color: #333
-            font-size: 14px
+            color: white
+            font-size: 0
         &__name_config
           color: $colorGreen
           font-size: 14px
-          padding-top: 5px
 
 
   &__number
