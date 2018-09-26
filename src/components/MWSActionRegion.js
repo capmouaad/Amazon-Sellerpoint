@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import api from '../services/Api';
 import { setSignupFields, setSignupAuthStep } from '../actions/signup';
 
 class MWSActionRegion extends Component {
@@ -21,11 +20,11 @@ class MWSActionRegion extends Component {
     )
   }
 
-  render(){
+  render() {
 
     const { marketplace_region: marketplaceRegion = 1 } = this.props.signupFields
 
-    return(
+    return (
       <React.Fragment>
         <div className="signup__choose">Choose the marketplace you would like to connect:</div>
         <div className="signup__options">
@@ -44,7 +43,7 @@ class MWSActionRegion extends Component {
           3. Grant permission to KiniMetrix Sellerpoint by confirming
           <br /><br />
           <span className='signup-text-important'>
-          4. Once the connection is made, you will <strong>{`come back`}</strong> and input the ‘Seller ID’ and the ‘MWS Auth Token’
+            4. Once the connection is made, you will <strong>{`come back`}</strong> and input the ‘Seller ID’ and the ‘MWS Auth Token’
           </span>
         </div>
         <div className="signup__form-cta signup__form-cta--centered">

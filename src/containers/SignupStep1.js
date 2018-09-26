@@ -12,7 +12,6 @@ import FormInput from '../components/Forms/FormInput';
 import PassMeter from '../components/Forms/PassMeter';
 import FormLoader from '../components/Forms/FormLoader';
 import { tAndC, privacyPolicy } from '../components/Footer';
-import Toaster, { showToastMessage } from '../services/toasterNotification'
 
 class SignupStep1 extends Component {
   static propTypes = {
@@ -125,7 +124,6 @@ class SignupStep1 extends Component {
               apiError: res.data.ErrorMessage,
               isFormSubmited: false
             })
-            showToastMessage(res.data.ErrorMessage, "Error");
           } else {
             this.createUser(leadObj) // move on if it's fine
           }
@@ -135,7 +133,6 @@ class SignupStep1 extends Component {
             apiError: res.data.ErrorMessage,
             isFormSubmited: false
           })
-          showToastMessage(res.data.ErrorMessage, "Error");
         }
       })
       .catch(function (error) {
@@ -162,9 +159,7 @@ class SignupStep1 extends Component {
           this.setState({
             apiError: res.data.ErrorMessage
           })
-          showToastMessage(res.data.ErrorMessage, "Error");
         }
-
         this.setState({ isFormSubmited: false })
       })
       .catch(function (error) {
@@ -227,7 +222,6 @@ class SignupStep1 extends Component {
 
     return (
       <div className="signup__container">
-        <Toaster />
         <Formsy
           className="signup__form"
           onSubmit={this.submitForm}
