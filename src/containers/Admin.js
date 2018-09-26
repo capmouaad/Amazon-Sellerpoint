@@ -59,10 +59,10 @@ class AdminComponent extends Component {
 
     deleteSeller() {
         const that = this;
+        that.setState({ isLoading: true });
         api
             .get(`DeleteSeller?clientId=` + this.state.clientId)
             .then((res) => {
-                that.setState({ isLoading: false });
                 that.cancel();
                 if (res.data.IsSuccess) {
                     showToastMessage("Seller deleted succesfully.", "Success");
@@ -70,6 +70,7 @@ class AdminComponent extends Component {
                 } else {
                     showToastMessage(res.data.ErrorMessage, "Error");
                 }
+                that.setState({ isLoading: false });
             })
             .catch(function (error) {
                 showToastMessage("!Unknown Issue", "Error");
@@ -79,6 +80,7 @@ class AdminComponent extends Component {
 
     getSellers() {
         const that = this;
+        that.setState({ isLoading: true });
         api
             .get(`GetAllSellers`)
             .then((res) => {
