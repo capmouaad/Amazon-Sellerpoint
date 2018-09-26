@@ -140,6 +140,7 @@ class DashMarketplaceConfig extends Component {
                   advState={APP_CONFIG.LWA_Source.Configuration.state}
                   onApiError={this.setApiError}
                   onFormSubmited={this.onFormSubmited}
+                  isInitialImport={false}
                 />
               </div>
             )}

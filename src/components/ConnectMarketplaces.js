@@ -9,7 +9,6 @@ class ConnectMarketplaces extends Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       sellerMarketplaces: [],
       advState: null,
@@ -28,14 +27,13 @@ class ConnectMarketplaces extends Component {
   };
 
   getSellerMarketplaces = () => {
+    localStorage.setItem("isInitialImport", this.props.isInitialImport)
     this.setState({ loading: true })
     api
       .get(`GetSellerMarketPlaces`)
       .then((res) => {
         console.log('backend responce to GET GetSellerMarketPlaces', res)
-
         if (res.data.IsSuccess) {
-
           this.setState({
             sellerMarketplaces: res.data.Marketplaces
           })
@@ -52,7 +50,6 @@ class ConnectMarketplaces extends Component {
       .finally(() => {
         this.setState({ loading: false })
       })
-
   }
 
   onOpenModel = (advState, sellerId) => {
@@ -75,6 +72,7 @@ class ConnectMarketplaces extends Component {
     this.setState({
       popupOpen: false
     });
+
   }
 
   LWAAuth = (advState) => {

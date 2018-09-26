@@ -134,6 +134,7 @@ class SignupStep3 extends Component {
               advState={this.props.advState || APP_CONFIG.LWA_Source.SignUpStep3.state}
               onApiError={this.setApiError}
               onFormSubmited={this.onFormSubmited}
+              isInitialImport={true}
             />
             <div className="signup__form-cta signup__form-cta--centered">
               <input type="checkbox" onChange={this.onCheckedInput} disabled={isDisabled} className={isDisabled ? 'check-box-disabled' : ''} /> I don't have advertising data to connect

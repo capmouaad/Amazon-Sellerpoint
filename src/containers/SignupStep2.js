@@ -24,6 +24,7 @@ class SignupStep2 extends Component {
   }
 
   render() {
+    localStorage.setItem("isInitialImport", true);
     return (
       <div className="signup__container">
         <div className="signup__form">

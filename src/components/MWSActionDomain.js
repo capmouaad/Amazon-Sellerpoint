@@ -7,7 +7,7 @@ import { setAddMarketStep, setSignupFields, setSignupStep, setSignupAuthStep } f
 
 class MWSActionDomain extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -19,13 +19,13 @@ class MWSActionDomain extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.setupMarketplaceDomains()
   }
 
   setupMarketplaceDomains = async () => {
     try {
-      this.setState({loading: true})
+      this.setState({ loading: true })
       const res = await api.get(`GetSellerMarketPlaces`)
       if (res.data.IsSuccess) {
         this.setState({
@@ -43,7 +43,7 @@ class MWSActionDomain extends Component {
     } catch (e) {
       console.error(e)
     } finally {
-      this.setState({loading: false})
+      this.setState({ loading: false })
     }
   }
 
@@ -58,7 +58,7 @@ class MWSActionDomain extends Component {
         index = options.indexOf(id)
         options.splice(index, 1)
       }
-  
+
       this.setState({
         choosedOptions: options
       })
@@ -87,20 +87,20 @@ class MWSActionDomain extends Component {
         }
       })
 
-      const filteredMarketplaces = marketplaceData.filter( x => choosedOptions.indexOf(x.marketPlaceId) !== -1 )
-
+      const filteredMarketplaces = marketplaceData.filter(x => choosedOptions.indexOf(x.marketPlaceId) !== -1)
 
       const obj = {
         sellerId: seller_id,
         authToken: mws_auth,
-        marketplaces: filteredMarketplaces
+        marketplaces: filteredMarketplaces,
+        isInitialImport: localStorage.getItem("isInitialImport")
       }
 
-      if(filteredMarketplaces.length > 0) {
+      if (filteredMarketplaces.length > 0) {
         //butch save
         const res = await api.post(`SaveMarketPlaceIds`, obj)
         console.log('backend responce to POST SaveMarketPlaceIds', res)
-        if ( res.data.IsSuccess ){
+        if (res.data.IsSuccess) {
           if (this.props.isMarketSetup) {
             this.props.setAddMarketStep(2)
             this.props.setSignupAuthStep(1)
@@ -137,12 +137,12 @@ class MWSActionDomain extends Component {
     }
   }
 
-  async updateStepOnBackend(){
+  async updateStepOnBackend() {
     const res = await api.post('UpdateCurrentStepAsync?step=ConnectAdvertising');
     return await res.data;
   }
 
-  render(){
+  render() {
     const { choosedOptions, marketplaceDomains, isFormSubmited, apiError, loading } = this.state
     const { signupFields } = this.props
     console.log('>>> herhehrer', marketplaceDomains)
@@ -155,34 +155,34 @@ class MWSActionDomain extends Component {
       }
     })
 
-    return(
-      
-      <div className={"loader-container " + (loading || isFormSubmited ? "is-loading" : null) }>
-      
+    return (
+
+      <div className={"loader-container " + (loading || isFormSubmited ? "is-loading" : null)}>
+
         <FormLoader />
-        { apiError &&
+        {apiError &&
           <span className="ui-input-validation">{apiError}</span>
         }
         <p className="t-parapgraph"><strong>Add Marketplaces to your SellerPoint account: </strong></p>
         <div className="signup__checkboxes">
-          { !!marketplaceDomains && options.map((cb, i) => {
-            return(
+          {!!marketplaceDomains && options.map((cb, i) => {
+            return (
               <CheckBox
                 key={`domainCheckBox-${i}`}
                 name={cb.name}
                 text={cb.name}
                 clickHandler={this.chooseOption.bind(this, cb.id)}
-                isActive={choosedOptions.indexOf(cb.id) >= 0 }
-                isAddedToMarket={marketplaceDomains.findIndex((item) => item.id === cb.id) >= 0 }
+                isActive={choosedOptions.indexOf(cb.id) >= 0}
+                isAddedToMarket={marketplaceDomains.findIndex((item) => item.id === cb.id) >= 0}
               />
             )
-          }) }
+          })}
         </div>
         <div className="signup__form-cta signup__form-cta--centered">
           <span onClick={this.nextAction} className="btn btn-signup btn--block">Next</span>
         </div>
       </div>
-     
+
     )
   }
 }
@@ -190,7 +190,7 @@ class MWSActionDomain extends Component {
 const mapStateToProps = (state) => ({
   signupFields: state.signup.fields,
   signupAuthStep: state.signup.signupAuthStep,
-  sellerId:state.seller_id
+  sellerId: state.seller_id
 });
 
 const mapDispatchToProps = (dispatch) => ({
