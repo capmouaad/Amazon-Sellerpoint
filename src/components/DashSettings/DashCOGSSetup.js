@@ -124,7 +124,7 @@ export default class DashCOGSSetup extends Component {
 
                     e.target.name = e.target.value;
                     this.lstEditedCOGS = this.lstEditedCOGS.filter((value, i) => value.COGSId !== cellInfo.original.COGSId)
-                    this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value > 0 ? e.target.value : e.target.defaultValue) });
+                    this.lstEditedCOGS.push({ COGSId: cellInfo.original.COGSId, LandedCost: (e.target.value != null && e.target.value != "" ? e.target.value : e.target.defaultValue) });
                 }}
                 onClick={e => {
                     e.target.value = e.target.name;
