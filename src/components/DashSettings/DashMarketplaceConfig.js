@@ -134,7 +134,7 @@ class DashMarketplaceConfig extends Component {
             render={props => (
               <div>
                 <div className="dash-new-marketplace">
-                  <Link className="btn btn-new-marketplace" to="/dash/configuration/marketplaceconfiguration/addMarketPlace">Add New Marketplace</Link>
+                  <Link className="btn-new-marketplace" to="/dash/configuration/marketplaceconfiguration/addMarketPlace">Add New Marketplace</Link>
                 </div>
                 <ConnectMarketplaces
                   advState={APP_CONFIG.LWA_Source.Configuration.state}
