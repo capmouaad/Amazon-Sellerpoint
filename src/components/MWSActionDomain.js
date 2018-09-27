@@ -88,12 +88,11 @@ class MWSActionDomain extends Component {
       })
 
       const filteredMarketplaces = marketplaceData.filter(x => choosedOptions.indexOf(x.marketPlaceId) !== -1)
-
       const obj = {
         sellerId: seller_id,
         authToken: mws_auth,
         marketplaces: filteredMarketplaces,
-        isInitialImport: localStorage.getItem("isInitialImport")
+        isInitialImport: signupFields.isInitialImport
       }
 
       if (filteredMarketplaces.length > 0) {

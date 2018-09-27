@@ -183,7 +183,8 @@ class SignupStep1 extends Component {
       last_name: last_name,
       company_name: company_name,
       phone: phone,
-      password: password
+      password: password,
+      isInitialImport: true
     })
 
     this.updateStepOnBackend()
