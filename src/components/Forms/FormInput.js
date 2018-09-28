@@ -51,7 +51,6 @@ class FormInput extends Component {
     }
   }
 
-
   getInput = () => {
     const { name, placeholder, mask } = this.props
     const type = this.props.type ? this.props.type : "text"
@@ -117,8 +116,6 @@ class FormInput extends Component {
         </React.Fragment>
       )
     }
-
-
   }
 }
 
