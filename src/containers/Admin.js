@@ -23,7 +23,7 @@ class AdminComponent extends Component {
             selectedSellerId: "",
             sellerIdPopup: false,
             confirmPopup: false,
-            clientId:0
+            clientId: 0
         }
 
         this.getSellers = this.getSellers.bind(this);
@@ -41,8 +41,8 @@ class AdminComponent extends Component {
         this.getSellers();
     }
 
-    sellerIdPopup(sellerId,clientId) {
-        this.setState({ sellerIdPopup: true, selectedSellerId: sellerId,clientId });
+    sellerIdPopup(sellerId, clientId) {
+        this.setState({ sellerIdPopup: true, selectedSellerId: sellerId, clientId });
     }
     sellerIdSubmit() {
         if (this.state.selectedSellerId === this.state.sellerId) {
@@ -60,8 +60,7 @@ class AdminComponent extends Component {
     deleteSeller() {
         const that = this;
         that.setState({ isLoading: true });
-        api
-            .get(`DeleteSeller?clientId=` + this.state.clientId)
+        api.delete(`DeleteSeller?clientId=` + this.state.clientId)
             .then((res) => {
                 that.cancel();
                 if (res.data.IsSuccess) {
@@ -75,6 +74,7 @@ class AdminComponent extends Component {
             .catch(function (error) {
                 showToastMessage("!Unknown Issue", "Error");
                 that.setState({ isLoading: false });
+                console.log(error);
             });
     }
 
@@ -106,7 +106,7 @@ class AdminComponent extends Component {
                 <Redirect to={`${process.env.PUBLIC_URL}/login`} />
             )
 
-        } else if (userInfo.Role !== "Admin") {
+        } else if (userInfo.Role.toUpperCase() !== "ADMIN") {
             return (
                 <Redirect to={`${process.env.PUBLIC_URL}/dash/dashboards`} />
             )
@@ -156,7 +156,7 @@ class AdminComponent extends Component {
                                             {
                                                 Header: "Action",
                                                 id: "SellerId",
-                                                accessor: d => (<button onClick={() => this.sellerIdPopup(d.SellerId,d.ClientId)}><SvgIcon name="garbage"></SvgIcon></button>)
+                                                accessor: d => (<button onClick={() => this.sellerIdPopup(d.SellerId, d.ClientId)}><SvgIcon name="garbage"></SvgIcon></button>)
                                             }
                                         ]}
                                         defaultPageSize={10}
