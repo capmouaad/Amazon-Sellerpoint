@@ -13,6 +13,14 @@ const initialState = {
     isTabOpened: true
 }
 
+const multiFilterStyle = {
+    control: styles => ({ ...styles, backgroundColor: 'white', border: 'none !important', boxShadow: 'none !important', padding: '0 !important' }),
+    placeholder: (styles) => ({
+        ...styles,
+        color: '#595959'
+    })
+}
+
 const colourStyles = {
     control: styles => ({ ...styles, backgroundColor: 'white' }),
     option: (styles, { data, isAlternative, isDisabled, isFocused, isPossible, isSelected }) => {
@@ -117,23 +125,39 @@ class DashFilters extends Component {
     }
 
     bindCurrentSelections = async () => {
-
         const { setCurrentSelections } = this.props
         if (window.GlobalQdtComponents) {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
             await app.getList('CurrentSelections', (reply) => {
-
                 // Flatten data from qlik so redux connect can compare object changes
                 let data = []
-                reply.qSelectionObject.qSelections.forEach((sel) => {
+                let multiSelected = []
+                reply.qSelectionObject.qSelections.map((sel) => {
                     if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
-                        sel.qSelectedFieldSelectionInfo.forEach((item) => {
-                            data.push({
-                                qField: sel.qField,
-                                qName: item.qName
+                        if (sel.qSelectedFieldSelectionInfo.length > 1) {
+                            sel.qSelectedFieldSelectionInfo.map((item) => {
+                                multiSelected.push({
+                                    label: item.qName,
+                                    qField: sel.qField,
+                                    qName: item.qName
+                                })
                             })
-                        })
+
+                            data.push({
+                                isShowList: true,
+                                qField: sel.qField,
+                                listSelected: multiSelected,
+                                qName: `${sel.qField}: ${sel.qSelectedFieldSelectionInfo.length} of ${sel.qTotal}`
+                            })
+                        } else {
+                            sel.qSelectedFieldSelectionInfo.map((item) => {
+                                data.push({
+                                    qField: sel.qField,
+                                    qName: item.qName
+                                })
+                            })
+                        }
                     }
                 })
 
@@ -524,20 +548,41 @@ class DashFilters extends Component {
                             <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 2 }}>
                                 <div className="dash-section__toggler-icon"></div>
                             </div>
-                            <h2 className="dash-filters__selected-title">Selected Filters</h2>
+                            <h2 className="dash-filters__selected-title">{`Selected Filters ${currentSelections.length === 0 ? ': None': ''}`}</h2>
                         </div>
                         <div className="dash-filters__selection">
                             {
                                 currentSelections.map((value, idx) => {
                                     return (
-                                        <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
-                                            {value.qName}
-                                            <i
-                                                className="fa fa-times"
-                                                style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                onClick={() => { this.deleteFilter({ item: value, qName: value.qName }) }}
-                                            ></i>
-                                        </span>
+                                        <div key={`${value.qName}-${idx}`}>
+                                            {
+                                            value.isShowList
+                                            ? (
+                                                <Select
+                                                    className="multi-selected-list"
+                                                    closeMenuOnSelect
+                                                    autoFocusFirstOption={false}
+                                                    hideSelectedOptions={false}
+                                                    onChange={(optionSelected) => { this.deleteFilter({ item: optionSelected, qName: optionSelected.qName })}}
+                                                    options={value.listSelected}
+                                                    isClearable={false}
+                                                    controlShouldRenderValue={false}
+                                                    placeholder={value.qName}
+                                                    styles={multiFilterStyle}
+                                                />
+                                            )
+                                            : (
+                                                <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
+                                                    {value.qName}
+                                                    <i
+                                                        className="fa fa-times"
+                                                        style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
+                                                        onClick={() => { this.deleteFilter({ item: value, qName: value.qName }) }}
+                                                    ></i>
+                                                </span>
+                                            )
+                                        }
+                                        </div>
                                     )
                                 })
                             }
