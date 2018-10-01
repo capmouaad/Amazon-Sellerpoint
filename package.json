@@ -119,8 +119,7 @@
     "test": "node scripts/test.js --env=jsdom",
     "surge": "mv build/index.html build/200.html && surge --domain sallerpoint.surge.sh --project ./build",
     "developer": "concurrently --kill-others \"gulp\" \"yarn start\"",
-    "builder": "gulp build --production && yarn build",
-    "postbuild": "react-snap"
+    "builder": "gulp build --production && yarn build"
   },
   "jest": {
     "collectCoverageFrom": [
