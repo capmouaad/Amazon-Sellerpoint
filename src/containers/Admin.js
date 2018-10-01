@@ -109,7 +109,7 @@ class AdminComponent extends Component {
         const that = this;
         that.setState({ isLoading: true });
         api
-            .get(`GetClients`)
+            .get(`GetClientsByUserID`)
             .then((res) => {
                 that.setState({ isLoading: false });
                 if (res.data.IsSuccess) {
@@ -133,6 +133,10 @@ class AdminComponent extends Component {
                 if (res.data.IsSuccess) {
                     if (type != 3) {
                         setTimeout(() => { window.location = window.location.origin + "/home/index"; }, 2000);
+                    }
+                    else{
+                        
+                        setTimeout(() => { this.props.history.push(`dash/dashboards`)}, 2000);
                     }
                     showToastMessage("Instance successfully switched", "Success");
 
