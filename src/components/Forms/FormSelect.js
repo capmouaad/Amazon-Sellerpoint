@@ -11,7 +11,7 @@ class FormSelect extends Component {
   };
 
   changeValue = (event) => {
-    this.props.onChangeHandler(event)
+    // this.props.onChangeHandler(event)
     this.props.setValue(event.currentTarget.value);
   }
 

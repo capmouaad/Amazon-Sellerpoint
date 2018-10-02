@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Route, Redirect, Switch } from 'react-router-dom'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { setHeaderClass } from '../actions/header';
 import KeywordAutomation from '../components/Keywords/KeywordAutomation'
+import KeywordAutomationMenu from '../components/Keywords/KeywordAutomationMenu'
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import ReloadStatusBar from '../components/ReloadStatusBar'
 
@@ -16,11 +18,15 @@ class DashboardKeywords extends Component {
   }
 
   render() {
+    const { match } = this.props
     return (
       <React.Fragment>
         <ImportProgress />
         <ReloadStatusBar />
-        <KeywordAutomation/>
+        <Switch>
+          <Route exact path={`${match.url}`} component={KeywordAutomation} />
+          <Route path={`${match.url}/KeywordsAutomationMenu`} component={KeywordAutomationMenu} />
+        </Switch>
       </React.Fragment>
     )
   }
