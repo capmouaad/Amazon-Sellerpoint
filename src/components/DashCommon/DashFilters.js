@@ -162,7 +162,17 @@ class DashFilters extends Component {
                         }
                     }
                 })
-                setCurrentSelections(data)
+
+
+                setCurrentSelections(data.sort((a, b) => {
+                    if (a.isShowList) {
+                        return -1
+                    } else if (b.isShowList) {
+                        return 1
+                    } else {
+                        return 0
+                    }
+                }))
             })
         }
     }
