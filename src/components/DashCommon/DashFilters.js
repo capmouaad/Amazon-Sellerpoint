@@ -6,6 +6,7 @@ import Select from 'tuna.react-select';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js';
 import { APP_CONFIG } from '../../constants'
+import Option from '../OptionItem'
 
 import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
 
@@ -18,7 +19,8 @@ const multiFilterStyle = {
     placeholder: (styles) => ({
         ...styles,
         color: '#595959'
-    })
+    }),
+    option: styles => ({ ...styles, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'})
 }
 
 const colourStyles = {
@@ -135,7 +137,7 @@ class DashFilters extends Component {
                 let multiSelected = []
                 reply.qSelectionObject.qSelections.map((sel) => {
                     if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
-                        if (sel.qSelectedFieldSelectionInfo.length > 1) {
+                        if (sel.qSelectedFieldSelectionInfo.length > 4) {
                             sel.qSelectedFieldSelectionInfo.map((item) => {
                                 multiSelected.push({
                                     label: item.qName,
@@ -160,7 +162,6 @@ class DashFilters extends Component {
                         }
                     }
                 })
-
                 setCurrentSelections(data)
             })
         }
@@ -548,7 +549,14 @@ class DashFilters extends Component {
                             <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 2 }}>
                                 <div className="dash-section__toggler-icon"></div>
                             </div>
-                            <h2 className="dash-filters__selected-title">{`Selected Filters ${currentSelections.length === 0 ? ': None': ''}`}</h2>
+                            <h2 className="dash-filters__selected-title">
+                                {`Selected Filters: `}
+                                {
+                                    currentSelections.length === 0
+                                    ? <span className='thin-text'>{`None`}</span>
+                                    : null
+                                }
+                            </h2>
                         </div>
                         <div className="dash-filters__selection">
                             {
@@ -569,6 +577,7 @@ class DashFilters extends Component {
                                                     controlShouldRenderValue={false}
                                                     placeholder={value.qName}
                                                     styles={multiFilterStyle}
+                                                    components={{ Option }}
                                                 />
                                             )
                                             : (

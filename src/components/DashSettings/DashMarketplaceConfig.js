@@ -24,6 +24,7 @@ const SignupNavEl = (props) => {
 class AddMarketSwitch extends Component {
   componentDidMount() {
     this.props.resetSignupAuthStep(1)
+    this.props.setAddMarketStep(1)
   }
 
   renderAddMarketStep = () => {
@@ -149,7 +150,7 @@ class DashMarketplaceConfig extends Component {
             exact
             path={`${match.url}/addMarketPlace`}
             render={props => (
-              <AddMarketSwitch {...props} signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
+              <AddMarketSwitch {...props} setAddMarketStep={this.props.setAddMarketStep} signupAuthStep={this.props.signupAuthStep} resetSignupAuthStep={this.props.setSignupAuthStep} onGoback={this.onGoBack} signupStep={this.props.signupStep} addMarketStep={this.props.addMarketStep} />
             )}
           />
         </div>

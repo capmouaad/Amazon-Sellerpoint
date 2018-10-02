@@ -42,7 +42,7 @@ class MWSActionRegion extends Component {
           <br /><br />
           3. Grant permission to KiniMetrix Sellerpoint by confirming
           <br /><br />
-          <span className='signup-text-important'>
+          <span >
             4. Once the connection is made, you will <strong>{`come back`}</strong> and input the ‘Seller ID’ and the ‘MWS Auth Token’
           </span>
         </div>
