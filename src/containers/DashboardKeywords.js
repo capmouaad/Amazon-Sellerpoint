@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { setHeaderClass } from '../actions/header';
 import KeywordAutomation from '../components/Keywords/KeywordAutomation'
 import KeywordAutomationMenu from '../components/Keywords/KeywordAutomationMenu'
+import ViewCurrentAutomations from '../components/Keywords/ViewCurrentAutomations'
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import ReloadStatusBar from '../components/ReloadStatusBar'
 
@@ -24,8 +25,9 @@ class DashboardKeywords extends Component {
         <ImportProgress />
         <ReloadStatusBar />
         <Switch>
-          <Route exact path={`${match.url}`} component={KeywordAutomation} />
-          <Route path={`${match.url}/KeywordsAutomationMenu`} component={KeywordAutomationMenu} />
+          <Route exact path={`${match.url}`} component={KeywordAutomationMenu} />
+          <Route path={`${match.url}/CreateNewAutomation`} component={KeywordAutomation} />
+          <Route path={`${match.url}/ViewCurrentAutomations`} component={ViewCurrentAutomations} />
         </Switch>
       </React.Fragment>
     )

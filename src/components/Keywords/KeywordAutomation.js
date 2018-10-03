@@ -85,7 +85,7 @@ class KeywordAutomation extends Component {
   }
 
   goBackMainMenu = () => {
-    this.props.history.push('/dash/Keywords/KeywordsAutomationMenu')
+    this.props.history.push('/dash/Keywords')
   }
 
   render() {
