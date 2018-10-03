@@ -8,6 +8,7 @@ import KeywordAutomationMenu from '../components/Keywords/KeywordAutomationMenu'
 import ViewCurrentAutomations from '../components/Keywords/ViewCurrentAutomations'
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import ReloadStatusBar from '../components/ReloadStatusBar'
+import CompetitiveASINSelection from '../components/Keywords/CompetitiveASINSelection'
 
 class DashboardKeywords extends Component {
   static propTypes = {
@@ -28,6 +29,7 @@ class DashboardKeywords extends Component {
           <Route exact path={`${match.url}`} component={KeywordAutomationMenu} />
           <Route path={`${match.url}/CreateNewAutomation`} component={KeywordAutomation} />
           <Route path={`${match.url}/ViewCurrentAutomations`} component={ViewCurrentAutomations} />
+          <Route path={`${match.url}/CompetitiveASINSelection`} component={CompetitiveASINSelection} />
         </Switch>
       </React.Fragment>
     )
