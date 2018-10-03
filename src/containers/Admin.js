@@ -8,6 +8,7 @@ import Toaster, { showToastMessage } from '../services/toasterNotification'
 import Modal from 'react-responsive-modal';
 import SvgIcon from "../components/Helpers/SvgIcon"
 import { SET_NAVBAR_DASHBOARD } from '../store/ActionTypes'
+import { setSignupId } from '../actions/signup';
 import { connect } from 'react-redux';
 
 class AdminComponent extends Component {
@@ -138,7 +139,8 @@ class AdminComponent extends Component {
                         
                         setTimeout(() => { this.props.history.push(`dash/dashboards`)}, 2000);
                     }
-                    showToastMessage("Instance successfully switched", "Success");
+                    that.props.setSignupId(clientId);
+                    showToastMessage("The Instance has been switched successfully.", "Success");
 
                 } else {
                     showToastMessage(res.data.ErrorMessage, "Error");
@@ -166,7 +168,8 @@ class AdminComponent extends Component {
         const instanceModel = {
             Instances: this.state.Instances,
             isLoading: this.state.isLoading,
-            changeInstance: this.changeInstance
+            changeInstance: this.changeInstance,
+            signupId:this.props.signupId
         }
 
         const { authToken, userInfo } = this.props
@@ -181,7 +184,7 @@ class AdminComponent extends Component {
             return (<Instances {...instanceModel} />)
         }
         else {
-            return [<Instances {...instanceModel} />, <Admin {...model} />]
+            return [<Instances {...instanceModel} key="0" />, <Admin {...model}  key="1"/>]
         }
 
     }
@@ -189,11 +192,13 @@ class AdminComponent extends Component {
 const mapStateToProps = (state) => ({
     authToken: state.login.authToken,
     navDashboard: state.header.navDashboard,
-    userInfo: state.login.userInfo
+    userInfo: state.login.userInfo,
+    signupId: state.signup.signupId,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data })
+    setNavbarDashboard: (data) => dispatch({ type: SET_NAVBAR_DASHBOARD, payload: data }),
+    setSignupId: (data) => dispatch(setSignupId(data)),
 })
 
 
@@ -339,7 +344,7 @@ const Instances = (props) => {
                                     {
                                         Header: "Action",
                                         id: "ClientId",
-                                        accessor: d => (<input type="radio" onClick={() => props.changeInstance(d.ClientID, d.ClientType)}></input>)
+                                        accessor: d => (<input type="radio" name="ClientType" onClick={() => props.changeInstance(d.ClientID, d.ClientType)} checked={props.signupId===d.ClientID || d.IsCurrent}></input>)
                                     }
                                 ]}
                             />
