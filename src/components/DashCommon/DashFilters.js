@@ -20,7 +20,24 @@ const multiFilterStyle = {
         ...styles,
         color: '#595959'
     }),
-    option: styles => ({ ...styles, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'})
+    option: (styles, { isFocused }) => {
+        let styleSelect = styles
+        if (isFocused) {
+           styleSelect = {
+                ...styleSelect,
+                backgroundColor: '#fff',
+                color: '#383838'
+           }
+        }
+        return {
+            ...styleSelect,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor: '#fff',
+            color: '#383838'
+        }
+    }
 }
 
 const colourStyles = {
@@ -578,7 +595,7 @@ class DashFilters extends Component {
                                             ? (
                                                 <Select
                                                     className="multi-selected-list"
-                                                    closeMenuOnSelect
+                                                    closeMenuOnSelect={false}
                                                     autoFocusFirstOption={false}
                                                     hideSelectedOptions={false}
                                                     onChange={(optionSelected) => { this.deleteFilter({ item: optionSelected, qName: optionSelected.qName })}}

@@ -47,6 +47,7 @@ class KeywordAutomation extends Component {
   }
 
   handleSubmit = async (e) => {
+    const { history } = this.props
     const { asin, automationName, inputKeywords, marketplaceId } = this.state
     try {
       this.setState({
@@ -68,7 +69,13 @@ class KeywordAutomation extends Component {
       const { IsSuccess, ErrorMessage } = formRes.data;
 
       if (IsSuccess) {
-
+        history.push({
+          pathname: '/dash/Keywords/CompetitiveASINSelection',
+          state: {
+            marketplaceId,
+            inputKeywords
+          }
+        })
       } else {
         throw new Error(ErrorMessage)
       }
