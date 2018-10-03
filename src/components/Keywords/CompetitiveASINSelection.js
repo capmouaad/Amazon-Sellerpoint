@@ -114,7 +114,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
     //     keywords: location.state ? location.state.inputKeywords: null,
     //     marketplaceId: location.state ? location.state.marketplaceId : null
     //   }
-    //   const { data } = await api.post('KWGetCompetitorASIN', params)
+    //   const { data } = await api.post('KWCompetitorASIN', params)
 
     //   this.setState({
     //     MatchingProducts: data.MatchingProducts

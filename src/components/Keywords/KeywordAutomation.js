@@ -63,7 +63,7 @@ class KeywordAutomation extends Component {
         inputKeywords: arrayInputKeywords
       }
 
-      const formRes = await api.post(`CreateKWAutomation`, params)
+      const formRes = await api.put(`KWAutomation`, params)
       console.log('backend responce to POST kwAutomation', formRes)
 
       const { IsSuccess, ErrorMessage } = formRes.data;
