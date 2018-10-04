@@ -73,7 +73,8 @@ class KeywordAutomation extends Component {
           pathname: '/dash/Keywords/CompetitiveASINSelection',
           state: {
             marketplaceId,
-            inputKeywords
+            inputKeywords: arrayInputKeywords,
+            asin
           }
         })
       } else {

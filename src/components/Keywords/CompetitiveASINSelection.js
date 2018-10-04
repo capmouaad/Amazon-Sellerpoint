@@ -1,5 +1,6 @@
 import { Input, Table } from 'reactstrap'
-// import api from '../../services/Api'
+import api from '../../services/Api'
+import FormLoader from './../Forms/FormLoader'
 import React from 'react'
 
 // Dummy data
@@ -94,7 +95,9 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   constructor (props) {
     super (props)
     this.state = {
-      MatchingProducts: []
+      MatchingProducts: [],
+      isGetDataBE: false,
+      apiError: null
     }
   }
 
@@ -112,9 +115,11 @@ export default class CompetitiveASINSelection extends React.PureComponent {
     //   const { location } = this.props
     //   const params = {
     //     keywords: location.state ? location.state.inputKeywords: null,
-    //     marketplaceId: location.state ? location.state.marketplaceId : null
+    //     marketplaceId: location.state ? location.state.marketplaceId : null,
+    //     InputASIN: location.state ? location.state.asin : null
     //   }
-    //   const { data } = await api.post('KWCompetitorASIN', params)
+
+    //   const { data } = await api.post('KWGetCompetitorASIN', params)
 
     //   this.setState({
     //     MatchingProducts: data.MatchingProducts
@@ -146,58 +151,68 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   }
 
   onAsinBlur = (e, idx) => {
-    this.onGetASINDetails(e.target.value, idx)
-  }
+    if (e.target.value === ''){
+      this.setState({
+        apiError: `Can't set empty ASIN input.`
+      })
+    } else {
+      this.setState({
+        apiError: null
+      })
 
-  checkAsinEnter = (e, idx) => {
-    if (e.key === 'Enter' || e.keyCode === 13) {
       this.onGetASINDetails(e.target.value, idx)
     }
   }
 
-  onGetASINDetails = async (asin, idx) => {
-    // Dummy Data
-    const res = {
-      "MatchingProduct": {
-          "ASIN": "B01BY9RTNQ",
-          "Brand": "PowerLix",
-          "Title": "PowerLix Milk Frother Handheld Battery Operated Electric Foam Maker For Coffee, Latte, Cappuccino, Hot Chocolate, Durable Drink Mixer With Stainless Steel Whisk, Stainless Steel Stand Include",
-          "SalesCategory": "14042381",
-          "SalesRank": 1,
-          "ListPrice": "15.99"
-      },
-      "IsSuccess": true,
-      "ErrorMessage": null
-    }
+  checkAsinEnter = (e, idx) => {
+    if (e.target.value === ''){
+      this.setState({
+        apiError: `Can't set empty ASIN input.`
+      })
+    } else {
+      this.setState({
+        apiError: null
+      })
 
-    const { MatchingProducts } = this.state
-        if (idx) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        this.onGetASINDetails(e.target.value, idx)
+      }
+    }
+  }
+
+  onGetASINDetails = async (asin, idx) => {
+    const { location } = this.props
+    try {
+      this.setState({
+        isGetDataBE: true
+      })
+      const params = {
+        ASIN: asin,
+        MarketplaceId: location.state ? location.state.marketplaceId : null
+      }
+      const { data } = await api.post('KWASINDetails', params)
+      
+      if (data.IsSuccess) {
+        const { MatchingProducts } = this.state
+        if (idx || idx === 0) {
           const newArr = [...MatchingProducts]
-          newArr[idx] = res.MatchingProduct
+          newArr[idx] = data.MatchingProduct
           this.setState({
-            MatchingProducts: newArr
+            MatchingProducts: newArr,
+            isGetDataBE: false,
+            apiError: null
           })
         }
-    // const { location } = this.props
-    // try {
-    //   const params = {
-    //     ASIN: asin,
-    //     MarketplaceId: location.state ? location.state.marketplaceId : null
-    //   }
-    //   const { data } = await api.post('KWASINDetails', params)
-    //   if (data.IsSuccess) {
-    //     const { MatchingProducts } = this.state
-    //     if (idx) {
-    //       const newArr = [...MatchingProducts]
-    //       newArr[idx] = data.MatchingProduct
-    //       this.setState({
-    //         MatchingProducts: newArr
-    //       })
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log('Error ', error)
-    // }
+      }
+      else {
+        this.setState({
+          isGetDataBE: false,
+          apiError: data.ErrorMessage
+        })
+      }
+    } catch (error) {
+      console.log('Error ', error)
+    }
   }
 
   onGoBackToMenu = () => {
@@ -210,11 +225,14 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   }
 
   render () {
+    const { isGetDataBE, apiError } = this.state
     return (
       <div className="dash-container">
-      <div className='keywords-auto-menu'>
-        <h3>{`Competitive ASIN Selection`}</h3>
-          <Table responsive>
+        <div className={"loader-container " + (isGetDataBE ? "is-loading" : "")}>
+          <FormLoader />
+          <div className='keywords-auto-menu'>
+            <h3>{`Competitive ASIN Selection`}</h3>
+            <Table responsive>
               <thead>
                 <tr>
                   <th>{`ASIN`}</th>
@@ -234,7 +252,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                         <Input type='checkbox'/>
                         {
                           item.isAddAsin
-                          ?  <Input autoFocus type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
+                          ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
                           : <span className='text-asin'>{item.ASIN}</span>
                         }
                       </div>
@@ -249,13 +267,18 @@ export default class CompetitiveASINSelection extends React.PureComponent {
               }
               </tbody>
             </Table>
+            {
+              apiError &&
+              <span className="ui-input-error">{apiError}</span>
+            }
             <div className='wrapper-asin-btn'>
               <button className='btn-submit-automation' onClick={this.onAddManualAsin}>{`Add Manual ASIN`}</button>
               <button className='btn-submit-automation' onClick={this.onGoBackToMenu}>{`Back to main menu`}</button>
               <button className='btn-submit-automation' onClick={this.onSubmit}>{`Submit`}</button>
             </div>
+          </div>
+        </div>
       </div>
-    </div>
     )
   }
 }

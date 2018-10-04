@@ -26,7 +26,7 @@ const multiFilterStyle = {
            styleSelect = {
                 ...styleSelect,
                 backgroundColor: '#fff',
-                color: '#383838'
+                color: '#595959'
            }
         }
         return {
@@ -35,7 +35,8 @@ const multiFilterStyle = {
             flexDirection: 'row',
             justifyContent: 'space-between',
             backgroundColor: '#fff',
-            color: '#383838'
+            color: '#595959',
+            fontSize: 12
         }
     }
 }
@@ -151,30 +152,38 @@ class DashFilters extends Component {
             await app.getList('CurrentSelections', (reply) => {
                 // Flatten data from qlik so redux connect can compare object changes
                 let data = []
-                let multiSelected = []
+                let multiSelected = {}
                 reply.qSelectionObject.qSelections.map((sel) => {
                     if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
-                        if (sel.qSelectedFieldSelectionInfo.length > 4) {
+                        if (sel.qSelectedCount <= 6) {
                             sel.qSelectedFieldSelectionInfo.map((item) => {
-                                multiSelected.push({
-                                    label: item.qName,
-                                    qField: sel.qField,
-                                    qName: item.qName
-                                })
+                                if (multiSelected[sel.qField]) {
+                                    multiSelected[sel.qField].push({
+                                        label: item.qName,
+                                        qField: sel.qField,
+                                        qName: item.qName
+                                    })
+                                } else {
+                                    multiSelected[sel.qField] = [
+                                        {
+                                            label: item.qName,
+                                            qField: sel.qField,
+                                            qName: item.qName
+                                        }
+                                    ]
+                                }
                             })
 
                             data.push({
-                                isShowList: true,
                                 qField: sel.qField,
-                                listSelected: multiSelected,
-                                qName: `${sel.qField}: ${sel.qSelectedFieldSelectionInfo.length} of ${sel.qTotal}`
+                                listSelected: multiSelected[sel.qField],
+                                qName: `${sel.qField}: ${sel.qSelectedCount} of ${sel.qTotal}`
                             })
                         } else {
-                            sel.qSelectedFieldSelectionInfo.map((item) => {
-                                data.push({
-                                    qField: sel.qField,
-                                    qName: item.qName
-                                })
+                            data.push({
+                                isLongList: true,
+                                qField: sel.qField,
+                                qName: `${sel.qField}: ${sel.qSelectedCount} of ${sel.qTotal}`
                             })
                         }
                     }
@@ -182,10 +191,10 @@ class DashFilters extends Component {
 
 
                 setCurrentSelections(data.sort((a, b) => {
-                    if (a.isShowList) {
-                        return -1
-                    } else if (b.isShowList) {
+                    if (a.isLongList) {
                         return 1
+                    } else if (b.isLongList) {
+                        return -1
                     } else {
                         return 0
                     }
@@ -336,12 +345,10 @@ class DashFilters extends Component {
     handleChange = async ({ optionSelected, key, doNotApplySelection }) => {
         try {
             const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
-            // let difference = this.state.selected.filter(x => !value.includes(x)); // calculates diff
-            // console.log('Removed: ', difference);                         // prints array of removed
 
-            //this.setState({ selected: value });
+            const isOptionArray = Array.isArray(optionSelected)
             let data = [];
-            if (optionSelected && Array.isArray(optionSelected) && optionSelected.length > 0) {
+            if (optionSelected && isOptionArray && optionSelected.length > 0) {
                 data = optionSelected.map((item) => (item.value))
             } else if (optionSelected) {
                 data.push(optionSelected.value);
@@ -366,31 +373,43 @@ class DashFilters extends Component {
         }
     }
 
-    deleteFilter = async ({ item, qName }) => {
+    deleteFilter = async ({ item }) => {
         try {
             // const { SellerSKUSelectedOptions} = this.props
             const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
-            if (isNaN(Number(qName)))
-                await app.field(item.qField).selectValues([{ qText: qName }], true, true);
-            else
-                await app.field(item.qField).selectValues([Number(qName)], true, true);
+            if (!item.isLongList) {
+                let filterToDeletes
+                if (isNaN(Number(item.qName))) {
+                    filterToDeletes = [{ qText: item.qName }]
+                } else {
+                    filterToDeletes = [Number(item.qName)]
+                }
+
+                await app.field(item.qField).selectValues(filterToDeletes, true, true)
+            } else {
+                await app.field(item.qField).clear()
+            }
+
 
             const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
+
+            let filterFunction = (val) => val.label !== item.qName
+
             switch (item.qField) {
                 case APP_CONFIG.QS_FIELD_NAME.MarketPlaceName:
                     setMarketPlaceNameSelectedOptions(
-                        MarketPlaceNameSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? MarketPlaceNameSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerID:
                     setSellerIdSelectedOptions(
-                        SellerIDSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? SellerIDSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerSKU:
                     setSellerSKUSelectedOptions(
-                        SellerSKUSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? SellerSKUSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 default:
@@ -519,7 +538,7 @@ class DashFilters extends Component {
                             <label>Seller ID </label>
                             <Select
                                 className="qlik-select mar-r"
-                                isMult
+                                isMulti
                                 autoFocusFirstOption={false}
                                 closeMenuOnSelect={false}
                                 isDisabled={!QlikConnected}
@@ -591,14 +610,14 @@ class DashFilters extends Component {
                                     return (
                                         <div key={`${value.qName}-${idx}`}>
                                             {
-                                            value.isShowList
+                                            !value.isLongList
                                             ? (
                                                 <Select
                                                     className="multi-selected-list"
                                                     closeMenuOnSelect={false}
                                                     autoFocusFirstOption={false}
                                                     hideSelectedOptions={false}
-                                                    onChange={(optionSelected) => { this.deleteFilter({ item: optionSelected, qName: optionSelected.qName })}}
+                                                    onChange={(optionSelected) => { this.deleteFilter({ item: optionSelected })}}
                                                     options={value.listSelected}
                                                     isClearable={false}
                                                     controlShouldRenderValue={false}
@@ -613,7 +632,7 @@ class DashFilters extends Component {
                                                     <i
                                                         className="fa fa-times"
                                                         style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                        onClick={() => { this.deleteFilter({ item: value, qName: value.qName }) }}
+                                                        onClick={() => { this.deleteFilter({ item: value }) }}
                                                     ></i>
                                                 </span>
                                             )
