@@ -27,6 +27,11 @@ class ConnectMarketplaces extends Component {
   };
 
   getSellerMarketplaces = () => {
+    this.props.setSignupFields({ // update redux store
+      ...this.props.signupFields,
+      seller_id: this.props.sellerId,
+      isInitialImport: this.props.isInitialImport
+    })
     this.setState({ loading: true })
     api
       .get(`GetSellerMarketPlaces`)
@@ -167,7 +172,8 @@ class ConnectMarketplaces extends Component {
 
 
 const mapStateToProps = (state) => ({
-  LWA: state.lwa
+  LWA: state.lwa,
+  sellerId: state.signup.fields.seller_id
 });
 
 const mapDispatchToProps = (dispatch) => ({
