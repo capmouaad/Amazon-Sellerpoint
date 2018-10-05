@@ -1,6 +1,7 @@
 import Loadable from 'react-loadable';
 import Loader from './components/Loader';
 import Admin from './containers/Admin';
+import Profile from './containers/Profile'
 import { userIsAuthenticatedRedir, userIsNotAuthenticatedRedir } from './services/Auth'
 
 function MyLoadable(opts) {
@@ -96,7 +97,11 @@ export const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin
-
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile,
   },
   {
     path: '/Tester',
