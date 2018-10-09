@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link} from 'react-router-dom';
 import SvgIcon from '../components/Helpers/SvgIcon'
 import { connect } from 'react-redux';
 import UserConfirmationModal from './UserConfirmationModal'
@@ -66,10 +67,10 @@ Are you sure you want to leave?
                     <div className="header__dropdown">
                         <div className="header__dropdown-menu">
                             <li>
-                                <a onClick={this.myProfile}>My Profile</a>
+                                <Link to="/profile">My Profile</Link>
                             </li>
                             <li>
-                                <a onClick={this.changePassword}>Change Password</a>
+                            <Link to="/changepassword">Change Password</Link>
                             </li>
                             <li>
                                 <a onClick={this.props.logOutUser}>Log out</a>

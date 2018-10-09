@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import api from '../services/Api';
 import "react-table/react-table.css";
 import FormInput from '../components/Forms/FormInput';
+import PassMeter from '../components/Forms/PassMeter';
 import Formsy from 'formsy-react';
 import FormLoader from '../components/Forms/FormLoader';
 import PropTypes from 'prop-types';
@@ -21,30 +22,24 @@ class ChangePasswordComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            preview: null,
-            filename: "",
-            first_name: "",
-            last_name: "",
-            email: "",
-            title: "",
-            instanceName: "",
-            profilePhoto: [],
-            workPhone: "",
+            password: {
+                CurrentPassword: '',
+                NewPassword: '',
+                ConfirmNewPassword: ''
+            },
             formIsValid: false,
-            apiError: null,
-            isLoading: false
+            isLoading: false,
+            matchPassword:null
         }
-        this.handleDrop = this.handleDrop.bind(this);
-        this.updateSellerProfile = this.updateSellerProfile.bind(this);
+        this.changePassword = this.changePassword.bind(this);
+        this.handleSubmit=this.handleSubmit.bind(this);
+        this.handleChange=this.handleChange.bind(this);
     }
-    
+
     componentDidMount() {
         this.props.setHeaderClass('header--dash');
     }
-    componentWillUnmount() {
-        const element = document.getElementsByClassName("header__dash-nav")[0];
-        element.style.display = 'flex';
-    }
+   
 
     formInvalid = () => {
         this.setState({ formIsValid: false });
@@ -55,56 +50,35 @@ class ChangePasswordComponent extends Component {
     }
 
     handleChange = (e) => {
-        let fieldName = e.target.name;
-        let fleldVal = e.target.value;
-        this.setState({ ...this.state, [fieldName]: fleldVal });
-    }
-
-    handleDrop(files) {
-        if (files.length > 0) {
-            var data = new FormData();
-            data.append("file", files[0]);
-            this.setState({ filename: files[0].name, preview: files[0].preview });
-            api
-                .post(`ImageUpload`, data)
-                .then((res) => {
-                    console.log('backend responce to GET ImageUpload', res)
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        }
+        const { name, value } = e.target;
+        const password = this.state.password;
+        password[name] = value;
+        this.setState({ ...this.state, password });
     }
 
     // submit handler from the form
     handleSubmit = (e) => {
-
-        if (this.state.first_name.match(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_')) {
-
-            console.log("Special Character Found");
+let matchPassword=null;
+        if (this.state.password.NewPassword===this.state.password.ConfirmNewPassword) {
+            matchPassword=true
+           this.setState({...this.state,matchPassword});
         }
         else {
-            console.log("Special Character not Found");
+            matchPassword=false;
+            this.setState({...this.state,matchPassword});
         }
 
-        if (this.state.formIsValid) {
-            this.updateSellerProfile() // move on if it's fine
-
+        if (this.state.formIsValid && matchPassword) {
+            this.changePassword() // move on if it's fine
         }
     }
 
-    updateSellerProfile = () => {
-        var sellerProfileObj = {
-            FirstName: this.state.first_name,
-            LastName: this.state.last_name,
-            Email: this.state.email,
-            Title: this.state.title,
-            WorkPhone: this.state.workPhone
-        }
+    changePassword = () => {
+       
         this.setState({ isLoading: true });
 
         api
-            .post(`UpdateSellerProfile`, sellerProfileObj)
+            .post(`ChangePassword`, this.state.password)
             .then((res) => {
                 console.log('backend responce to GET UpdateSellerProfile', res)
                 if (res.data.IsSuccess) {
@@ -122,7 +96,7 @@ class ChangePasswordComponent extends Component {
 
     render() {
         const { authToken } = this.props
-        const { preview, first_name, last_name, email, title, instanceName, role, profilePhoto, workPhone, isLoading } = this.state
+        const { password, isLoading,matchPassword } = this.state
 
         if (!authToken) {
             return (
@@ -133,12 +107,12 @@ class ChangePasswordComponent extends Component {
         return (
             <React.Fragment>
                 <Toaster />
-                <div className="password">
+                <div className="newpassword">
                     <div className={isLoading ? "container loader-inside loader-inside" : "container loader-inside loader-inside loading-over"}>
                         <FormLoader />
-                        <div className="password__container">
+                        <div className="newpassword__container">
                             <Formsy
-                                className="password__form"
+                                className="newpassword__form"
                                 onValidSubmit={this.handleSubmit}
                                 onValid={this.formValid}
                                 onInvalid={this.formInvalid}
@@ -147,44 +121,45 @@ class ChangePasswordComponent extends Component {
 
                                 <div className="row">
                                     <div className="col-sm-5"><FormInput
-                                        name="password"
+                                        name="CurrentPassword"
                                         label="Current Password"
+                                        type="password"
                                         placeholder="Enter current password"
-                                        validations="minLength:1"
-                                        validationErrors={{
-                                            isDefaultRequiredValue: 'Please enter your current password',
-                                            minLength: 'First name is too short'
-                                        }}
-                                        value={first_name}
+                                        validations="minLength:8"
+                                        value={password.CurrentPassword}
                                         onChangeHandler={this.handleChange}
                                         required
                                     /></div>
                                     <div className="col-sm-5"><FormInput
-                                        name="last_name"
+                                        name="NewPassword"
                                         label="New Password"
+                                        type="password"
                                         placeholder="Enter new password (8 char. min)"
-                                        validations="minLength:1"
-                                        value={last_name}
+                                        value={password.NewPassword}
+                                        validations="minLength:8"
                                         validationErrors={{
-                                            isDefaultRequiredValue: 'Please enter your last name',
-                                            minLength: 'Last name is too short'
+                                            // isDefaultRequiredValue: 'Please enter password'
                                         }}
                                         onChangeHandler={this.handleChange}
                                         required
-                                    /></div>
+                                    />
+                                    <PassMeter password={password.NewPassword} />
+                                    
+                                    </div>
                                     <div className="col-sm-5"><FormInput
-                                        name="email"
+                                        name="ConfirmNewPassword"
                                         label="Confirm Password"
+                                        type="password"
                                         placeholder="Confirm new password (8 char. min)"
-                                        value={email}
+                                        value={password.ConfirmNewPassword}
                                         validations="minLength:1"
-                                        validationErrors={{
-                                            isDefaultRequiredValue: 'Please enter your email',
-                                            minLength: 'Email is too short'
-                                        }}
                                         onChangeHandler={this.handleChange}
                                         required
-                                    /></div>
+                                    />
+                                    {matchPassword === false &&
+                                        <span className="ui-input-validation">Passwords did not match</span>
+                                        }
+                                    </div>
                                     <div className="row">
                                         <button type="submit" style={{ width: '20%', marginRight: '9px' }} className="btn btn-signup btn--block">Save</button>
                                         <button type="button" style={{ width: '20%' }} className="btn btn-signup btn--block">Cancel</button>
