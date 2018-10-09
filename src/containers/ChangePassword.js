@@ -13,7 +13,7 @@ import Dropzone from 'react-dropzone';
 
 const handleDropRejected = (...args) => console.log('reject', args)
 
-class ProfileComponent extends Component {
+class ChangePasswordComponent extends Component {
     static propTypes = {
         setHeaderClass: PropTypes.func.isRequired
     };
@@ -35,13 +35,9 @@ class ProfileComponent extends Component {
             isLoading: false
         }
         this.handleDrop = this.handleDrop.bind(this);
-        this.getSellerPoint = this.getSellerPoint.bind(this);
         this.updateSellerProfile = this.updateSellerProfile.bind(this);
     }
-    componentWillMount() {
-        this.getSellerPoint();
-    }
-
+    
     componentDidMount() {
         this.props.setHeaderClass('header--dash');
     }
@@ -56,37 +52,6 @@ class ProfileComponent extends Component {
 
     formValid = () => {
         this.setState({ formIsValid: true });
-    }
-
-
-    getSellerPoint = () => {
-        this.setState({ isLoading: true });
-        api
-            .get(`GetSellerProfile`)
-            .then((res) => {
-                if (res.data.IsSuccess) {
-                    this.setState({
-                        first_name: res.data.FirstName,
-                        last_name: res.data.LastName,
-                        email: res.data.Email,
-                        title: res.data.Title,
-                        instanceName: res.data.CompanyName,
-                        role: res.data.RoleTitle,
-                        profilePhoto: res.data.ProfilePhoto,
-                        workPhone: res.data.WorkPhone,
-                        isLoading: false
-                    })
-                }
-                else {
-                    showToastMessage(res.data.ErrorMessage, "Error");
-
-                }
-                this.setState({ isLoading: false });
-            })
-            .catch(function (error) {
-                this.setState({ isLoading: false });
-                console.log(error);
-            });
     }
 
     handleChange = (e) => {
@@ -168,26 +133,26 @@ class ProfileComponent extends Component {
         return (
             <React.Fragment>
                 <Toaster />
-                <div className="profile">
+                <div className="password">
                     <div className={isLoading ? "container loader-inside loader-inside" : "container loader-inside loader-inside loading-over"}>
                         <FormLoader />
-                        <div className="profile__container">
+                        <div className="password__container">
                             <Formsy
-                                className="profile__form"
+                                className="password__form"
                                 onValidSubmit={this.handleSubmit}
                                 onValid={this.formValid}
                                 onInvalid={this.formInvalid}
                             >
-                                <div className="row"><h2>My Profile</h2><p></p></div>
+                                <div className="row"><h2>Change Password</h2><p></p></div>
 
                                 <div className="row">
                                     <div className="col-sm-5"><FormInput
-                                        name="first_name"
-                                        label="First Name"
-                                        placeholder="Jennifer"
+                                        name="password"
+                                        label="Current Password"
+                                        placeholder="Enter current password"
                                         validations="minLength:1"
                                         validationErrors={{
-                                            isDefaultRequiredValue: 'Please enter your first name',
+                                            isDefaultRequiredValue: 'Please enter your current password',
                                             minLength: 'First name is too short'
                                         }}
                                         value={first_name}
@@ -196,8 +161,8 @@ class ProfileComponent extends Component {
                                     /></div>
                                     <div className="col-sm-5"><FormInput
                                         name="last_name"
-                                        label="Last Name"
-                                        placeholder="Jennifer"
+                                        label="New Password"
+                                        placeholder="Enter new password (8 char. min)"
                                         validations="minLength:1"
                                         value={last_name}
                                         validationErrors={{
@@ -209,8 +174,8 @@ class ProfileComponent extends Component {
                                     /></div>
                                     <div className="col-sm-5"><FormInput
                                         name="email"
-                                        label="E-Mail Address"
-                                        placeholder="Jennifer@test.com"
+                                        label="Confirm Password"
+                                        placeholder="Confirm new password (8 char. min)"
                                         value={email}
                                         validations="minLength:1"
                                         validationErrors={{
@@ -218,42 +183,10 @@ class ProfileComponent extends Component {
                                             minLength: 'Email is too short'
                                         }}
                                         onChangeHandler={this.handleChange}
-                                        readOnly={true}
+                                        required
                                     /></div>
-                                    <div className="col-sm-5">
-                                        <FormInput
-                                            name="workPhone"
-                                            type="tel"
-                                            label="Phone Number"
-                                            placeholder="XXX-XXX-XXXX"
-                                            value={workPhone}
-                                            mask={[/\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                                            onChangeHandler={this.handleChange}
-                                            validations={{
-                                                matchRegexp: /\d{3}-\d{3}-\d{4}/
-                                            }}
-                                            validationErrors={{
-                                                matchRegexp: "Phone number is not valid",
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-sm-5 profile-photo"><div className="ui-group ui-group--labeled"><label>Profile Image </label>
-                                        <Dropzone onDrop={this.handleDrop} className="dropzone" accept="image/jpeg,image/jpg,image/tiff,image/gif" multiple={false} onDropRejected={handleDropRejected}>
-                                            Drag a file here or click to upload.
-        </Dropzone>
-                                        {preview &&
-                                            <img src={preview} alt="image preview" className="dz-image" />
-                                        }
-                                        {profilePhoto &&
-                                            <img src={"data:image;base64," + profilePhoto} className="img-thumbnail fix-size" alt="Thumbnail" />
-                                        }
-                                    </div></div>
-
-                                    <div className="col-sm-5"><div className="ui-group ui-group--labeled"><label>Primary Instance </label> <label>{instanceName} </label></div></div>
-
                                     <div className="row">
-                                        <button type="submit" style={{ width: '20%', marginRight: '9px' }} className="btn btn-signup btn--block">Update</button>
+                                        <button type="submit" style={{ width: '20%', marginRight: '9px' }} className="btn btn-signup btn--block">Save</button>
                                         <button type="button" style={{ width: '20%' }} className="btn btn-signup btn--block">Cancel</button>
                                     </div>
 
@@ -273,4 +206,4 @@ const mapDispatchToProps = (dispatch) => ({
     setHeaderClass: (data) => dispatch(setHeaderClass(data))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileComponent)
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordComponent)
