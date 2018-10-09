@@ -169,9 +169,10 @@ class ProfileComponent extends Component {
             <React.Fragment>
                 <Toaster />
                 <div className="profile">
-                    <div className={isLoading ? "container loader-inside loader-inside" : "container loader-inside loader-inside loading-over"}>
+                    <div className="container">
+                        <div className= {isLoading ? "profile__container loader-inside" : "profile__container loader-inside loading-over"}>
                         <FormLoader />
-                        <div className="profile__container">
+                           
                             <Formsy
                                 className="profile__form"
                                 onValidSubmit={this.handleSubmit}
@@ -252,9 +253,9 @@ class ProfileComponent extends Component {
 
                                     <div className="col-sm-5"><div className="ui-group ui-group--labeled"><label>Primary Instance </label> <label>{instanceName} </label></div></div>
 
-                                    <div className="row">
-                                        <button type="submit" style={{ width: '20%', marginRight: '9px' }} className="btn btn-signup btn--block">Update</button>
-                                        <button type="button" style={{ width: '20%' }} className="btn btn-signup btn--block">Cancel</button>
+                                    <div className="profile__form-cta">
+                                        <button type="submit" style={{ width: '30%', marginRight: '9px' }} className="btn btn-profile btn--block">Update</button>
+                                        <button type="button" style={{ width: '30%' }} className="btn btn-profile btn--block">Cancel</button>
                                     </div>
 
                                 </div>
