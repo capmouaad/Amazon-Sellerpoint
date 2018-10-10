@@ -70,7 +70,7 @@ class ProfileComponent extends Component {
                         last_name: res.data.LastName,
                         email: res.data.Email,
                         title: res.data.Title,
-                        instanceName: res.data.CompanyName,
+                        instanceName: res.data.ClientName,
                         role: res.data.RoleTitle,
                         profilePhoto: res.data.ProfilePhoto,
                         workPhone: res.data.WorkPhone,
@@ -170,9 +170,9 @@ class ProfileComponent extends Component {
                 <Toaster />
                 <div className="profile">
                     <div className="container">
-                        <div className= {isLoading ? "profile__container loader-inside" : "profile__container loader-inside loading-over"}>
-                        <FormLoader />
-                           
+                        <div className={isLoading ? "profile__container loader-inside" : "profile__container loader-inside loading-over"}>
+                            <FormLoader />
+
                             <Formsy
                                 className="profile__form"
                                 onValidSubmit={this.handleSubmit}
@@ -240,7 +240,7 @@ class ProfileComponent extends Component {
                                         }
                                     </div></div>
 
-                                    <div className="col-sm-5"><div className="ui-group ui-group--labeled"><label>Primary Instance </label> <label>{instanceName} </label></div></div>
+                                    <div className="col-sm-5"><div className="ui-group ui-group--labeled"><label>Company Name</label> <label>{instanceName} </label></div></div>
 
                                     <div className="profile__form-cta">
                                         <button type="submit" style={{ width: '30%', marginRight: '9px' }} className="btn btn-profile btn--block">Update</button>
