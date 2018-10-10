@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import api from '../services/Api';
 import "react-table/react-table.css";
 import FormInput from '../components/Forms/FormInput';
@@ -210,7 +210,7 @@ class ProfileComponent extends Component {
                                     /></div>
                                     <div className="col-sm-5"><FormInput
                                         name="email"
-                                        label="E-Mail Address"
+                                        label="Email Address"
                                         placeholder="Jennifer@test.com"
                                         value={email}
                                         validations="minLength:1"
@@ -255,7 +255,7 @@ class ProfileComponent extends Component {
 
                                     <div className="profile__form-cta">
                                         <button type="submit" style={{ width: '30%', marginRight: '9px' }} className="btn btn-profile btn--block">Update</button>
-                                        <button type="button" style={{ width: '30%' }} className="btn btn-profile btn--block">Cancel</button>
+                                        <Link to="/dash/dashboards" style={{ width: '30%' }} className="btn btn-profile btn--block">Cancel</Link>
                                     </div>
 
                                 </div>

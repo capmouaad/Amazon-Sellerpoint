@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect,Link } from 'react-router-dom';
 import api from '../services/Api';
 import "react-table/react-table.css";
 import FormInput from '../components/Forms/FormInput';
@@ -160,9 +160,9 @@ let matchPassword=null;
                                         <span className="ui-input-validation">Passwords did not match</span>
                                         }
                                     </div>
-                                    <div className="row">
-                                        <button type="submit" style={{ width: '20%', marginRight: '9px' }} className="btn btn-signup btn--block">Save</button>
-                                        <button type="button" style={{ width: '20%' }} className="btn btn-signup btn--block">Cancel</button>
+                                    <div className="newpassword__form-cta">
+                                        <button type="submit" style={{ width: '30%', marginRight: '9px' }} className="btn btn-newpassword btn--block">Save</button>
+                                        <Link to="/dash/dashboards" style={{ width: '30%' }} className="btn btn-newpassword btn--block">Cancel</Link>
                                     </div>
 
                                 </div>
