@@ -208,19 +208,8 @@ class ProfileComponent extends Component {
                                         onChangeHandler={this.handleChange}
                                         required
                                     /></div>
-                                    <div className="col-sm-5"><FormInput
-                                        name="email"
-                                        label="Email Address"
-                                        placeholder="Jennifer@test.com"
-                                        value={email}
-                                        validations="minLength:1"
-                                        validationErrors={{
-                                            isDefaultRequiredValue: 'Please enter your email',
-                                            minLength: 'Email is too short'
-                                        }}
-                                        onChangeHandler={this.handleChange}
-                                        readOnly={true}
-                                    /></div>
+
+                                    <div className="col-sm-5"><div className="ui-group ui-group--labeled"><label>Email Address </label> <label>{email} </label></div></div>
                                     <div className="col-sm-5">
                                         <FormInput
                                             name="workPhone"
