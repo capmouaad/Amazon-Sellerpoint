@@ -155,7 +155,15 @@ class DashFilters extends Component {
                 let multiSelected = {}
                 reply.qSelectionObject.qSelections.map((sel) => {
                     if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
-                        if (sel.qSelectedCount <= 6) {
+                        if (sel.qSelectedCount <= 4) {
+                            sel.qSelectedFieldSelectionInfo.map((item) => {
+                                data.push({
+                                    isShortList: true,
+                                    qField: sel.qField,
+                                    qName: item.qName
+                                })
+                            })
+                        } else if (sel.qSelectedCount > 4 && sel.qSelectedCount <= 6) {
                             sel.qSelectedFieldSelectionInfo.map((item) => {
                                 if (multiSelected[sel.qField]) {
                                     multiSelected[sel.qField].push({
@@ -610,7 +618,7 @@ class DashFilters extends Component {
                                     return (
                                         <div key={`${value.qName}-${idx}`}>
                                             {
-                                            !value.isLongList
+                                            !value.isLongList && !value.isShortList
                                             ? (
                                                 <Select
                                                     className="multi-selected-list"
