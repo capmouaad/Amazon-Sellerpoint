@@ -24,9 +24,10 @@ class MWSActionDomain extends Component {
   }
 
   setupMarketplaceDomains = async () => {
+    console.log(this.props)
     try {
       this.setState({ loading: true })
-      const res = await api.get(`GetSellerMarketPlaces`)
+      const res = await api.get(`GetSellerMarketPlaceByClientIdAndSellerId`)
       if (res.data.IsSuccess) {
         this.setState({
           marketplaceDomains: res.data.Marketplaces.map(x => ({
