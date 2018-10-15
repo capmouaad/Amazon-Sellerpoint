@@ -9,6 +9,7 @@ import ViewCurrentAutomations from '../components/Keywords/ViewCurrentAutomation
 import ImportProgress from '../components/DashCommon/ImportProgress';
 import ReloadStatusBar from '../components/ReloadStatusBar'
 import CompetitiveASINSelection from '../components/Keywords/CompetitiveASINSelection'
+import KeywordReport from '../components/Keywords/KeywordReport'
 
 class DashboardKeywords extends Component {
   static propTypes = {
@@ -30,6 +31,7 @@ class DashboardKeywords extends Component {
           <Route path={`${match.url}/CreateNewAutomation`} component={KeywordAutomation} />
           <Route path={`${match.url}/ViewCurrentAutomations`} component={ViewCurrentAutomations} />
           <Route path={`${match.url}/CompetitiveASINSelection`} component={CompetitiveASINSelection} />
+          <Route path={`${match.url}/KeywordReport`} component={KeywordReport} />
         </Switch>
       </React.Fragment>
     )

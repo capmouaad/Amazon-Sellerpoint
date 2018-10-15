@@ -32,7 +32,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
       const { data } = await api.post('KWCompetitorASIN', params)
       this.setState({
-        MatchingProducts: data.MatchingProducts,
+        MatchingProducts: data.MatchingProducts ? data.MatchingProducts : [],
         isGetDataBE: false
       })
     } catch (error) {
@@ -140,6 +140,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
   render () {
     const { isGetDataBE, apiError } = this.state
+    console.log(this.state);
     return (
       <div className="dash-container">
         <div className={"loader-container " + (isGetDataBE ? "is-loading" : "")}>

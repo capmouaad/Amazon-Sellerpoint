@@ -8,13 +8,27 @@ export default class ViewCurrentAutomations extends React.PureComponent {
   constructor (props) {
     super (props)
     this.state = {
-      automations: []
+      automations: [],
+      selectedItem: false
     }
   }
 
   onGoBackMenu = () => {
     const { history } = this.props
     history.push('/dash/Keywords')
+  }
+
+  onSubmit = () => {
+    const { automations, selectedItem } = this.state;
+    const item = automations[selectedItem];
+    this.props.history.push('/dash/keywords/KeywordReport', { item });
+  }
+
+  onSelectItem = (selectedItem) => {
+    this.setState({
+      ...this.state,
+      selectedItem
+    })
   }
 
   onGetAllKeywordsAutomations = async () => {
@@ -53,10 +67,10 @@ export default class ViewCurrentAutomations extends React.PureComponent {
             </thead>
             <tbody>
             {
-              this.state.automations.map((item) => (
+              this.state.automations.map((item, index) => (
                 <tr key={`key-${item.AutomationId}`}>
                   <td>
-                    <Input type='radio' name='keyword-automation'/>
+                    <Input type='radio' onClick={this.onSelectItem.bind(this, index)} name='keyword-automation'/>
                   </td>
                   <td>{item.AutomationId}</td>
                   <td>{item.Name}</td>
