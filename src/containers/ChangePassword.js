@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect,Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import api from '../services/Api';
 import "react-table/react-table.css";
 import FormInput from '../components/Forms/FormInput';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { setHeaderClass } from '../actions/header';
 import Toaster, { showToastMessage } from '../services/toasterNotification'
 import { connect } from 'react-redux';
-import Dropzone from 'react-dropzone';
 
 const handleDropRejected = (...args) => console.log('reject', args)
 
@@ -29,17 +28,18 @@ class ChangePasswordComponent extends Component {
             },
             formIsValid: false,
             isLoading: false,
-            matchPassword:null
+            matchPassword: null
         }
         this.changePassword = this.changePassword.bind(this);
-        this.handleSubmit=this.handleSubmit.bind(this);
-        this.handleChange=this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.formRef = React.createRef();
     }
 
     componentDidMount() {
         this.props.setHeaderClass('header--dash');
     }
-   
+
 
     formInvalid = () => {
         this.setState({ formIsValid: false });
@@ -58,14 +58,14 @@ class ChangePasswordComponent extends Component {
 
     // submit handler from the form
     handleSubmit = (e) => {
-let matchPassword=null;
-        if (this.state.password.NewPassword===this.state.password.ConfirmNewPassword) {
-            matchPassword=true
-           this.setState({...this.state,matchPassword});
+        let matchPassword = null;
+        if (this.state.password.NewPassword === this.state.password.ConfirmNewPassword) {
+            matchPassword = true
+            this.setState({ ...this.state, matchPassword });
         }
         else {
-            matchPassword=false;
-            this.setState({...this.state,matchPassword});
+            matchPassword = false;
+            this.setState({ ...this.state, matchPassword });
         }
 
         if (this.state.formIsValid && matchPassword) {
@@ -74,15 +74,13 @@ let matchPassword=null;
     }
 
     changePassword = () => {
-       
         this.setState({ isLoading: true });
-
         api
             .post(`ChangePassword`, this.state.password)
             .then((res) => {
-                console.log('backend responce to GET UpdateSellerProfile', res)
                 if (res.data.IsSuccess) {
                     showToastMessage(res.data.ErrorMessage, "Success");
+                    this.formRef.reset();
                 } else {
                     showToastMessage(res.data.ErrorMessage, "Error");
                 }
@@ -96,7 +94,7 @@ let matchPassword=null;
 
     render() {
         const { authToken } = this.props
-        const { password, isLoading,matchPassword } = this.state
+        const { password, isLoading, matchPassword } = this.state
 
         if (!authToken) {
             return (
@@ -108,14 +106,16 @@ let matchPassword=null;
             <React.Fragment>
                 <Toaster />
                 <div className="newpassword">
-                    <div className={isLoading ? "container loader-inside loader-inside" : "container loader-inside loader-inside loading-over"}>
-                        <FormLoader />
-                        <div className="newpassword__container">
+                    <div className="container">
+
+                        <div className={isLoading ? "newpassword__container loader-inside" : "newpassword__container loader-inside loading-over"}>
+                            <FormLoader />
                             <Formsy
                                 className="newpassword__form"
                                 onValidSubmit={this.handleSubmit}
                                 onValid={this.formValid}
                                 onInvalid={this.formInvalid}
+                                ref={(node) => { this.formRef = node }}
                             >
                                 <div className="row"><h2>Change Password</h2><p></p></div>
 
@@ -143,8 +143,8 @@ let matchPassword=null;
                                         onChangeHandler={this.handleChange}
                                         required
                                     />
-                                    <PassMeter password={password.NewPassword} />
-                                    
+                                        <PassMeter password={password.NewPassword} />
+
                                     </div>
                                     <div className="col-sm-5"><FormInput
                                         name="ConfirmNewPassword"
@@ -156,8 +156,8 @@ let matchPassword=null;
                                         onChangeHandler={this.handleChange}
                                         required
                                     />
-                                    {matchPassword === false &&
-                                        <span className="ui-input-validation">Passwords did not match</span>
+                                        {matchPassword === false &&
+                                            <span className="ui-input-validation">Passwords did not match</span>
                                         }
                                     </div>
                                     <div className="newpassword__form-cta">
