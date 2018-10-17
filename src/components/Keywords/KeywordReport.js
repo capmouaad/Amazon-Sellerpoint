@@ -1,6 +1,6 @@
 import React from 'react'
 import { Table } from 'reactstrap'
-// import api from '../../services/Api'
+import FormLoader from './../Forms/FormLoader'
 import axios from 'axios'
 
 export default class KeywordReport extends React.PureComponent {
@@ -10,8 +10,20 @@ export default class KeywordReport extends React.PureComponent {
     this.state = {
       item: props.location.state ? props.location.state.item : false,
       reports: [],
+      loaded: false,
       apiError: null
     }
+  }
+
+  onGetIndexReport = async (keyword) => {
+    const params = {
+      asin: this.state.item.ASIN,
+      keyword
+    }
+    const { data } = await axios.post('http://localhost:5000/product', params)
+                      .catch(e => { return {e, data: { indexed: 'No', page: '', rank: ''}}})
+
+    return data;
   }
   
   onGetKeywordReport = async () => {
@@ -20,7 +32,7 @@ export default class KeywordReport extends React.PureComponent {
       return;
     }
     const params = {
-      pageId: `https://www.amazon.com/db/${item.ASIN}`,
+      pageId: `https://www.amazon.com/dp/${item.ASIN}`,
       keywordList: []
     }
     item.InputKeywords.map(keyword => {
@@ -31,16 +43,24 @@ export default class KeywordReport extends React.PureComponent {
         })
       })
     })
-    
-    const { data } = await axios.post('http://localhost:3001/report', params)
+
+    const { data } = await axios.post('https://sellerpoint-keyword-service.herokuapp.com/report', params)
+                      .catch(e => { return {e, data: []}; })
+
     const reports = []
-    item.InputKeywords.map(keyword => {
+    item.InputKeywords = ['pasta pot', 'pasta']
+    await Promise.all(item.InputKeywords.map(async (keyword) => {
       let report = {
         keyword,
+        index: {},
         broad: {},
         phrase: {},
         exact: {}
       }
+      // Keyword index/page/rank
+      const index = await this.onGetIndexReport(keyword);
+      report.index = index;
+      // Keyword report
       data.map(d => {
         if (d.keyword === keyword) {
           let type = d.matchType.toLowerCase();
@@ -52,17 +72,15 @@ export default class KeywordReport extends React.PureComponent {
           }
         }
       })
+      console.log(report)
       reports.push(report)
-    })
-    console.log(reports)
+    }))
+
     this.setState({
       ...this.state,
-      reports
+      reports,
+      loaded: true
     })
-  }
-
-  onSubmit() {
-    this.onGetKeywordReport();  
   }
 
   componentDidMount () {
@@ -72,7 +90,8 @@ export default class KeywordReport extends React.PureComponent {
   render() {
     return (
       <div className="dash-container">
-        <div className='keywords-auto-menu'>
+        <div className={'keywords-auto-menu ' + (this.state.loaded ? 'loader-container' : '')}>
+          <FormLoader />
           <p>Keyword Report for: <strong>{this.state.item.ASIN}</strong></p>
           <Table responsive>
             <thead>
@@ -110,9 +129,9 @@ export default class KeywordReport extends React.PureComponent {
               this.state.reports.map((report, idx) => (
                 <tr key={`keyword-${idx}`}>
                   <td>{report.keyword}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>{report.index.indexed}</td>
+                  <td>{report.index.page}</td>
+                  <td>{report.index.rank}</td>
                   <td>{report.broad.search}</td>
                   <td>{report.phrase.search}</td>
                   <td>{report.exact.search}</td>
@@ -130,9 +149,6 @@ export default class KeywordReport extends React.PureComponent {
             }
             </tbody>
           </Table>
-          <div className='wrapper-btn'>
-            <button className='btn-submit-automation' onClick={this.onSubmit.bind(this)}>{`Submit`}</button>
-          </div>
         </div>
       </div>
     )
