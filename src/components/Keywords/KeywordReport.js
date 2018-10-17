@@ -20,7 +20,7 @@ export default class KeywordReport extends React.PureComponent {
       asin: this.state.item.ASIN,
       keyword
     }
-    const { data } = await axios.post('http://localhost:5000/product', params)
+    const { data } = await axios.post('https://sellerpoint-keyword-service.herokuapp.com/product', params)
                       .catch(e => { return {e, data: { indexed: 'No', page: '', rank: ''}}})
 
     return data;
