@@ -48,7 +48,6 @@ export default class KeywordReport extends React.PureComponent {
                       .catch(e => { return {e, data: []}; })
 
     const reports = []
-    item.InputKeywords = ['pasta pot', 'pasta']
     await Promise.all(item.InputKeywords.map(async (keyword) => {
       let report = {
         keyword,
