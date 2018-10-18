@@ -21,7 +21,7 @@ export default class KeywordReport extends React.PureComponent {
       keyword
     }
     const { data } = await axios.post('https://sellerpoint-keyword-service.herokuapp.com/product', params)
-                      .catch(e => { return {e, data: { indexed: 'No', page: '', rank: ''}}})
+                      .catch(e => { return {e, data: { indexed: false, page: null, position: null}}})
 
     return data;
   }
@@ -56,8 +56,9 @@ export default class KeywordReport extends React.PureComponent {
         phrase: {},
         exact: {}
       }
-      // Keyword index/page/rank
+      // Keyword index/page/position
       const index = await this.onGetIndexReport(keyword);
+      
       report.index = index;
       // Keyword report
       data.map(d => {
@@ -128,9 +129,9 @@ export default class KeywordReport extends React.PureComponent {
               this.state.reports.map((report, idx) => (
                 <tr key={`keyword-${idx}`}>
                   <td>{report.keyword}</td>
-                  <td>{report.index.indexed}</td>
+                  <td>{report.index.indexed ? 'Yes' : 'No'}</td>
                   <td>{report.index.page}</td>
-                  <td>{report.index.rank}</td>
+                  <td>{report.index.position ? report.index.position : ''}</td>
                   <td>{report.broad.search}</td>
                   <td>{report.phrase.search}</td>
                   <td>{report.exact.search}</td>
