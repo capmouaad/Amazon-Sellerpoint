@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table } from 'reactstrap'
 import FormLoader from './../Forms/FormLoader'
-import axios from 'axios'
+import api from '../../services/Api'
 
 export default class KeywordReport extends React.PureComponent {
   constructor(props) {
@@ -15,75 +15,23 @@ export default class KeywordReport extends React.PureComponent {
     }
   }
 
-  onGetIndexReport = async (keyword) => {
-    const params = {
-      asin: this.state.item.ASIN,
-      keyword
-    }
-    const { data } = await axios.post('https://sellerpoint-keyword-service.herokuapp.com/product', params)
-                      .catch(e => { return {e, data: { indexed: false, page: null, position: null}}})
-
-    return data;
-  }
-  
   onGetKeywordReport = async () => {
     const { item } = this.state;
-    if (!item) {
-      return;
-    }
-    const params = {
-      pageId: `https://www.amazon.com/dp/${item.ASIN}`,
-      keywordList: []
-    }
-    item.InputKeywords.map(keyword => {
-      ['EXACT', 'BROAD', 'PHRASE'].map((type) => {
-        params.keywordList.push({
-          key: keyword,
-          matchType: type
-        })
+    const { data } = await api.get('KWAutomationResult?automationId=1')
+      .catch(e => { return { e, data: [] }; })
+
+    if (data && data.KWAutomationResults) {
+      const reports = data.KWAutomationResults;
+
+      this.setState({
+        ...this.state,
+        reports,
+        loaded: true
       })
-    })
-
-    const { data } = await axios.post('https://sellerpoint-keyword-service.herokuapp.com/report', params)
-                      .catch(e => { return {e, data: []}; })
-
-    const reports = []
-    await Promise.all(item.InputKeywords.map(async (keyword) => {
-      let report = {
-        keyword,
-        index: {},
-        broad: {},
-        phrase: {},
-        exact: {}
-      }
-      // Keyword index/page/position
-      const index = await this.onGetIndexReport(keyword);
-      
-      report.index = index;
-      // Keyword report
-      data.map(d => {
-        if (d.keyword === keyword) {
-          let type = d.matchType.toLowerCase();
-          report[type] = {
-            search: d.impression,
-            relevancy: d.relevance,
-            volume: d.impression * d.relevance,
-            power: d.power
-          }
-        }
-      })
-      console.log(report)
-      reports.push(report)
-    }))
-
-    this.setState({
-      ...this.state,
-      reports,
-      loaded: true
-    })
+    }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.onGetKeywordReport();
   }
 
@@ -125,28 +73,28 @@ export default class KeywordReport extends React.PureComponent {
               </tr>
             </thead>
             <tbody>
-            {
-              this.state.reports.map((report, idx) => (
-                <tr key={`keyword-${idx}`}>
-                  <td>{report.keyword}</td>
-                  <td>{report.index.indexed ? 'Yes' : 'No'}</td>
-                  <td>{report.index.page}</td>
-                  <td>{report.index.position ? report.index.position : ''}</td>
-                  <td>{report.broad.search}</td>
-                  <td>{report.phrase.search}</td>
-                  <td>{report.exact.search}</td>
-                  <td>{report.broad.relevancy}</td>
-                  <td>{report.phrase.relevancy}</td>
-                  <td>{report.exact.relevancy}</td>
-                  <td>{report.broad.volume}</td>
-                  <td>{report.phrase.volume}</td>
-                  <td>{report.exact.volume}</td>
-                  <td>{report.broad.power}</td>
-                  <td>{report.phrase.power}</td>
-                  <td>{report.exact.power}</td>
-                </tr>
-              )) 
-            }
+              {
+                this.state.reports.map((report, idx) => (
+                  <tr key={`keyword-${idx}`}>
+                    <td>{report.Keyword}</td>
+                    <td>{report.IsIndexed ? 'Yes' : 'No'}</td>
+                    <td>{report.Page}</td>
+                    <td>{report.Position ? report.Position : ''}</td>
+                    <td>{report.VolumeExact}</td>
+                    <td>{report.VolumeBroad}</td>
+                    <td>{report.VolumePhrase}</td>
+                    <td>{report.RelevanceExact}</td>
+                    <td>{report.RelevanceBroad}</td>
+                    <td>{report.RelevancePhrase}</td>
+                    <td>{report.VolumeExact * report.RelevanceExact}</td>
+                    <td>{report.VolumeBroad * report.RelevanceBroad}</td>
+                    <td>{report.VolumePhrase * report.RelevancePhrase}</td>
+                    <td>{report.PowerExact}</td>
+                    <td>{report.PowerBroad}</td>
+                    <td>{report.PowerPhrase}</td>
+                  </tr>
+                ))
+              }
             </tbody>
           </Table>
         </div>
