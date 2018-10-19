@@ -17,7 +17,7 @@ export default class KeywordReport extends React.PureComponent {
 
   onGetKeywordReport = async () => {
     const { item } = this.state;
-    const { data } = await api.get('KWAutomationResult?automationId=1')
+    const { data } = await api.get(`KWAutomationResult?automationId=${item.AutomationId}`)
       .catch(e => { return { e, data: [] }; })
 
     if (data && data.KWAutomationResults) {

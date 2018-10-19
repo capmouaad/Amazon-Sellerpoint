@@ -6,8 +6,12 @@ import React from 'react'
 export default class CompetitiveASINSelection extends React.PureComponent {
   constructor (props) {
     super (props)
+
+    const { location } = this.props
     this.state = {
+      automationId: location.state ? location.state.automationId: null,
       MatchingProducts: [],
+      SelectedProductsIds: [],
       isGetDataBE: false,
       apiError: null
     }
@@ -16,6 +20,63 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   onGoBackMenu = () => {
     const { history } = this.props
     history.push('/dash/Keywords')
+  }
+
+  onChangeCheckbox = (e, idx) => {
+    const target = e.target
+    const checked = target.checked
+
+    console.log(this.state.SelectedProductsIds)
+    const position = this.state.SelectedProductsIds.indexOf(idx)
+
+    if (checked && position == -1) {
+      const SelectedProductsIds = this.state.SelectedProductsIds
+      SelectedProductsIds.push(idx)
+      this.setState({
+        ...this.state,
+        SelectedProductsIds
+      })
+    }
+    else if(!checked && position > -1) {
+      const SelectedProductsIds = this.state.SelectedProductsIds
+      SelectedProductsIds.splice(position, 1)
+      this.setState({
+        ...this.state,
+        SelectedProductsIds
+      })
+    }
+  }
+
+  onSubmit = async () => {
+    const queryData = {
+      automationId: this.state.automationId,
+      outputASINs: []
+    }
+
+    const selectedProducts = []
+    this.state.SelectedProductsIds.map((idx) => {
+      const product = this.state.MatchingProducts[idx]
+      const item = {
+        asin: product.ASIN,
+        isMyAsin: product.IsMyASIN,
+        isManualInput: product.isAddAsin ? product.isAddAsin : false,
+        brand: product.Brand,
+        title: product.Title,
+        salesCategory: product.SalesCategory,
+        salesRank: product.SalesRank
+      }
+      selectedProducts.push(item)
+    })
+    queryData.outputASINs = selectedProducts
+    
+    this.setState({
+      isGetDataBE: true
+    })
+    await api.post('KWSaveOutput', queryData)
+    this.setState({
+      isGetDataBE: false
+    })
+    this.onGoBackToMenu()
   }
 
   onGetCompetitorASIN = async () => {
@@ -111,6 +172,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
         if (idx || idx === 0) {
           const newArr = [...MatchingProducts]
           newArr[idx] = data.MatchingProduct
+          newArr[idx]['isAddAsin'] = true
           this.setState({
             MatchingProducts: newArr,
             isGetDataBE: false,
@@ -164,7 +226,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                   <tr key={`key-asin-${idx}`}>
                     <td>
                       <div className='wrapper-asin-checkbox'>
-                        <Input type='checkbox'/>
+                        <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
                         {
                           item.isAddAsin
                           ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>

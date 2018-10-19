@@ -66,12 +66,13 @@ class KeywordAutomation extends Component {
       const formRes = await api.put(`KWAutomation`, params)
       console.log('backend responce to POST kwAutomation', formRes)
 
-      const { IsSuccess, ErrorMessage } = formRes.data;
+      const { AutomationId, IsSuccess, ErrorMessage } = formRes.data;
 
       if (IsSuccess) {
         history.push({
           pathname: '/dash/Keywords/CompetitiveASINSelection',
           state: {
+            automationId: AutomationId,
             marketplaceId,
             inputKeywords: arrayInputKeywords,
             asin
