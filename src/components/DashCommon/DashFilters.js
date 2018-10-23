@@ -6,11 +6,39 @@ import Select from 'tuna.react-select';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js';
 import { APP_CONFIG } from '../../constants'
+import Option from '../OptionItem'
 
 import { setDataGroupByOptions, setSellerIdOptions, setMarketPlaceNameOptions, setSellerSKUOptions, setDataGroupBySelectedOptions, setSellerIdSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerSKUSelectedOptions, setCurrentSelections, setPickerStartDate, setPickerEndDate, resetQlikFilter } from '../../actions/dashFilter'
 
 const initialState = {
     isTabOpened: true
+}
+
+const multiFilterStyle = {
+    control: styles => ({ ...styles, backgroundColor: 'white', border: 'none !important', boxShadow: 'none !important', padding: '0 !important' }),
+    placeholder: (styles) => ({
+        ...styles,
+        color: '#595959'
+    }),
+    option: (styles, { isFocused }) => {
+        let styleSelect = styles
+        if (isFocused) {
+           styleSelect = {
+                ...styleSelect,
+                backgroundColor: '#fff',
+                color: '#595959'
+           }
+        }
+        return {
+            ...styleSelect,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor: '#fff',
+            color: '#595959',
+            fontSize: 12
+        }
+    }
 }
 
 const colourStyles = {
@@ -117,27 +145,68 @@ class DashFilters extends Component {
     }
 
     bindCurrentSelections = async () => {
-
         const { setCurrentSelections } = this.props
         if (window.GlobalQdtComponents) {
             let app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
             await app.getList('CurrentSelections', (reply) => {
-
                 // Flatten data from qlik so redux connect can compare object changes
                 let data = []
-                reply.qSelectionObject.qSelections.forEach((sel) => {
+                let multiSelected = {}
+                reply.qSelectionObject.qSelections.map((sel) => {
                     if (sel.qField !== 'DataFieldLabel' && sel.qField !== 'Date') {
-                        sel.qSelectedFieldSelectionInfo.forEach((item) => {
+                        if (sel.qSelectedCount <= 4) {
+                            sel.qSelectedFieldSelectionInfo.map((item) => {
+                                data.push({
+                                    isShortList: true,
+                                    qField: sel.qField,
+                                    qName: item.qName
+                                })
+                            })
+                        } else if (sel.qSelectedCount > 4 && sel.qSelectedCount <= 6) {
+                            sel.qSelectedFieldSelectionInfo.map((item) => {
+                                if (multiSelected[sel.qField]) {
+                                    multiSelected[sel.qField].push({
+                                        label: item.qName,
+                                        qField: sel.qField,
+                                        qName: item.qName
+                                    })
+                                } else {
+                                    multiSelected[sel.qField] = [
+                                        {
+                                            label: item.qName,
+                                            qField: sel.qField,
+                                            qName: item.qName
+                                        }
+                                    ]
+                                }
+                            })
+
                             data.push({
                                 qField: sel.qField,
-                                qName: item.qName
+                                listSelected: multiSelected[sel.qField],
+                                qName: `${sel.qField}: ${sel.qSelectedCount} of ${sel.qTotal}`
                             })
-                        })
+                        } else {
+                            data.push({
+                                isLongList: true,
+                                qField: sel.qField,
+                                qName: `${sel.qField}: ${sel.qSelectedCount} of ${sel.qTotal}`
+                            })
+                        }
                     }
                 })
 
-                setCurrentSelections(data)
+
+                setCurrentSelections(data.sort((a, b) => {
+                    if (a.isLongList) {
+                        return 1
+                    } else if (b.isLongList) {
+                        return -1
+                    } else {
+                        return 0
+                    }
+                }))
             })
         }
     }
@@ -284,12 +353,10 @@ class DashFilters extends Component {
     handleChange = async ({ optionSelected, key, doNotApplySelection }) => {
         try {
             const { setDataGroupBySelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
-            // let difference = this.state.selected.filter(x => !value.includes(x)); // calculates diff
-            // console.log('Removed: ', difference);                         // prints array of removed
 
-            //this.setState({ selected: value });
+            const isOptionArray = Array.isArray(optionSelected)
             let data = [];
-            if (optionSelected && Array.isArray(optionSelected) && optionSelected.length > 0) {
+            if (optionSelected && isOptionArray && optionSelected.length > 0) {
                 data = optionSelected.map((item) => (item.value))
             } else if (optionSelected) {
                 data.push(optionSelected.value);
@@ -314,31 +381,43 @@ class DashFilters extends Component {
         }
     }
 
-    deleteFilter = async ({ item, qName }) => {
+    deleteFilter = async ({ item }) => {
         try {
             // const { SellerSKUSelectedOptions} = this.props
             const app = (window.GlobalQdtComponents && window.GlobalQdtComponents.qAppPromise) ? await window.GlobalQdtComponents.qAppPromise : {}
 
-            if (isNaN(Number(qName)))
-                await app.field(item.qField).selectValues([{ qText: qName }], true, true);
-            else
-                await app.field(item.qField).selectValues([Number(qName)], true, true);
+            if (!item.isLongList) {
+                let filterToDeletes
+                if (isNaN(Number(item.qName))) {
+                    filterToDeletes = [{ qText: item.qName }]
+                } else {
+                    filterToDeletes = [Number(item.qName)]
+                }
+
+                await app.field(item.qField).selectValues(filterToDeletes, true, true)
+            } else {
+                await app.field(item.qField).clear()
+            }
+
 
             const { MarketPlaceNameSelectedOptions, SellerIDSelectedOptions, SellerSKUSelectedOptions, setMarketPlaceNameSelectedOptions, setSellerIdSelectedOptions, setSellerSKUSelectedOptions } = this.props
+
+            let filterFunction = (val) => val.label !== item.qName
+
             switch (item.qField) {
                 case APP_CONFIG.QS_FIELD_NAME.MarketPlaceName:
                     setMarketPlaceNameSelectedOptions(
-                        MarketPlaceNameSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? MarketPlaceNameSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerID:
                     setSellerIdSelectedOptions(
-                        SellerIDSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? SellerIDSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 case APP_CONFIG.QS_FIELD_NAME.SellerSKU:
                     setSellerSKUSelectedOptions(
-                        SellerSKUSelectedOptions.filter((val) => val.label !== qName)
+                        !item.isLongList ? SellerSKUSelectedOptions.filter(filterFunction) : []
                     )
                     break
                 default:
@@ -467,7 +546,7 @@ class DashFilters extends Component {
                             <label>Seller ID </label>
                             <Select
                                 className="qlik-select mar-r"
-                                isMult
+                                isMulti
                                 autoFocusFirstOption={false}
                                 closeMenuOnSelect={false}
                                 isDisabled={!QlikConnected}
@@ -524,20 +603,49 @@ class DashFilters extends Component {
                             <div className={"dash-section__toggler"} onClick={this.toggleTab} style={{ marginTop: 2 }}>
                                 <div className="dash-section__toggler-icon"></div>
                             </div>
-                            <h2 className="dash-filters__selected-title">Selected Filters</h2>
+                            <h2 className="dash-filters__selected-title">
+                                {`Selected Filters: `}
+                                {
+                                    currentSelections.length === 0
+                                    ? <span className='thin-text'>{`None`}</span>
+                                    : null
+                                }
+                            </h2>
                         </div>
                         <div className="dash-filters__selection">
                             {
                                 currentSelections.map((value, idx) => {
                                     return (
-                                        <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
-                                            {value.qName}
-                                            <i
-                                                className="fa fa-times"
-                                                style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
-                                                onClick={() => { this.deleteFilter({ item: value, qName: value.qName }) }}
-                                            ></i>
-                                        </span>
+                                        <div key={`${value.qName}-${idx}`}>
+                                            {
+                                            !value.isLongList && !value.isShortList
+                                            ? (
+                                                <Select
+                                                    className="multi-selected-list"
+                                                    closeMenuOnSelect={false}
+                                                    autoFocusFirstOption={false}
+                                                    hideSelectedOptions={false}
+                                                    onChange={(optionSelected) => { this.deleteFilter({ item: optionSelected })}}
+                                                    options={value.listSelected}
+                                                    isClearable={false}
+                                                    controlShouldRenderValue={false}
+                                                    placeholder={value.qName}
+                                                    styles={multiFilterStyle}
+                                                    components={{ Option }}
+                                                />
+                                            )
+                                            : (
+                                                <span key={`${value.qName}-${idx}`} className='selected-el p-2'>
+                                                    {value.qName}
+                                                    <i
+                                                        className="fa fa-times"
+                                                        style={{ marginLeft: 10, cursor: 'pointer', padding: 3 }}
+                                                        onClick={() => { this.deleteFilter({ item: value }) }}
+                                                    ></i>
+                                                </span>
+                                            )
+                                        }
+                                        </div>
                                     )
                                 })
                             }

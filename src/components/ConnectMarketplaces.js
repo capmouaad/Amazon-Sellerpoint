@@ -27,7 +27,11 @@ class ConnectMarketplaces extends Component {
   };
 
   getSellerMarketplaces = () => {
-    localStorage.setItem("isInitialImport", this.props.isInitialImport)
+    this.props.setSignupFields({ // update redux store
+      ...this.props.signupFields,
+      seller_id: this.props.sellerId,
+      isInitialImport: this.props.isInitialImport
+    })
     this.setState({ loading: true })
     api
       .get(`GetSellerMarketPlaces`)
@@ -64,6 +68,7 @@ class ConnectMarketplaces extends Component {
     this.props.setSignupFields({ // update redux store
       ...this.props.signupFields,
       seller_id: sellerId,
+      isInitialImport: this.props.isInitialImport
     })
 
     this.LWAAuth(advState);
@@ -144,7 +149,7 @@ class ConnectMarketplaces extends Component {
                           {isConnected ?
                             <span className="signup__table-connection"><span className="ico-checkmark"></span> Connected</span> :
                             isAvailable ?
-                              <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Connect</span> :
+                              <span className="btn btn-connect" onClick={this.onOpenModel.bind(this, this.props.advState, mp.SellerId)}>Click to Connect</span> :
                               <span className="signup__table-connection"> Not Available</span>
                           }
                         </td>
@@ -167,7 +172,8 @@ class ConnectMarketplaces extends Component {
 
 
 const mapStateToProps = (state) => ({
-  LWA: state.lwa
+  LWA: state.lwa,
+  sellerId: state.signup.fields.seller_id
 });
 
 const mapDispatchToProps = (dispatch) => ({

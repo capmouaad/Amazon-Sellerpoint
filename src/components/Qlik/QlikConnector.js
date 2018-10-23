@@ -128,7 +128,7 @@ class QlikConnector extends React.Component {
 
       if (!QlikData || !QlikData.QlikAppId) {
         console.error('>>>> Error : No QlikAppId from server !')
-        this.requestQlikData()
+       // this.requestQlikData()
         return
       }
 

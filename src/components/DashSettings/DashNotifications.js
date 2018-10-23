@@ -11,15 +11,15 @@ export default class DashNotifications extends Component {
 
   componentWillMount() {
     if (document.getElementById("notification_script") == null) {
-      this.addCustomScript();
+      this.addCustomScriptNotification();
     }
     else {
       document.getElementById("notification_script").remove();
-      this.addCustomScript();
+      this.addCustomScriptNotification();
     }
   }
 
-  addCustomScript = () => {
+  addCustomScriptNotification = () => {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=3s";
     script.id = "notification_script";

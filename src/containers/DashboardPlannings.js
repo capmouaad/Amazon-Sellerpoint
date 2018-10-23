@@ -17,12 +17,12 @@ class DashboardPlannings extends Component {
   }
 
   componentWillMount() {
-    if (document.getElementById("notification_script") == null) {
-      this.addCustomScript();
+    if (document.getElementById("planning_script") == null) {
+      this.addCustomScriptPlanning();
     }
     else {
-      document.getElementById("notification_script").remove();
-      this.addCustomScript();
+      document.getElementById("planning_script").remove();
+      this.addCustomScriptPlanning();
     }
   }
 
@@ -30,10 +30,10 @@ class DashboardPlannings extends Component {
     this.props.setHeaderClass('header--dash');
   }
 
-  addCustomScript() {
+  addCustomScriptPlanning() {
     const script = document.createElement("script");
     script.src = "https://kinimetrix.activehosted.com/f/embed.php?id=3s";
-    script.id = "notification_script";
+    script.id = "planning_script";
     script.async = true;
     document.body.appendChild(script);
   }

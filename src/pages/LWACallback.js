@@ -56,7 +56,7 @@ class LWACallback extends Component {
         code: authCode,
         scope: authScope,
         sellerId: sellerId,
-        isInitialImport: localStorage.getItem("isInitialImport")
+        isInitialImport: this.props.isInitialImport
       }
 
       const res = await api.post(`ConnectAdvertisingData`, obj)
@@ -98,6 +98,7 @@ class LWACallback extends Component {
 
 const mapStateToProps = (state) => ({
   sellerId: state.signup.fields.seller_id,
+  isInitialImport: state.signup.fields.isInitialImport,
   LWA: state.lwa
 });
 

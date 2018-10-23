@@ -28,4 +28,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /.vs
-/.vscode
+package-lock.json
+sprite.svg
+_sprite-svg.scss

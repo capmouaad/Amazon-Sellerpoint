@@ -1,4 +1,4 @@
-## Sellerpoint front-end
+## Sallerpoint front-end
 React.js app bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 React, Redux, React-router 4, React-loadable is used

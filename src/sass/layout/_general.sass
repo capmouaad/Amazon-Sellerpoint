@@ -107,8 +107,12 @@ body, html
   align-items: center
   .signup__form-cta
     .btn-signup
+      color: #383838
       font-size: 18px
       font-weight: bold
+      &:hover
+        background-color: $colorBlue
+        color: white !important
 
 
 .market-msw-region
@@ -118,8 +122,12 @@ body, html
     text-align: left
   .signup__form-cta
     .btn-signup
+      color: #383838
       font-size: 18px
       font-weight: bold
+      &:hover
+        background-color: $colorBlue
+        color: white !important
 
 .reload-time
   display: flex
@@ -205,4 +213,97 @@ body, html
 
 .hidden-status-bar
   display: none
+
+.multi-selected-list
+  background: #fff
+  width: 160px
+  color: #595959 !important
+  z-index: 100
+  margin: 0 15px
+.thin-text
+  font-weight: 400 !important
+
+.keywords-auto-menu
+  padding: 20px 50px
+  h3
+    font-size: 26px
+    text-transform: uppercase
+    color: #383838
+  table
+    width: 100%
+    border-collapse: collapse
+    thead
+      tr
+        th
+          padding: 10px 0
+          text-align: center
+          border: 1px solid #cccccc
+          color: #383838
+          font-weight: bold
+    tbody
+      tr
+        td
+          padding: 10px 0
+          text-align: center
+          border: 1px solid #cccccc
+          input[type='text']
+            width: 100%
+            border: none
+            text-align: center
+            line-height: 18px
+          .wrapper-asin-checkbox
+            text-align: left
+            input[type='checkbox']
+              margin: 0 15px
+            input[type='text']
+              display: inline-block
+              width: calc(100% - 45px)
+              text-align: left
+              text-transform: uppercase
+            .text-asin
+              max-width: 90px
+  .form-check
+    display: flex
+    flex-direction: column
+    label
+        max-width: 400px
+        cursor: pointer
+        padding: 10px 20px !important
+        font-size: 16px
+        display: flex
+        align-items: center
+        color: #383838
+        input
+          cursor: pointer
+          margin-right: 10px
+          font-size: 14px
+          margin-top: -2px
+  .btn-submit-automation
+    background: #FFC402
+    padding: 10px 30px
+    border-radius: 5px
+    font-weight: bold
+    cursor: pointer
+    color: #1D3049 !important
+    margin: 20px
+    font-size: 16px
+  .wrapper-btn
+    .btn-back-menu-keywords
+      background: #FFC402
+      padding: 10px 30px
+      border-radius: 5px
+      font-weight: bold
+      cursor: pointer
+      color: #1D3049 !important
+      margin: 20px
+      font-size: 16px
+  .wrapper-asin-btn
+    margin: 20px 0
+    .btn-submit-automation:first-child
+      margin-left: 0
+  .ui-input-error
+    font-size: 12px
+    color: red
+    display: block
+    margin: 20px 0
 

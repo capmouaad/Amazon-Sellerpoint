@@ -26,7 +26,7 @@ class MWSActionDomain extends Component {
   setupMarketplaceDomains = async () => {
     try {
       this.setState({ loading: true })
-      const res = await api.get(`GetSellerMarketPlaces`)
+      const res = await api.get(`GetSellerMarketPlaceByClientIdAndSellerId`)
       if (res.data.IsSuccess) {
         this.setState({
           marketplaceDomains: res.data.Marketplaces.map(x => ({
@@ -88,12 +88,11 @@ class MWSActionDomain extends Component {
       })
 
       const filteredMarketplaces = marketplaceData.filter(x => choosedOptions.indexOf(x.marketPlaceId) !== -1)
-
       const obj = {
         sellerId: seller_id,
         authToken: mws_auth,
         marketplaces: filteredMarketplaces,
-        isInitialImport: localStorage.getItem("isInitialImport")
+        isInitialImport: signupFields.isInitialImport
       }
 
       if (filteredMarketplaces.length > 0) {

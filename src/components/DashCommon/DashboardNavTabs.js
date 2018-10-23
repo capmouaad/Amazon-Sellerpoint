@@ -15,12 +15,6 @@ class Help extends Component {
     this.OpenHelpBox = this.OpenHelpBox.bind(this);
   }
 
-  componentWillMount() {
-    if (document.getElementById("help_script") == null) {
-      this.addCustomScript();
-    }
-  }
-
   handleClickOutside = () => {
     if (this.state.isHelpOpen) this.setState({ isHelpOpen: false })
   };

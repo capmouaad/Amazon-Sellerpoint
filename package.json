@@ -94,6 +94,7 @@
     "react-tippy": "^1.2.2",
     "react-toastify": "^4.2.0",
     "react-youtube": "^7.6.0",
+    "reactstrap": "^6.4.0",
     "redux": "^4.0.0",
     "redux-auth-wrapper": "^2.0.3",
     "redux-persist": "^5.10.0",
@@ -119,8 +120,7 @@
     "test": "node scripts/test.js --env=jsdom",
     "surge": "mv build/index.html build/200.html && surge --domain sallerpoint.surge.sh --project ./build",
     "developer": "concurrently --kill-others \"gulp\" \"yarn start\"",
-    "builder": "gulp build --production && yarn build",
-    "postbuild": "react-snap"
+    "builder": "gulp build --production && yarn build"
   },
   "jest": {
     "collectCoverageFrom": [

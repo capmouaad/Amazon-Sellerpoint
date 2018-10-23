@@ -8,6 +8,7 @@ import DashboardWelcome from '../containers/DashboardWelcome';
 import DashboardDashboards from '../containers/DashboardDashboards';
 import DashboardPlannings from '../containers/DashboardPlannings';
 import DashboardConfiguration from '../containers/DashboardConfiguration';
+import DashboardKeywords from '../containers/DashboardKeywords';
 import QlikConnector from '../components/Qlik/QlikConnector'
 
 const Configuration_TAB_MAP = {
@@ -118,6 +119,7 @@ class Dashboard extends Component {
                     <Route path={`${match.url}/dashboards`} component={DashboardDashboards} />
                     <Route path={`${match.url}/plannings`} component={DashboardPlannings} />
                     <Route path={`${match.url}/configuration`} component={DashboardConfiguration} />
+                    <Route path={`${match.url}/keywords`} component={DashboardKeywords} />
                     <Route
                         exact
                         path={`${match.url}/welcome`}

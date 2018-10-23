@@ -6,9 +6,9 @@ const initialState = {
   MarketPlaceNameOptions: [],
   SellerSKUOptions: [],
   DataGroupBySelectedOptions: null,
-  SellerIDSelectedOptions: null,
-  MarketPlaceNameSelectedOptions: null,
-  SellerSKUSelectedOptions: null,
+  SellerIDSelectedOptions: [],
+  MarketPlaceNameSelectedOptions: [],
+  SellerSKUSelectedOptions: [],
   currentSelections: [],
   pickerStartDate: '',
   pickerEndDate: ''
