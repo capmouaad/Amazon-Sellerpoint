@@ -111,6 +111,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       ...MatchingProducts,
       {
         "ASIN": "",
+        "SmallImageURL":"",
         "Brand": "",
         "Title": "",
         "SalesCategory": "",
@@ -213,6 +214,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
               <thead>
                 <tr>
                   <th>{`ASIN`}</th>
+                  <th>{`Image`}</th>
                   <th>{`Brand`}</th>
                   <th>{`Listing Title`}</th>
                   <th>{`Sales Category (Lowest Level)`}</th>
@@ -234,8 +236,9 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                         }
                       </div>
                     </td>
+                    <td><img src={item.SmallImageURL} height="42" width="42"/></td>
                     <td>{item.Brand}</td>
-                    <td>{item.Title}</td>
+                    <td className='title'>{item.Title}</td>
                     <td>{item.SalesCategory}</td>
                     <td>{item.SalesRank}</td>
                     <td>{item.ListPrice || '---'}</td>
