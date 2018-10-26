@@ -236,7 +236,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                         }
                       </div>
                     </td>
-                    <td><img src={item.SmallImageURL} height="42" width="42"/></td>
+                    <td>{item.SmallImageURL?<img src={item.SmallImageURL} height="42" width="42"/>:''}</td>
                     <td>{item.Brand}</td>
                     <td className='title'>{item.Title}</td>
                     <td>{item.SalesCategory}</td>
