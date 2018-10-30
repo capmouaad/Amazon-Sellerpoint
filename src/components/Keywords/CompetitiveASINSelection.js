@@ -92,8 +92,25 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       }
 
       const { data } = await api.post('KWCompetitorASIN', params)
+      const MatchingProducts = data.MatchingProducts || []
+      for (var i = 0;i < MatchingProducts.length;i ++) {
+        const product = MatchingProducts[i]
+        const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ asins: [product.ASIN] })
+        }).then(r => r.json())
+        product.SalesCategory = ReviewInfo[0].category
+        product.ListPrice = ReviewInfo[0].price
+        product.reviews = ReviewInfo[0].reviews
+        MatchingProducts[i] = product
+      }
+
       this.setState({
-        MatchingProducts: data.MatchingProducts ? data.MatchingProducts : [],
+        MatchingProducts: MatchingProducts,
         isGetDataBE: false
       })
     } catch (error) {
@@ -219,6 +236,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                   <th>{`Listing Title`}</th>
                   <th>{`Sales Category (Lowest Level)`}</th>
                   <th>{`Sale Rank`}</th>
+                  <th>{`Reviews`}</th>
                   <th>{`Price`}</th>
                 </tr>
               </thead>
@@ -241,6 +259,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                     <td className='title'>{item.Title}</td>
                     <td>{item.SalesCategory}</td>
                     <td>{item.SalesRank}</td>
+                    <td>{item.reviews}</td>
                     <td>{item.ListPrice || '---'}</td>
                   </tr>
                 ))
