@@ -105,7 +105,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
         }).then(r => r.json())
         product.SalesCategory = ReviewInfo[0].category
         product.ListPrice = ReviewInfo[0].price
-        product.reviews = ReviewInfo[0].reviews
+        product.reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
         MatchingProducts[i] = product
       }
 
