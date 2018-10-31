@@ -94,6 +94,10 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       }
 
       const { data } = await api.post('KWCompetitorASIN', params)
+      this.setState({
+        MatchingProducts: data.MatchingProducts || []
+      })
+
       const MatchingProducts = data.MatchingProducts || []
       for (var i = 0;i < MatchingProducts.length;i ++) {
         const product = MatchingProducts[i]
