@@ -1,5 +1,6 @@
 import React from 'react'
-import { Table } from 'reactstrap'
+import ReactTable from 'react-table'
+import 'react-table/react-table.css'
 import FormLoader from './../Forms/FormLoader'
 import api from '../../services/Api'
 
@@ -36,67 +37,136 @@ export default class KeywordReport extends React.PureComponent {
   }
 
   render() {
+    const data = this.state.reports.map(item => {
+      return {
+        keyword: item.Keyword,
+        indexed: item.IsIndexed ? 'Yes' : 'No',
+        page: item.page,
+        position: item.position,
+        vexact: item.VolumeExact,
+        vbroad: item.VolumeBroad,
+        vphrase: item.VolumePhrase,
+        rexact: item.RelevanceExact,
+        rbroad: item.RelevanceBroad,
+        rphrase: item.RelevancePhrase,
+        xexact: item.VolumeExact * item.RelevanceExact,
+        xbroad: item.VolumeBroad * item.RelevanceBroad,
+        xphrase: item.VolumePhrase * item.RelevancePhrase,
+        pexact: item.PowerExact,
+        pbroad: item.PowerBroad,
+        pphrase: item.PowerPhrase
+      }
+    })
+
     return (
       <div className="dash-container">
         <div className={'keywords-auto-menu ' + (this.state.loaded ? 'loader-container' : '')}>
           <FormLoader />
           <p>Keyword Report for: <strong>{this.state.item.ASIN}</strong></p>
-          <Table responsive>
-            <thead>
-              <tr>
-                <th>{` `}</th>
-                <th>{` `}</th>
-                <th>{` `}</th>
-                <th>{` `}</th>
-                <th colSpan="3">{`Search Volume`}</th>
-                <th colSpan="3">{`Relevancy Score`}</th>
-                <th colSpan="3">{`Volume x Relevancy`}</th>
-                <th colSpan="3">{`Power`}</th>
-              </tr>
-              <tr>
-                <th>{`KEYWORD`}</th>
-                <th>{`Indexed?`}</th>
-                <th>{`Page`}</th>
-                <th>{`Position`}</th>
-                <th>{`Broad`}</th>
-                <th>{`Phrase`}</th>
-                <th>{`Exact`}</th>
-                <th>{`Broad`}</th>
-                <th>{`Phrase`}</th>
-                <th>{`Exact`}</th>
-                <th>{`Broad`}</th>
-                <th>{`Phrase`}</th>
-                <th>{`Exact`}</th>
-                <th>{`Broad`}</th>
-                <th>{`Phrase`}</th>
-                <th>{`Exact`}</th>
-              </tr>
-            </thead>
-            <tbody>
+          <ReactTable
+            data={data}
+            noDataText="Report unavailable."
+            minRows="1"
+            columns={[
               {
-                this.state.reports.map((report, idx) => (
-                  <tr key={`keyword-${idx}`}>
-                    <td>{report.Keyword}</td>
-                    <td>{report.IsIndexed ? 'Yes' : 'No'}</td>
-                    <td>{report.Page}</td>
-                    <td>{report.Position ? report.Position : ''}</td>
-                    <td>{report.VolumeExact}</td>
-                    <td>{report.VolumeBroad}</td>
-                    <td>{report.VolumePhrase}</td>
-                    <td>{report.RelevanceExact}</td>
-                    <td>{report.RelevanceBroad}</td>
-                    <td>{report.RelevancePhrase}</td>
-                    <td>{report.VolumeExact * report.RelevanceExact}</td>
-                    <td>{report.VolumeBroad * report.RelevanceBroad}</td>
-                    <td>{report.VolumePhrase * report.RelevancePhrase}</td>
-                    <td>{report.PowerExact}</td>
-                    <td>{report.PowerBroad}</td>
-                    <td>{report.PowerPhrase}</td>
-                  </tr>
-                ))
+                Header: ' ',
+                columns: [
+                  {
+                    Header: 'KEYWORD',
+                    accessor: 'keyword',
+                    width: 250
+                  },
+                  {
+                    Header: 'Indexed?',
+                    accessor: 'indexed',
+                    width: 80
+                  },
+                  {
+                    Header: 'Page',
+                    accessor: 'page',
+                    width: 70
+                  },
+                  {
+                    Header: 'Position',
+                    accessor: 'position',
+                    width: 70
+                  }
+                ]
+              },
+              {
+                Header: 'Search Volume',
+                columns: [
+                  {
+                    Header: 'Broad',
+                    accessor: 'vbroad'
+                  },
+                  {
+                    Header: 'Phrase',
+                    accessor: 'vphrase'
+                  },
+                  {
+                    Header: 'Exact',
+                    accessor: 'vexact'
+                  }
+                ]
+              },
+              {
+                Header: 'Relevancy Score',
+                columns: [
+                  {
+                    Header: 'Broad',
+                    accessor: 'rbroad'
+                  },
+                  {
+                    Header: 'Phrase',
+                    accessor: 'rphrase'
+                  },
+                  {
+                    Header: 'Exact',
+                    accessor: 'rexact'
+                  }
+                ]
+              },
+              {
+                Header: 'Volume x Relevacy',
+                columns: [
+                  {
+                    Header: 'Broad',
+                    accessor: 'xbroad'
+                  },
+                  {
+                    Header: 'Phrase',
+                    accessor: 'xphrase'
+                  },
+                  {
+                    Header: 'Exact',
+                    accessor: 'xexact'
+                  }
+                ]
+              },
+              {
+                Header: 'Power',
+                columns: [
+                  {
+                    Header: 'Broad',
+                    accessor: 'pbroad'
+                  },
+                  {
+                    Header: 'Phrase',
+                    accessor: 'pphrase'
+                  },
+                  {
+                    Header: 'Exact',
+                    accessor: 'pexact'
+                  }
+                ]
               }
-            </tbody>
-          </Table>
+            ]}
+            showPagination={false}
+            className="-striped -highlight"
+            nextText=">>"
+            previousText="<<"
+          />
         </div>
       </div>
     )

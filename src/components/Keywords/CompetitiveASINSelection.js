@@ -1,7 +1,9 @@
-import { Input, Table } from 'reactstrap'
+import React from 'react'
+import { Input } from 'reactstrap'
+import ReactTable from 'react-table'
+import 'react-table/react-table.css'
 import api from '../../services/Api'
 import FormLoader from './../Forms/FormLoader'
-import React from 'react'
 
 export default class CompetitiveASINSelection extends React.PureComponent {
   constructor (props) {
@@ -95,19 +97,28 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       const MatchingProducts = data.MatchingProducts || []
       for (var i = 0;i < MatchingProducts.length;i ++) {
         const product = MatchingProducts[i]
-        const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ asins: [product.ASIN] })
-        }).then(r => r.json())
-        product.SalesCategory = ReviewInfo[0].category
-        product.ListPrice = ReviewInfo[0].price
-        product.reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
-        MatchingProducts[i] = product
+        if (product.ASIN === location.state.asin) {
+          this.setState({
+            SelectedProductsIds: [i]
+          })
+          break;
+        }
       }
+      // for (var i = 0;i < MatchingProducts.length;i ++) {
+      //   const product = MatchingProducts[i]
+      //   const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Accept': 'application/json',
+      //       'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify({ asins: [product.ASIN] })
+      //   }).then(r => r.json())
+      //   product.SalesCategory = ReviewInfo[0].category
+      //   product.ListPrice = ReviewInfo[0].price
+      //   product.Reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
+      //   MatchingProducts[i] = product
+      // }
 
       this.setState({
         MatchingProducts: MatchingProducts,
@@ -220,52 +231,79 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
   render () {
     const { isGetDataBE, apiError } = this.state
-    console.log(this.state);
+    const { location } = this.props
+    const data = this.state.MatchingProducts.map((item, idx) => {
+      const currentASIN = location.state.asin === item.ASIN
+      return {
+        asin: <div className='wrapper-asin-checkbox'>
+                <Input type='checkbox' checked={currentASIN} disabled={currentASIN} onChange={(e) => { this.onChangeCheckbox(e, idx) }} />&nbsp;
+                {
+                  item.isAddAsin
+                  ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
+                  : <span className='text-asin'>{item.ASIN}</span>
+                }
+              </div>,
+        image: item.SmallImageURL ? <img src={item.SmallImageURL} height="42" width="42"/> : '',
+        brand: item.Brand,
+        title: item.Title,
+        category: item.SalesCategory,
+        rank: item.SalesRank,
+        reviews: item.Reviews,
+        price: item.ListPrice || '---'
+      }
+    })
+
     return (
       <div className="dash-container">
         <div className={"loader-container " + (isGetDataBE ? "is-loading" : "")}>
           <FormLoader />
           <div className='keywords-auto-menu'>
             <h3>{`Competitive ASIN Selection`}</h3>
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>{`ASIN`}</th>
-                  <th>{`Image`}</th>
-                  <th>{`Brand`}</th>
-                  <th>{`Listing Title`}</th>
-                  <th>{`Sales Category (Lowest Level)`}</th>
-                  <th>{`Sale Rank`}</th>
-                  <th>{`Reviews`}</th>
-                  <th>{`Price`}</th>
-                </tr>
-              </thead>
-              <tbody>
-              {
-                this.state.MatchingProducts.map((item, idx) => (
-                  <tr key={`key-asin-${idx}`}>
-                    <td>
-                      <div className='wrapper-asin-checkbox'>
-                        <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
-                        {
-                          item.isAddAsin
-                          ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
-                          : <span className='text-asin'>{item.ASIN}</span>
-                        }
-                      </div>
-                    </td>
-                    <td>{item.SmallImageURL?<img src={item.SmallImageURL} height="42" width="42"/>:''}</td>
-                    <td>{item.Brand}</td>
-                    <td className='title'>{item.Title}</td>
-                    <td>{item.SalesCategory}</td>
-                    <td>{item.SalesRank}</td>
-                    <td>{item.reviews}</td>
-                    <td>{item.ListPrice || '---'}</td>
-                  </tr>
-                ))
-              }
-              </tbody>
-            </Table>
+            <ReactTable
+              data={data}
+              noDataText="No data found."
+              minRows="1"
+              columns={[
+                {
+                  Header: 'ASIN',
+                  accessor: 'asin'
+                },
+                {
+                  Header: 'Image',
+                  accessor: 'image',
+                  width: 100
+                },
+                {
+                  Header: 'Brand',
+                  accessor: 'brand'
+                },
+                {
+                  Header: 'Listing Title',
+                  accessor: 'title'
+                },
+                {
+                  Header: 'Sales Category (Lowest Level)',
+                  accessor: 'category'
+                },
+                {
+                  Header: 'Sale Rank',
+                  accessor: 'rank'
+                },
+                {
+                  Header: 'Reviews',
+                  accessor: 'reviews'
+                },
+                {
+                  Header: 'Price',
+                  accessor: 'price'
+                }
+              ]}
+              showPagination={false}
+              defaultPageSize={30}
+              className="-striped -highlight"
+              nextText=">>"
+              previousText="<<"
+            />
             {
               apiError &&
               <span className="ui-input-error">{apiError}</span>
