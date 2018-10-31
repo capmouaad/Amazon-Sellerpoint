@@ -104,21 +104,21 @@ export default class CompetitiveASINSelection extends React.PureComponent {
           break;
         }
       }
-      // for (var i = 0;i < MatchingProducts.length;i ++) {
-      //   const product = MatchingProducts[i]
-      //   const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Accept': 'application/json',
-      //       'Content-Type': 'application/json'
-      //     },
-      //     body: JSON.stringify({ asins: [product.ASIN] })
-      //   }).then(r => r.json())
-      //   product.SalesCategory = ReviewInfo[0].category
-      //   product.ListPrice = ReviewInfo[0].price
-      //   product.Reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
-      //   MatchingProducts[i] = product
-      // }
+      for (var i = 0;i < MatchingProducts.length;i ++) {
+        const product = MatchingProducts[i]
+        const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ asins: [product.ASIN] })
+        }).then(r => r.json())
+        product.SalesCategory = ReviewInfo[0].category
+        product.ListPrice = ReviewInfo[0].price
+        product.Reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
+        MatchingProducts[i] = product
+      }
 
       this.setState({
         MatchingProducts: MatchingProducts,
