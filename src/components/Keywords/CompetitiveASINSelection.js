@@ -240,7 +240,12 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       const currentASIN = location.state.asin === item.ASIN
       return {
         asin: <div className='wrapper-asin-checkbox'>
-                <Input type='checkbox' checked={currentASIN} disabled={currentASIN} onChange={(e) => { this.onChangeCheckbox(e, idx) }} />&nbsp;
+                {
+                  currentASIN
+                  ? <Input type='checkbox' checked={true} disabled={true} />
+                  : <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
+                }
+                &nbsp;
                 {
                   item.isAddAsin
                   ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
