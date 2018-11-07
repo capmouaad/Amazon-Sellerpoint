@@ -31,3 +31,6 @@ yarn-error.log*
 package-lock.json
 sprite.svg
 _sprite-svg.scss
+
+# work space
+*.code-workspace
