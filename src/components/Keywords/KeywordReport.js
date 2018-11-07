@@ -162,7 +162,7 @@ export default class KeywordReport extends React.PureComponent {
                 ]
               }
             ]}
-            showPagination={false}
+            showPagination={true}
             className="-striped -highlight"
             nextText=">>"
             previousText="<<"
