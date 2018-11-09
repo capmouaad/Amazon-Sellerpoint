@@ -54,7 +54,7 @@ class KeywordAutomation extends Component {
         isFormSubmited: true // reset submit status
       })
 
-      const arrayInputKeywords = inputKeywords.split('\n')
+      const arrayInputKeywords = inputKeywords.trim().split('\n')
 
       const params = {
         name: automationName,

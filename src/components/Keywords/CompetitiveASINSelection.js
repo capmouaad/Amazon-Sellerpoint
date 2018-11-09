@@ -14,6 +14,8 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       automationId: location.state ? location.state.automationId: null,
       MatchingProducts: [],
       SelectedProductsIds: [],
+      CheckboxRefs: [],
+      Checkboxes: [],
       isGetDataBE: false,
       apiError: null
     }
@@ -27,15 +29,16 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   onChangeCheckbox = (e, idx) => {
     const target = e.target
     const checked = target.checked
-
-    console.log(this.state.SelectedProductsIds)
     const position = this.state.SelectedProductsIds.indexOf(idx)
+
+    // const ref = this.state.CheckboxRefs[idx]
+    // ref.current.checked = checked
+    // console.log(this.state.CheckboxRefs)
 
     if (checked && position == -1) {
       const SelectedProductsIds = this.state.SelectedProductsIds
       SelectedProductsIds.push(idx)
       this.setState({
-        ...this.state,
         SelectedProductsIds
       })
     }
@@ -43,10 +46,34 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       const SelectedProductsIds = this.state.SelectedProductsIds
       SelectedProductsIds.splice(position, 1)
       this.setState({
-        ...this.state,
         SelectedProductsIds
       })
     }
+  }
+
+  renderCell = cellInfo => {
+    const { location } = this.props
+    const item = this.state.MatchingProducts[cellInfo.index]
+    const currentASIN = location.state.asin === item.ASIN
+    const checked = this.state.SelectedProductsIds.indexOf(cellInfo.index) > -1
+
+    return (
+    <div className='wrapper-asin-checkbox'>
+      {
+        currentASIN
+        ? <input type='checkbox' checked={true} disabled={true} />
+        : <input type='checkbox' ref={this.state.CheckboxRefs[cellInfo.index]} 
+          checked={checked} onChange={(e) => { this.onChangeCheckbox(e, cellInfo.index) }} />
+      }
+      &nbsp;
+      {
+        item.isAddAsin
+        ?  <Input type='text' value={item.ASIN}
+            onKeyPress={(e) => { this.checkAsinEnter(e, cellInfo.index) }} onBlur={(e) => { this.onAsinBlur(e, cellInfo.index) }}/>
+        : <span className='text-asin'>{item.ASIN}</span>
+      }
+    </div>
+    )
   }
 
   onSubmit = async () => {
@@ -108,6 +135,15 @@ export default class CompetitiveASINSelection extends React.PureComponent {
           break;
         }
       }
+
+      const refs = (new Array(MatchingProducts.length)).fill(React.createRef())
+      const checkboxes = []
+      for (var i = 0;i < MatchingProducts.length;i ++) {
+        const item = <input type='checkbox' ref={this.state.CheckboxRefs[i]} onChange={(e) => { this.onChangeCheckbox(e, i) }} />
+        checkboxes.push(item)
+      }
+
+      // Get Review data for each product
       for (var i = 0;i < MatchingProducts.length;i ++) {
         const product = MatchingProducts[i]
         const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
@@ -126,6 +162,8 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
       this.setState({
         MatchingProducts: MatchingProducts,
+        CheckboxRefs: refs,
+        Checkboxes: checkboxes,
         isGetDataBE: false
       })
     } catch (error) {
@@ -236,29 +274,34 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   render () {
     const { isGetDataBE, apiError } = this.state
     const { location } = this.props
-    const data = this.state.MatchingProducts.map((item, idx) => {
+    const { MatchingProducts, SelectedProductsIds } = this.state
+    const data = MatchingProducts.map((item, idx) => {
       const currentASIN = location.state.asin === item.ASIN
+      const checked = SelectedProductsIds.indexOf(idx) > -1
       return {
-        asin: <div className='wrapper-asin-checkbox'>
-                {
-                  currentASIN
-                  ? <Input type='checkbox' checked={true} disabled={true} />
-                  : <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
-                }
-                &nbsp;
-                {
-                  item.isAddAsin
-                  ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
-                  : <span className='text-asin'>{item.ASIN}</span>
-                }
-              </div>,
+        asin: (
+          <div className='wrapper-asin-checkbox'>
+          {
+            currentASIN
+            ? <input type='checkbox' checked={true} disabled={true} />
+            : this.state.Checkboxes[idx]
+          }
+          &nbsp;
+          {
+            item.isAddAsin
+            ?  <Input type='text' value={item.ASIN}
+                onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
+            : <span className='text-asin'>{item.ASIN}</span>
+          }
+          </div>
+        ),
         image: item.SmallImageURL ? <img src={item.SmallImageURL} height="42" width="42"/> : '',
         brand: item.Brand,
         title: item.Title,
         category: item.SalesCategory,
         rank: item.SalesRank,
         reviews: item.Reviews,
-        price: item.ListPrice || '---'
+        price: item.ListPrice || ''
       }
     })
 
@@ -275,7 +318,8 @@ export default class CompetitiveASINSelection extends React.PureComponent {
               columns={[
                 {
                   Header: 'ASIN',
-                  accessor: 'asin'
+                  accessor: 'asin',
+                  // Cell: this.renderCell
                 },
                 {
                   Header: 'Image',
@@ -304,11 +348,13 @@ export default class CompetitiveASINSelection extends React.PureComponent {
                 },
                 {
                   Header: 'Price',
-                  accessor: 'price'
+                  id: 'price',
+                  accessor: d=>Number(d.price)
                 }
               ]}
               showPagination={false}
-              defaultPageSize={30}
+              sortable={false}
+              defaultPageSize={100}
               className="-striped -highlight"
               nextText=">>"
               previousText="<<"
