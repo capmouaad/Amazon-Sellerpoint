@@ -12,13 +12,14 @@ class KeywordAutomationMenu extends Component {
 
   onSubmit = () => {
     const { history, match } = this.props
+    const url = match.url.replace(/\/$/, '')
     const { key } = this.state
     switch (key) {
       case 'create':
-        history.push(`${match.url}/CreateNewAutomation`)
+        history.push(`${url}/CreateNewAutomation`)
         break
       case 'view':
-        history.push(`${match.url}/ViewCurrentAutomations`)
+        history.push(`${url}/ViewCurrentAutomations`)
         break
       case 'edit':
         alert(key)

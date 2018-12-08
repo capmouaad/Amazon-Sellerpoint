@@ -1,7 +1,9 @@
-import { Input, Table } from 'reactstrap'
+import React from 'react'
+import { Input } from 'reactstrap'
+import ReactTable from 'react-table'
+import 'react-table/react-table.css'
 import api from '../../services/Api'
 import FormLoader from './../Forms/FormLoader'
-import React from 'react'
 
 export default class CompetitiveASINSelection extends React.PureComponent {
   constructor (props) {
@@ -25,15 +27,12 @@ export default class CompetitiveASINSelection extends React.PureComponent {
   onChangeCheckbox = (e, idx) => {
     const target = e.target
     const checked = target.checked
-
-    console.log(this.state.SelectedProductsIds)
     const position = this.state.SelectedProductsIds.indexOf(idx)
 
     if (checked && position == -1) {
       const SelectedProductsIds = this.state.SelectedProductsIds
       SelectedProductsIds.push(idx)
       this.setState({
-        ...this.state,
         SelectedProductsIds
       })
     }
@@ -41,11 +40,11 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       const SelectedProductsIds = this.state.SelectedProductsIds
       SelectedProductsIds.splice(position, 1)
       this.setState({
-        ...this.state,
         SelectedProductsIds
       })
     }
   }
+
 
   onSubmit = async () => {
     const queryData = {
@@ -93,7 +92,39 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
       const { data } = await api.post('KWCompetitorASIN', params)
       this.setState({
-        MatchingProducts: data.MatchingProducts ? data.MatchingProducts : [],
+        MatchingProducts: data.MatchingProducts || []
+      })
+
+      const MatchingProducts = data.MatchingProducts || []
+      for (var i = 0;i < MatchingProducts.length;i ++) {
+        const product = MatchingProducts[i]
+        if (product.ASIN === location.state.asin) {
+          this.setState({
+            SelectedProductsIds: [i]
+          })
+          break;
+        }
+      }
+
+      // Get Review data for each product
+      for (var i = 0;i < MatchingProducts.length;i ++) {
+        const product = MatchingProducts[i]
+        const ReviewInfo = await fetch('https://sellerpoint-keyword-service.herokuapp.com/review', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ asins: [product.ASIN] })
+        }).then(r => r.json())
+        product.SalesCategory = ReviewInfo[0].category
+        product.ListPrice = ReviewInfo[0].price
+        product.Reviews = ReviewInfo[0].reviews + ' (' + ReviewInfo[0].score + ')'
+        MatchingProducts[i] = product
+      }
+
+      this.setState({
+        MatchingProducts: MatchingProducts,
         isGetDataBE: false
       })
     } catch (error) {
@@ -111,6 +142,7 @@ export default class CompetitiveASINSelection extends React.PureComponent {
       ...MatchingProducts,
       {
         "ASIN": "",
+        "SmallImageURL":"",
         "Brand": "",
         "Title": "",
         "SalesCategory": "",
@@ -202,48 +234,88 @@ export default class CompetitiveASINSelection extends React.PureComponent {
 
   render () {
     const { isGetDataBE, apiError } = this.state
-    console.log(this.state);
+    const { location } = this.props
+    const { MatchingProducts, SelectedProductsIds } = this.state
+    const data = MatchingProducts.map((item, idx) => {
+      const currentASIN = location.state.asin === item.ASIN
+      const checked = SelectedProductsIds.indexOf(idx) > -1
+      return {
+        asin: <div className='wrapper-asin-checkbox'>
+              {
+                currentASIN
+                ? <Input type='checkbox' checked={true} disabled={true} />
+                : <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
+              }
+              &nbsp;
+              {
+                item.isAddAsin
+                ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
+                : <span className='text-asin'>{item.ASIN}</span>
+              }
+            </div>,
+        image: item.SmallImageURL ? <img src={item.SmallImageURL} height="42" width="42"/> : '',
+        brand: item.Brand,
+        title: item.Title,
+        category: item.SalesCategory,
+        rank: item.SalesRank,
+        reviews: item.Reviews,
+        price: item.ListPrice || ''
+      }
+    })
+
     return (
       <div className="dash-container">
         <div className={"loader-container " + (isGetDataBE ? "is-loading" : "")}>
           <FormLoader />
           <div className='keywords-auto-menu'>
             <h3>{`Competitive ASIN Selection`}</h3>
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>{`ASIN`}</th>
-                  <th>{`Brand`}</th>
-                  <th>{`Listing Title`}</th>
-                  <th>{`Sales Category (Lowest Level)`}</th>
-                  <th>{`Sale Rank`}</th>
-                  <th>{`Price`}</th>
-                </tr>
-              </thead>
-              <tbody>
-              {
-                this.state.MatchingProducts.map((item, idx) => (
-                  <tr key={`key-asin-${idx}`}>
-                    <td>
-                      <div className='wrapper-asin-checkbox'>
-                        <Input type='checkbox' onChange={(e) => { this.onChangeCheckbox(e, idx) }} />
-                        {
-                          item.isAddAsin
-                          ?  <Input type='text' onKeyPress={(e) => { this.checkAsinEnter(e, idx) }} onBlur={(e) => { this.onAsinBlur(e, idx) }}/>
-                          : <span className='text-asin'>{item.ASIN}</span>
-                        }
-                      </div>
-                    </td>
-                    <td>{item.Brand}</td>
-                    <td>{item.Title}</td>
-                    <td>{item.SalesCategory}</td>
-                    <td>{item.SalesRank}</td>
-                    <td>{item.ListPrice || '---'}</td>
-                  </tr>
-                ))
-              }
-              </tbody>
-            </Table>
+            <ReactTable
+              data={data}
+              noDataText="No data found."
+              minRows="1"
+              columns={[
+                {
+                  Header: 'ASIN',
+                  accessor: 'asin',
+                },
+                {
+                  Header: 'Image',
+                  accessor: 'image',
+                  width: 100
+                },
+                {
+                  Header: 'Brand',
+                  accessor: 'brand'
+                },
+                {
+                  Header: 'Listing Title',
+                  accessor: 'title'
+                },
+                {
+                  Header: 'Sales Category (Lowest Level)',
+                  accessor: 'category'
+                },
+                {
+                  Header: 'Sale Rank',
+                  accessor: 'rank'
+                },
+                {
+                  Header: 'Reviews',
+                  accessor: 'reviews'
+                },
+                {
+                  Header: 'Price',
+                  id: 'price',
+                  accessor: d=>Number(d.price)
+                }
+              ]}
+              showPagination={false}
+              sortable={false}
+              defaultPageSize={100}
+              className="-striped -highlight"
+              nextText=">>"
+              previousText="<<"
+            />
             {
               apiError &&
               <span className="ui-input-error">{apiError}</span>
